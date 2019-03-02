@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package adventar.v1;
+
+service Adventar {
+  rpc GetCalendar(GetCalendarRequest) returns (Calendar) {}
+}
+
+message Calendar {
+  int64 id = 1;
+  int64 user_id = 2;
+  string title = 3;
+  string description = 4;
+  int32 year = 5;
+}
+
+message GetCalendarRequest {
+  int64 id = 1;
+}
