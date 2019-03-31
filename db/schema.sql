@@ -36,5 +36,5 @@ CREATE TABLE `users` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp,
   `updated_at` datetime NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_users_on_uid_and_provider` (`uid`,`provider`) USING BTREE
+  UNIQUE KEY `index_users_on_uid_and_provider` (`auth_uid`,`auth_provider`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
