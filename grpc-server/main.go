@@ -37,6 +37,31 @@ func (s *server) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*p
 	return &pb.Calendar{Id: calendar.ID, UserId: calendar.UserID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}, nil
 }
 
+func (s *server) CreateCalendar(ctx context.Context, in *pb.CreateCalendarRequest) (*pb.Calendar, error) {
+	stmt, err := db.Prepare("insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)")
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := stmt.Exec(in.GetUserId(), in.GetTitle(), in.GetDescription(), in.GetYear())
+	if err != nil {
+		return nil, err
+	}
+
+	lastID, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	var calendar Calendar
+	err = db.QueryRow("select id, user_id, title, description, year from calendars where id = ?", lastID).Scan(&calendar.ID, &calendar.UserID, &calendar.Title, &calendar.Description, &calendar.Year)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Calendar{Id: calendar.ID, UserId: calendar.UserID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}, nil
+}
+
 func main() {
 	var err error
 	db, err = sql.Open("mysql", "root@tcp(127.0.0.1:3306)/adventar_dev")

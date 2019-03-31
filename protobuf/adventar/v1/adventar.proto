@@ -4,6 +4,7 @@ package adventar.v1;
 
 service Adventar {
   rpc GetCalendar(GetCalendarRequest) returns (Calendar) {}
+  rpc CreateCalendar(CreateCalendarRequest) returns (Calendar) {}
 }
 
 message Calendar {
@@ -16,4 +17,11 @@ message Calendar {
 
 message GetCalendarRequest {
   int64 id = 1;
+}
+
+message CreateCalendarRequest {
+  int64 user_id = 1;
+  string title = 2;
+  string description = 3;
+  int32 year = 4;
 }
