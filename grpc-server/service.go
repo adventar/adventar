@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	pb "github.com/adventar/adventar/grpc-server/adventar/v1"
 )
@@ -21,6 +23,12 @@ type Calendar struct {
 	Title       string
 	Description string
 	Year        int32
+}
+
+type User struct {
+	ID      int64
+	Name    string
+	IconURL string
 }
 
 func NewService(db *sql.DB) *Service {
@@ -74,4 +82,26 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 	}
 
 	return &pb.Calendar{Id: calendar.ID, UserId: calendar.UserID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}, nil
+}
+
+func (s *Service) GetCurrentUser(ctx context.Context) (*User, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, fmt.Errorf("not found metadata")
+	}
+
+	values := md["authorization"]
+	if len(values) == 0 {
+		return nil, fmt.Errorf("not found authorization in metadata")
+	}
+
+	authResult := VerifyIDToken(values[0])
+
+	var user User
+	err := s.db.QueryRow("select id, name, icon_url from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID).Scan(&user.ID, &user.Name, &user.IconURL)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

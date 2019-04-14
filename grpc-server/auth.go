@@ -9,13 +9,13 @@ import (
 )
 
 type AuthResult struct {
-	name         string
-	iconURL      string
-	authProvider string
-	authUID      string
+	Name         string
+	IconURL      string
+	AuthProvider string
+	AuthUID      string
 }
 
-func VerifyIDToken(ctx context.Context, idToken string) *AuthResult {
+func VerifyIDToken(idToken string) *AuthResult {
 	opt := option.WithCredentialsFile("./service_account.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
@@ -27,7 +27,7 @@ func VerifyIDToken(ctx context.Context, idToken string) *AuthResult {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
 
-	token, err := client.VerifyIDToken(ctx, idToken)
+	token, err := client.VerifyIDToken(context.Background(), idToken)
 	if err != nil {
 		log.Fatalf("error verifying ID token: %v\n", err)
 	}
@@ -63,10 +63,10 @@ func VerifyIDToken(ctx context.Context, idToken string) *AuthResult {
 	authUID := extractAuthUID(identities, provider)
 
 	return &AuthResult{
-		name:         name,
-		iconURL:      iconURL,
-		authProvider: authProvider,
-		authUID:      authUID,
+		Name:         name,
+		IconURL:      iconURL,
+		AuthProvider: authProvider,
+		AuthUID:      authUID,
 	}
 }
 
