@@ -15,7 +15,9 @@ type AuthResult struct {
 	AuthUID      string
 }
 
-func VerifyIDToken(idToken string) *AuthResult {
+type FirebaseVerifier struct{}
+
+func (v *FirebaseVerifier) VerifyIDToken(idToken string) *AuthResult {
 	opt := option.WithCredentialsFile("./service_account.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {

@@ -10,12 +10,24 @@ import (
 	main "github.com/adventar/adventar/grpc-server"
 	pb "github.com/adventar/adventar/grpc-server/adventar/v1"
 	_ "github.com/go-sql-driver/mysql"
+	"google.golang.org/grpc/metadata"
 )
 
 var (
 	db      *sql.DB
 	service *main.Service
 )
+
+type testVerifier struct{}
+
+func (v *testVerifier) VerifyIDToken(s string) *main.AuthResult {
+	return &main.AuthResult{
+		Name:         "foo",
+		IconURL:      "",
+		AuthProvider: "google",
+		AuthUID:      "xxx",
+	}
+}
 
 func TestMain(m *testing.M) {
 	var err error
@@ -25,7 +37,8 @@ func TestMain(m *testing.M) {
 	}
 	defer db.Close()
 
-	service = main.NewService(db)
+	v := &testVerifier{}
+	service = main.NewService(db, v)
 	code := m.Run()
 	os.Exit(code)
 }
@@ -55,12 +68,14 @@ func TestGetCalendar(t *testing.T) {
 func TestCreateCalendar(t *testing.T) {
 	cleanupDatabase()
 
-	userID, err := createUser()
+	_, err := createUser()
 	if err != nil {
 		t.Fatal(err)
 	}
-	in := &pb.CreateCalendarRequest{UserId: userID, Title: "foo", Description: "bar", Year: 2019}
-	ctx := context.Background()
+	in := &pb.CreateCalendarRequest{Title: "foo", Description: "bar", Year: 2019}
+	md := make(map[string][]string)
+	md["authorization"] = append(md["authorization"], "x")
+	ctx := metadata.NewIncomingContext(context.Background(), md)
 
 	calendar, err := service.CreateCalendar(ctx, in)
 	if err != nil {

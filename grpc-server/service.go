@@ -13,8 +13,13 @@ import (
 	pb "github.com/adventar/adventar/grpc-server/adventar/v1"
 )
 
+type Verifier interface {
+	VerifyIDToken(string) *AuthResult
+}
+
 type Service struct {
-	db *sql.DB
+	db       *sql.DB
+	verifier Verifier
 }
 
 type Calendar struct {
@@ -31,8 +36,8 @@ type User struct {
 	IconURL string
 }
 
-func NewService(db *sql.DB) *Service {
-	return &Service{db: db}
+func NewService(db *sql.DB, verifier Verifier) *Service {
+	return &Service{db: db, verifier: verifier}
 }
 
 func (s *Service) Serve(addr string) {
@@ -60,12 +65,17 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 }
 
 func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarRequest) (*pb.Calendar, error) {
+	currentUser, err := s.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	stmt, err := s.db.Prepare("insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)")
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := stmt.Exec(in.GetUserId(), in.GetTitle(), in.GetDescription(), in.GetYear())
+	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), in.GetYear())
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +105,7 @@ func (s *Service) GetCurrentUser(ctx context.Context) (*User, error) {
 		return nil, fmt.Errorf("not found authorization in metadata")
 	}
 
-	authResult := VerifyIDToken(values[0])
+	authResult := s.verifier.VerifyIDToken(values[0])
 
 	var user User
 	err := s.db.QueryRow("select id, name, icon_url from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID).Scan(&user.ID, &user.Name, &user.IconURL)

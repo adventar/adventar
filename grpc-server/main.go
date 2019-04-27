@@ -15,6 +15,7 @@ func main() {
 	}
 	defer db.Close()
 
-	s := NewService(db)
+	v := &FirebaseVerifier{}
+	s := NewService(db, v)
 	s.Serve(":8080")
 }
