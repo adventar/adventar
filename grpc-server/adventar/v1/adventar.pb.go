@@ -7,6 +7,7 @@ import (
 	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	math "math"
 )
@@ -22,205 +23,29 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type Calendar struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UserId               int64    `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Title                string   `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
-	Description          string   `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	Year                 int32    `protobuf:"varint,5,opt,name=year,proto3" json:"year,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Calendar) Reset()         { *m = Calendar{} }
-func (m *Calendar) String() string { return proto.CompactTextString(m) }
-func (*Calendar) ProtoMessage()    {}
-func (*Calendar) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c3b1639048342dcd, []int{0}
-}
-
-func (m *Calendar) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Calendar.Unmarshal(m, b)
-}
-func (m *Calendar) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Calendar.Marshal(b, m, deterministic)
-}
-func (m *Calendar) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Calendar.Merge(m, src)
-}
-func (m *Calendar) XXX_Size() int {
-	return xxx_messageInfo_Calendar.Size(m)
-}
-func (m *Calendar) XXX_DiscardUnknown() {
-	xxx_messageInfo_Calendar.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Calendar proto.InternalMessageInfo
-
-func (m *Calendar) GetId() int64 {
-	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
-func (m *Calendar) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *Calendar) GetTitle() string {
-	if m != nil {
-		return m.Title
-	}
-	return ""
-}
-
-func (m *Calendar) GetDescription() string {
-	if m != nil {
-		return m.Description
-	}
-	return ""
-}
-
-func (m *Calendar) GetYear() int32 {
-	if m != nil {
-		return m.Year
-	}
-	return 0
-}
-
-type GetCalendarRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetCalendarRequest) Reset()         { *m = GetCalendarRequest{} }
-func (m *GetCalendarRequest) String() string { return proto.CompactTextString(m) }
-func (*GetCalendarRequest) ProtoMessage()    {}
-func (*GetCalendarRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c3b1639048342dcd, []int{1}
-}
-
-func (m *GetCalendarRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetCalendarRequest.Unmarshal(m, b)
-}
-func (m *GetCalendarRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetCalendarRequest.Marshal(b, m, deterministic)
-}
-func (m *GetCalendarRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetCalendarRequest.Merge(m, src)
-}
-func (m *GetCalendarRequest) XXX_Size() int {
-	return xxx_messageInfo_GetCalendarRequest.Size(m)
-}
-func (m *GetCalendarRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetCalendarRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetCalendarRequest proto.InternalMessageInfo
-
-func (m *GetCalendarRequest) GetId() int64 {
-	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
-type CreateCalendarRequest struct {
-	UserId               int64    `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Title                string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Description          string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Year                 int32    `protobuf:"varint,4,opt,name=year,proto3" json:"year,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CreateCalendarRequest) Reset()         { *m = CreateCalendarRequest{} }
-func (m *CreateCalendarRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateCalendarRequest) ProtoMessage()    {}
-func (*CreateCalendarRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c3b1639048342dcd, []int{2}
-}
-
-func (m *CreateCalendarRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateCalendarRequest.Unmarshal(m, b)
-}
-func (m *CreateCalendarRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateCalendarRequest.Marshal(b, m, deterministic)
-}
-func (m *CreateCalendarRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCalendarRequest.Merge(m, src)
-}
-func (m *CreateCalendarRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateCalendarRequest.Size(m)
-}
-func (m *CreateCalendarRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateCalendarRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateCalendarRequest proto.InternalMessageInfo
-
-func (m *CreateCalendarRequest) GetUserId() int64 {
-	if m != nil {
-		return m.UserId
-	}
-	return 0
-}
-
-func (m *CreateCalendarRequest) GetTitle() string {
-	if m != nil {
-		return m.Title
-	}
-	return ""
-}
-
-func (m *CreateCalendarRequest) GetDescription() string {
-	if m != nil {
-		return m.Description
-	}
-	return ""
-}
-
-func (m *CreateCalendarRequest) GetYear() int32 {
-	if m != nil {
-		return m.Year
-	}
-	return 0
-}
-
-func init() {
-	proto.RegisterType((*Calendar)(nil), "adventar.v1.Calendar")
-	proto.RegisterType((*GetCalendarRequest)(nil), "adventar.v1.GetCalendarRequest")
-	proto.RegisterType((*CreateCalendarRequest)(nil), "adventar.v1.CreateCalendarRequest")
-}
-
 func init() { proto.RegisterFile("adventar/v1/adventar.proto", fileDescriptor_c3b1639048342dcd) }
 
 var fileDescriptor_c3b1639048342dcd = []byte{
-	// 253 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x91, 0xcf, 0x4a, 0xc3, 0x40,
-	0x10, 0xc6, 0xdd, 0xfc, 0xa9, 0x75, 0x02, 0x3d, 0x0c, 0x16, 0x97, 0x5e, 0x0c, 0x8b, 0x87, 0x9c,
-	0x52, 0xaa, 0x4f, 0x20, 0x3d, 0x14, 0x0f, 0x5e, 0xf2, 0x02, 0xb2, 0xba, 0x73, 0x58, 0x28, 0x49,
-	0xdd, 0x4c, 0x03, 0x82, 0xe0, 0xbb, 0xf8, 0xa4, 0xe2, 0x6a, 0x74, 0x53, 0x1b, 0x6f, 0xf3, 0xcd,
-	0x7c, 0x2c, 0xbf, 0xef, 0x5b, 0x58, 0x68, 0xd3, 0x51, 0xcd, 0xda, 0x2d, 0xbb, 0xd5, 0xb2, 0x9f,
-	0xcb, 0x9d, 0x6b, 0xb8, 0xc1, 0xec, 0x47, 0x77, 0x2b, 0xf5, 0x06, 0xd3, 0xb5, 0xde, 0x52, 0x6d,
-	0xb4, 0xc3, 0x19, 0x44, 0xd6, 0x48, 0x91, 0x8b, 0x22, 0xae, 0x22, 0x6b, 0xf0, 0x02, 0x4e, 0xf7,
-	0x2d, 0xb9, 0x07, 0x6b, 0x64, 0xe4, 0x97, 0x93, 0x4f, 0x79, 0x67, 0xf0, 0x1c, 0x52, 0xb6, 0xbc,
-	0x25, 0x19, 0xe7, 0xa2, 0x38, 0xab, 0xbe, 0x04, 0xe6, 0x90, 0x19, 0x6a, 0x9f, 0x9c, 0xdd, 0xb1,
-	0x6d, 0x6a, 0x99, 0xf8, 0x5b, 0xb8, 0x42, 0x84, 0xe4, 0x85, 0xb4, 0x93, 0x69, 0x2e, 0x8a, 0xb4,
-	0xf2, 0xb3, 0xba, 0x02, 0xdc, 0x10, 0xf7, 0x0c, 0x15, 0x3d, 0xef, 0xa9, 0xe5, 0x43, 0x14, 0xf5,
-	0x0a, 0xf3, 0xb5, 0x23, 0xcd, 0x74, 0x68, 0x0c, 0x18, 0xc5, 0x71, 0xc6, 0xe8, 0x1f, 0xc6, 0x78,
-	0x9c, 0x31, 0xf9, 0x65, 0xbc, 0x7e, 0x17, 0x30, 0xbd, 0xfd, 0x2e, 0x0d, 0x37, 0x90, 0x05, 0xc0,
-	0x78, 0x59, 0x06, 0x75, 0x96, 0x7f, 0xa3, 0x2c, 0xe6, 0x03, 0x43, 0x7f, 0x55, 0x27, 0x78, 0x0f,
-	0xb3, 0x61, 0x26, 0x54, 0x43, 0xeb, 0xb1, 0xc0, 0xa3, 0xcf, 0x3d, 0x4e, 0xfc, 0xef, 0xde, 0x7c,
-	0x04, 0x00, 0x00, 0xff, 0xff, 0x97, 0xc8, 0x38, 0x43, 0xfb, 0x01, 0x00, 0x00,
+	// 296 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0x5f, 0x4b, 0xf3, 0x30,
+	0x14, 0x87, 0x77, 0xf3, 0x8e, 0x97, 0x14, 0x77, 0x11, 0xd0, 0x8b, 0x0c, 0xfc, 0xd3, 0x0f, 0x90,
+	0x32, 0xbd, 0x17, 0x64, 0x1b, 0x2a, 0xa8, 0x17, 0x13, 0xc1, 0x3b, 0xc9, 0xd6, 0x63, 0x19, 0x74,
+	0x49, 0x4c, 0xd2, 0xc2, 0xbe, 0x9b, 0x1f, 0x4e, 0x6c, 0x9a, 0x92, 0x23, 0xeb, 0x7a, 0xd7, 0x9e,
+	0xe7, 0x77, 0x1e, 0xce, 0xc9, 0x21, 0x4c, 0xe4, 0x35, 0x48, 0x27, 0x4c, 0x56, 0xcf, 0xb2, 0xf0,
+	0xcd, 0xb5, 0x51, 0x4e, 0xd1, 0xa4, 0xfb, 0xaf, 0x67, 0x6c, 0x5a, 0x28, 0x55, 0x94, 0x90, 0x35,
+	0x68, 0x5d, 0x7d, 0x66, 0xb0, 0xd3, 0x6e, 0xef, 0x93, 0x6c, 0x1a, 0x5b, 0x0c, 0x58, 0x55, 0x99,
+	0x0d, 0xd8, 0x16, 0x9e, 0x23, 0xa8, 0x37, 0x1f, 0x3b, 0xb0, 0x56, 0x14, 0x81, 0x5f, 0x7f, 0xff,
+	0x23, 0xff, 0xef, 0xda, 0x08, 0x7d, 0x27, 0x27, 0x4f, 0x5b, 0xeb, 0xe6, 0xa2, 0x04, 0x99, 0x0b,
+	0x63, 0xe9, 0x15, 0x8f, 0xa6, 0xe0, 0x88, 0xad, 0xe0, 0xab, 0x02, 0xeb, 0x58, 0x7a, 0x2c, 0x62,
+	0xb5, 0x92, 0x16, 0xd2, 0x11, 0x5d, 0x91, 0xe4, 0x1e, 0x3a, 0x42, 0x2f, 0x50, 0x53, 0x44, 0x82,
+	0xf5, 0xb2, 0x3f, 0xd0, 0x39, 0x9f, 0xc9, 0x64, 0x6e, 0x40, 0x38, 0xe8, 0xb4, 0x78, 0x16, 0x0c,
+	0x83, 0xf9, 0x14, 0x67, 0x5a, 0xea, 0x75, 0x6f, 0x3a, 0xef, 0xd7, 0x61, 0x38, 0xa8, 0x7b, 0x21,
+	0x93, 0x05, 0x94, 0xd0, 0xab, 0xc3, 0x30, 0xe8, 0xce, 0xb8, 0xbf, 0x34, 0x0f, 0x97, 0xe6, 0xcb,
+	0xdf, 0x4b, 0xa7, 0x23, 0xba, 0x20, 0x89, 0x5f, 0x68, 0x29, 0x9d, 0xd9, 0xff, 0x79, 0xc1, 0x88,
+	0x04, 0x13, 0x45, 0x81, 0x06, 0x79, 0x8b, 0xdf, 0xe3, 0x90, 0x25, 0x22, 0xc7, 0x2d, 0x0f, 0x24,
+	0xf1, 0xe3, 0x1f, 0xb2, 0x44, 0x64, 0x78, 0xab, 0x5b, 0x32, 0x7e, 0xdd, 0x16, 0xf2, 0x51, 0x52,
+	0x86, 0x24, 0xbe, 0x38, 0xd8, 0xbf, 0x1e, 0x37, 0x95, 0x9b, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x34, 0x7a, 0xcb, 0x96, 0x4a, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -235,8 +60,15 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AdventarClient interface {
-	GetCalendar(ctx context.Context, in *GetCalendarRequest, opts ...grpc.CallOption) (*Calendar, error)
+	ListCalendars(ctx context.Context, in *ListCalendarsRequest, opts ...grpc.CallOption) (*ListCalendarsResponse, error)
+	GetCalendar(ctx context.Context, in *GetCalendarRequest, opts ...grpc.CallOption) (*GetCalendarResponse, error)
 	CreateCalendar(ctx context.Context, in *CreateCalendarRequest, opts ...grpc.CallOption) (*Calendar, error)
+	UpdateCalendar(ctx context.Context, in *UpdateCalendarRequest, opts ...grpc.CallOption) (*Calendar, error)
+	DeleteCalendar(ctx context.Context, in *DeleteCalendarRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	CreateEntry(ctx context.Context, in *CreateEntryRequest, opts ...grpc.CallOption) (*Entry, error)
+	UpdateEntry(ctx context.Context, in *UpdateEntryRequest, opts ...grpc.CallOption) (*Entry, error)
+	DeleteEntry(ctx context.Context, in *DeleteEntryRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type adventarClient struct {
@@ -247,8 +79,17 @@ func NewAdventarClient(cc *grpc.ClientConn) AdventarClient {
 	return &adventarClient{cc}
 }
 
-func (c *adventarClient) GetCalendar(ctx context.Context, in *GetCalendarRequest, opts ...grpc.CallOption) (*Calendar, error) {
-	out := new(Calendar)
+func (c *adventarClient) ListCalendars(ctx context.Context, in *ListCalendarsRequest, opts ...grpc.CallOption) (*ListCalendarsResponse, error) {
+	out := new(ListCalendarsResponse)
+	err := c.cc.Invoke(ctx, "/adventar.v1.Adventar/ListCalendars", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventarClient) GetCalendar(ctx context.Context, in *GetCalendarRequest, opts ...grpc.CallOption) (*GetCalendarResponse, error) {
+	out := new(GetCalendarResponse)
 	err := c.cc.Invoke(ctx, "/adventar.v1.Adventar/GetCalendar", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -265,14 +106,93 @@ func (c *adventarClient) CreateCalendar(ctx context.Context, in *CreateCalendarR
 	return out, nil
 }
 
+func (c *adventarClient) UpdateCalendar(ctx context.Context, in *UpdateCalendarRequest, opts ...grpc.CallOption) (*Calendar, error) {
+	out := new(Calendar)
+	err := c.cc.Invoke(ctx, "/adventar.v1.Adventar/UpdateCalendar", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventarClient) DeleteCalendar(ctx context.Context, in *DeleteCalendarRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/adventar.v1.Adventar/DeleteCalendar", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventarClient) CreateEntry(ctx context.Context, in *CreateEntryRequest, opts ...grpc.CallOption) (*Entry, error) {
+	out := new(Entry)
+	err := c.cc.Invoke(ctx, "/adventar.v1.Adventar/CreateEntry", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventarClient) UpdateEntry(ctx context.Context, in *UpdateEntryRequest, opts ...grpc.CallOption) (*Entry, error) {
+	out := new(Entry)
+	err := c.cc.Invoke(ctx, "/adventar.v1.Adventar/UpdateEntry", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventarClient) DeleteEntry(ctx context.Context, in *DeleteEntryRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/adventar.v1.Adventar/DeleteEntry", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventarClient) SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/adventar.v1.Adventar/SignIn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdventarServer is the server API for Adventar service.
 type AdventarServer interface {
-	GetCalendar(context.Context, *GetCalendarRequest) (*Calendar, error)
+	ListCalendars(context.Context, *ListCalendarsRequest) (*ListCalendarsResponse, error)
+	GetCalendar(context.Context, *GetCalendarRequest) (*GetCalendarResponse, error)
 	CreateCalendar(context.Context, *CreateCalendarRequest) (*Calendar, error)
+	UpdateCalendar(context.Context, *UpdateCalendarRequest) (*Calendar, error)
+	DeleteCalendar(context.Context, *DeleteCalendarRequest) (*empty.Empty, error)
+	CreateEntry(context.Context, *CreateEntryRequest) (*Entry, error)
+	UpdateEntry(context.Context, *UpdateEntryRequest) (*Entry, error)
+	DeleteEntry(context.Context, *DeleteEntryRequest) (*empty.Empty, error)
+	SignIn(context.Context, *SignInRequest) (*empty.Empty, error)
 }
 
 func RegisterAdventarServer(s *grpc.Server, srv AdventarServer) {
 	s.RegisterService(&_Adventar_serviceDesc, srv)
+}
+
+func _Adventar_ListCalendars_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCalendarsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventarServer).ListCalendars(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/adventar.v1.Adventar/ListCalendars",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventarServer).ListCalendars(ctx, req.(*ListCalendarsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Adventar_GetCalendar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -311,10 +231,122 @@ func _Adventar_CreateCalendar_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Adventar_UpdateCalendar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCalendarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventarServer).UpdateCalendar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/adventar.v1.Adventar/UpdateCalendar",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventarServer).UpdateCalendar(ctx, req.(*UpdateCalendarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Adventar_DeleteCalendar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCalendarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventarServer).DeleteCalendar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/adventar.v1.Adventar/DeleteCalendar",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventarServer).DeleteCalendar(ctx, req.(*DeleteCalendarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Adventar_CreateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventarServer).CreateEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/adventar.v1.Adventar/CreateEntry",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventarServer).CreateEntry(ctx, req.(*CreateEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Adventar_UpdateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventarServer).UpdateEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/adventar.v1.Adventar/UpdateEntry",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventarServer).UpdateEntry(ctx, req.(*UpdateEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Adventar_DeleteEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventarServer).DeleteEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/adventar.v1.Adventar/DeleteEntry",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventarServer).DeleteEntry(ctx, req.(*DeleteEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Adventar_SignIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventarServer).SignIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/adventar.v1.Adventar/SignIn",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventarServer).SignIn(ctx, req.(*SignInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Adventar_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "adventar.v1.Adventar",
 	HandlerType: (*AdventarServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListCalendars",
+			Handler:    _Adventar_ListCalendars_Handler,
+		},
 		{
 			MethodName: "GetCalendar",
 			Handler:    _Adventar_GetCalendar_Handler,
@@ -322,6 +354,30 @@ var _Adventar_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCalendar",
 			Handler:    _Adventar_CreateCalendar_Handler,
+		},
+		{
+			MethodName: "UpdateCalendar",
+			Handler:    _Adventar_UpdateCalendar_Handler,
+		},
+		{
+			MethodName: "DeleteCalendar",
+			Handler:    _Adventar_DeleteCalendar_Handler,
+		},
+		{
+			MethodName: "CreateEntry",
+			Handler:    _Adventar_CreateEntry_Handler,
+		},
+		{
+			MethodName: "UpdateEntry",
+			Handler:    _Adventar_UpdateEntry_Handler,
+		},
+		{
+			MethodName: "DeleteEntry",
+			Handler:    _Adventar_DeleteEntry_Handler,
+		},
+		{
+			MethodName: "SignIn",
+			Handler:    _Adventar_SignIn_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

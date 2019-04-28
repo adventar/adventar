@@ -53,15 +53,15 @@ func TestGetCalendar(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	in.Id = id
+	in.CalendarId = id
 
-	calendar, err := service.GetCalendar(ctx, in)
+	res, err := service.GetCalendar(ctx, in)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if calendar.Id != in.Id {
-		t.Errorf("actual: %d, expected: %d", calendar.Id, in.Id)
+	if res.Calendar.Id != in.CalendarId {
+		t.Errorf("actual: %d, expected: %d", res.Calendar.Id, in.CalendarId)
 	}
 }
 

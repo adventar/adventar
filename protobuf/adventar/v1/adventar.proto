@@ -2,26 +2,20 @@ syntax = "proto3";
 
 package adventar.v1;
 
+import "google/protobuf/empty.proto";
+import "adventar/v1/resources.proto";
+import "adventar/v1/rpc_messages.proto";
+
 service Adventar {
-  rpc GetCalendar(GetCalendarRequest) returns (Calendar) {}
+  rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse) {}
+  rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse) {}
   rpc CreateCalendar(CreateCalendarRequest) returns (Calendar) {}
-}
+  rpc UpdateCalendar(UpdateCalendarRequest) returns (Calendar) {}
+  rpc DeleteCalendar(DeleteCalendarRequest) returns (google.protobuf.Empty) {}
 
-message Calendar {
-  int64 id = 1;
-  int64 user_id = 2;
-  string title = 3;
-  string description = 4;
-  int32 year = 5;
-}
+  rpc CreateEntry(CreateEntryRequest) returns (Entry) {}
+  rpc UpdateEntry(UpdateEntryRequest) returns (Entry) {}
+  rpc DeleteEntry(DeleteEntryRequest) returns (google.protobuf.Empty) {}
 
-message GetCalendarRequest {
-  int64 id = 1;
-}
-
-message CreateCalendarRequest {
-  int64 user_id = 1;
-  string title = 2;
-  string description = 3;
-  int32 year = 4;
+  rpc SignIn(SignInRequest) returns (google.protobuf.Empty) {}
 }

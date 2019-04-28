@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
@@ -53,15 +54,20 @@ func (s *Service) Serve(addr string) {
 	}
 }
 
-func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*pb.Calendar, error) {
+func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest) (*pb.ListCalendarsResponse, error) {
+	return &pb.ListCalendarsResponse{}, nil
+}
+
+func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*pb.GetCalendarResponse, error) {
 	var calendar Calendar
-	log.Printf("Request Id: %d", in.GetId())
-	row := s.db.QueryRow("select id, user_id, title, description, year from calendars where id = ?", in.GetId())
+	log.Printf("Request Id: %d", in.GetCalendarId())
+	row := s.db.QueryRow("select id, user_id, title, description, year from calendars where id = ?", in.GetCalendarId())
 	err := row.Scan(&calendar.ID, &calendar.UserID, &calendar.Title, &calendar.Description, &calendar.Year)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.Calendar{Id: calendar.ID, UserId: calendar.UserID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}, nil
+	pbCalendar := &pb.Calendar{Id: calendar.ID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}
+	return &pb.GetCalendarResponse{Calendar: pbCalendar}, nil
 }
 
 func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarRequest) (*pb.Calendar, error) {
@@ -91,7 +97,31 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 		return nil, err
 	}
 
-	return &pb.Calendar{Id: calendar.ID, UserId: calendar.UserID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}, nil
+	return &pb.Calendar{Id: calendar.ID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}, nil
+}
+
+func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarRequest) (*pb.Calendar, error) {
+	return &pb.Calendar{}, nil
+}
+
+func (s *Service) DeleteCalendar(ctx context.Context, in *pb.DeleteCalendarRequest) (*empty.Empty, error) {
+	return &empty.Empty{}, nil
+}
+
+func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*pb.Entry, error) {
+	return &pb.Entry{}, nil
+}
+
+func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*pb.Entry, error) {
+	return &pb.Entry{}, nil
+}
+
+func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*empty.Empty, error) {
+	return &empty.Empty{}, nil
+}
+
+func (s *Service) SignIn(ctx context.Context, in *pb.SignInRequest) (*empty.Empty, error) {
+	return &empty.Empty{}, nil
 }
 
 func (s *Service) GetCurrentUser(ctx context.Context) (*User, error) {

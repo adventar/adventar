@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package adventar.v1;
+import "adventar/v1/resources.proto";
+
+message ListCalendarsRequest { int64 year = 1; }
+
+message ListCalendarsResponse {
+  int64 year = 1;
+  repeated Calendar calendars = 2;
+}
+
+message GetCalendarRequest { int64 calendar_id = 1; }
+
+message GetCalendarResponse {
+  Calendar calendar = 1;
+  repeated Entry entries = 2;
+}
+
+message CreateCalendarRequest {
+  string title = 1;
+  string description = 2;
+  int32 year = 3;
+}
+
+message UpdateCalendarRequest {
+  int64 calendar_id = 1;
+  string title = 2;
+  string description = 3;
+  int32 year = 4;
+}
+
+message DeleteCalendarRequest { int64 calendar_id = 1; }
+
+message CreateEntryRequest { int64 calendar_id = 1; }
+
+message UpdateEntryRequest {
+  int64 entry_id = 1;
+  string comment = 2;
+  string url = 3;
+}
+
+message DeleteEntryRequest { int64 entry_id = 1; }
+
+message SignInRequest { string jwt = 1; }
