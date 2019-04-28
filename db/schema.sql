@@ -30,7 +30,7 @@ CREATE TABLE `entries` (
   `comment` text NOT NULL,
   `url` text NOT NULL,
   `title` text NOT NULL,
-  `image` text NOT NULL,
+  `image_url` text NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp,
   `updated_at` datetime NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
   PRIMARY KEY (`id`),
