@@ -23,7 +23,7 @@ type testVerifier struct{}
 func (v *testVerifier) VerifyIDToken(s string) *main.AuthResult {
 	return &main.AuthResult{
 		Name:         "foo",
-		IconURL:      "",
+		IconURL:      "http://example.com/icon",
 		AuthProvider: "google",
 		AuthUID:      "xxx",
 	}
@@ -92,6 +92,47 @@ func TestCreateCalendar(t *testing.T) {
 	db.QueryRow("select title from calendars where id = ?", calendar.Id).Scan(&title)
 	if title != "foo" {
 		t.Errorf("actual: %s, expected: foo", title)
+	}
+}
+
+func TestSignInIfUserExists(t *testing.T) {
+	cleanupDatabase()
+	_, err := createUser()
+	if err != nil {
+		t.Fatal(err)
+	}
+	in := &pb.SignInRequest{Jwt: ""}
+	ctx := context.Background()
+	_, err = service.SignIn(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var iconURL string
+	err = db.QueryRow("select icon_url from users").Scan(&iconURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expected := "http://example.com/icon"
+	if iconURL != expected {
+		t.Errorf("actual: %s, expected: %s", iconURL, expected)
+	}
+}
+
+func TestSignInIfUserDoesNotExist(t *testing.T) {
+	cleanupDatabase()
+	in := &pb.SignInRequest{Jwt: ""}
+	ctx := context.Background()
+	_, err := service.SignIn(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var count int
+	err = db.QueryRow("select count(*) users").Scan(&count)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if count != 1 {
+		t.Errorf("actual: %d, expected: 1", count)
 	}
 }
 

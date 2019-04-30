@@ -50,7 +50,6 @@ func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest
 // GetCalendar returns a calendar.
 func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*pb.GetCalendarResponse, error) {
 	var calendar calendar
-	log.Printf("Request Id: %d", in.GetCalendarId())
 	row := s.db.QueryRow("select id, user_id, title, description, year from calendars where id = ?", in.GetCalendarId())
 	err := row.Scan(&calendar.ID, &calendar.UserID, &calendar.Title, &calendar.Description, &calendar.Year)
 	if err != nil {
@@ -118,6 +117,36 @@ func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*
 
 // SignIn validates the id token.
 func (s *Service) SignIn(ctx context.Context, in *pb.SignInRequest) (*empty.Empty, error) {
+	authResult := s.verifier.VerifyIDToken(in.GetJwt())
+	var userID int
+	err := s.db.QueryRow("select id from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID).Scan(&userID)
+
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	if err == sql.ErrNoRows {
+		stmt, err := s.db.Prepare("insert into users (name, auth_uid, auth_provider, icon_url) values (?, ?, ?, ?)")
+		if err != nil {
+			return nil, err
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec(authResult.Name, authResult.AuthUID, authResult.AuthProvider, authResult.IconURL)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		stmt, err := s.db.Prepare("update users set icon_url = ? where id = ?")
+		if err != nil {
+			return nil, err
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec(authResult.IconURL, userID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &empty.Empty{}, nil
 }
 
