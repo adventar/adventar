@@ -23,20 +23,6 @@ type Service struct {
 	verifier Verifier
 }
 
-type Calendar struct {
-	ID          int64
-	UserID      int64
-	Title       string
-	Description string
-	Year        int32
-}
-
-type User struct {
-	ID      int64
-	Name    string
-	IconURL string
-}
-
 func NewService(db *sql.DB, verifier Verifier) *Service {
 	return &Service{db: db, verifier: verifier}
 }
