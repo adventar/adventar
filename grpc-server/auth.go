@@ -8,6 +8,7 @@ import (
 	"google.golang.org/api/option"
 )
 
+// AuthResult represents result of authentication.
 type AuthResult struct {
 	Name         string
 	IconURL      string
@@ -15,9 +16,9 @@ type AuthResult struct {
 	AuthUID      string
 }
 
-type FirebaseVerifier struct{}
+type firebaseVerifier struct{}
 
-func (v *FirebaseVerifier) VerifyIDToken(idToken string) *AuthResult {
+func (v *firebaseVerifier) VerifyIDToken(idToken string) *AuthResult {
 	opt := option.WithCredentialsFile("./service_account.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
