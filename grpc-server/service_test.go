@@ -72,7 +72,7 @@ func TestCreateCalendar(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	in := &pb.CreateCalendarRequest{Title: "foo", Description: "bar", Year: 2019}
+	in := &pb.CreateCalendarRequest{Title: "foo", Description: "bar"}
 	md := make(map[string][]string)
 	md["authorization"] = append(md["authorization"], "x")
 	ctx := metadata.NewIncomingContext(context.Background(), md)

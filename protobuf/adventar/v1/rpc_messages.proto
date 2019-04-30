@@ -20,14 +20,12 @@ message GetCalendarResponse {
 message CreateCalendarRequest {
   string title = 1;
   string description = 2;
-  int32 year = 3;
 }
 
 message UpdateCalendarRequest {
   int64 calendar_id = 1;
   string title = 2;
   string description = 3;
-  int32 year = 4;
 }
 
 message DeleteCalendarRequest { int64 calendar_id = 1; }

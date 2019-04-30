@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
@@ -71,7 +72,7 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 		return nil, err
 	}
 
-	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), in.GetYear())
+	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), time.Now().Year())
 	if err != nil {
 		return nil, err
 	}
