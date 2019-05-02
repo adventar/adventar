@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
@@ -45,7 +46,76 @@ func (s *Service) serve(addr string) {
 
 // ListCalendars lists calendars.
 func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest) (*pb.ListCalendarsResponse, error) {
-	return &pb.ListCalendarsResponse{}, nil
+	rows, err := s.db.Query(`
+		select
+			c.id,
+			c.title,
+			c.description,
+			c.year,
+			u.id,
+			u.name,
+			u.icon_url
+		from calendars as c
+		inner join users as u on u.id = c.id
+		where c.year = ?
+	`, in.GetYear())
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var calendars []*pb.Calendar
+	var cids []interface{}
+	for rows.Next() {
+		var calendar pb.Calendar
+		var user pb.User
+		err := rows.Scan(
+			&calendar.Id,
+			&calendar.Title,
+			&calendar.Description,
+			&calendar.Year,
+			&user.Id,
+			&user.Name,
+			&user.IconUrl,
+		)
+		if err != nil {
+			return nil, err
+		}
+		calendar.Owner = &user
+		calendars = append(calendars, &calendar)
+		cids = append(cids, calendar.Id)
+	}
+
+	interpolations := []string{}
+	for range cids {
+		interpolations = append(interpolations, "?")
+	}
+	sql := fmt.Sprintf(`
+		select
+			calendar_id,
+			count(*)
+		from entries
+		where calendar_id in (%s)
+		group by calendar_id
+	`, strings.Join(interpolations, ","))
+	rows, err = s.db.Query(sql, cids...)
+	if err != nil {
+		return nil, err
+	}
+	entryCounts := map[int64]int32{}
+	for rows.Next() {
+		var cid int64
+		var count int32
+		if err := rows.Scan(&cid, &count); err != nil {
+			return nil, err
+		}
+		entryCounts[cid] = count
+	}
+
+	for _, c := range calendars {
+		c.EntryCount = entryCounts[c.Id]
+	}
+
+	return &pb.ListCalendarsResponse{Year: in.GetYear(), Calendars: calendars}, nil
 }
 
 // GetCalendar returns a calendar.

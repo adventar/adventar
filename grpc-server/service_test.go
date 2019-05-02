@@ -43,13 +43,51 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+func TestListCalendars(t *testing.T) {
+	cleanupDatabase()
+
+	in := new(pb.ListCalendarsRequest)
+	ctx := context.Background()
+
+	userID, err := createUser()
+	if err != nil {
+		t.Fatal(err)
+	}
+	calendarID, err := createCalendar(userID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = createEntry(userID, calendarID)
+	in.Year = 2019
+	res, err := service.ListCalendars(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Year != 2019 {
+		t.Errorf("actual: %d, expected: %d", res.Year, 2019)
+	}
+	if len(res.Calendars) != 1 {
+		t.Errorf("actual: %d, expected: %d", len(res.Calendars), 1)
+	}
+	if res.Calendars[0].GetOwner().GetId() != userID {
+		t.Errorf("actual: %d, expected: %d", res.Calendars[0].GetEntryCount(), 1)
+	}
+	if res.Calendars[0].GetEntryCount() != 1 {
+		t.Errorf("actual: %d, expected: %d", res.Calendars[0].GetEntryCount(), 1)
+	}
+}
+
 func TestGetCalendar(t *testing.T) {
 	cleanupDatabase()
 
 	in := new(pb.GetCalendarRequest)
 	ctx := context.Background()
 
-	id, err := createCalendar()
+	userID, err := createUser()
+	if err != nil {
+		t.Fatal(err)
+	}
+	id, err := createCalendar(userID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -176,12 +214,7 @@ func createUser() (int64, error) {
 	return res.LastInsertId()
 }
 
-func createCalendar() (int64, error) {
-	userID, err := createUser()
-	if err != nil {
-		return 0, err
-	}
-
+func createCalendar(userID int64) (int64, error) {
 	stmt, err := db.Prepare("insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)")
 	defer stmt.Close()
 
@@ -190,6 +223,22 @@ func createCalendar() (int64, error) {
 	}
 
 	res, err := stmt.Exec(userID, "test title", "test description", 2019)
+	if err != nil {
+		return 0, err
+	}
+
+	return res.LastInsertId()
+}
+
+func createEntry(userID int64, calendarID int64) (int64, error) {
+	stmt, err := db.Prepare("insert into entries(user_id, calendar_id, date, url, comment, title, image_url) values(?, ?, ?, ?, ?, ?, ?)")
+	defer stmt.Close()
+
+	if err != nil {
+		return 0, err
+	}
+
+	res, err := stmt.Exec(userID, calendarID, "2019-12-01", "", "", "", "")
 	if err != nil {
 		return 0, err
 	}
