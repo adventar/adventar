@@ -30,7 +30,10 @@ message UpdateCalendarRequest {
 
 message DeleteCalendarRequest { int64 calendar_id = 1; }
 
-message CreateEntryRequest { int64 calendar_id = 1; }
+message CreateEntryRequest {
+  int64 calendar_id = 1;
+  Date date = 2;
+}
 
 message UpdateEntryRequest {
   int64 entry_id = 1;
