@@ -139,6 +139,9 @@ func TestGetCalendar(t *testing.T) {
 	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
 	createCalendar(t, c)
 
+	e := &entry{userID: u.id, calendarID: c.id, date: "2019-12-01"}
+	createEntry(t, e)
+
 	in.CalendarId = c.id
 
 	res, err := service.GetCalendar(ctx, in)
@@ -148,6 +151,14 @@ func TestGetCalendar(t *testing.T) {
 
 	if res.Calendar.Id != in.CalendarId {
 		t.Errorf("actual: %d, expected: %d", res.Calendar.Id, in.CalendarId)
+	}
+
+	if res.Calendar.EntryCount != 1 {
+		t.Errorf("actual: %d, expected: %d", res.Calendar.EntryCount, 1)
+	}
+
+	if res.Entries[0].Id != e.id {
+		t.Errorf("actual: %d, expected: %d", res.Entries[0].Id, e.id)
 	}
 }
 

@@ -120,8 +120,20 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	pbCalendar := &pb.Calendar{Id: calendar.ID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}
-	return &pb.GetCalendarResponse{Calendar: pbCalendar}, nil
+
+	entries, err := s.findEntries(calendar.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	pbCalendar := &pb.Calendar{
+		Id:          calendar.ID,
+		Title:       calendar.Title,
+		Description: calendar.Description,
+		Year:        calendar.Year,
+		EntryCount:  int32(len(entries)),
+	}
+	return &pb.GetCalendarResponse{Calendar: pbCalendar, Entries: entries}, nil
 }
 
 // CreateCalendar creates a calendar.
@@ -363,4 +375,56 @@ func (s *Service) bindEntryCount(calendars []*pb.Calendar) error {
 	}
 
 	return nil
+}
+
+func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
+	rows, err := s.db.Query(`
+		select
+			e.id,
+			e.date,
+			e.title,
+			e.comment,
+			e.url,
+			e.image_url,
+			u.id,
+			u.name,
+			u.icon_url
+		from entries as e
+		inner join users as u on u.id = e.user_id
+		where e.calendar_id = ?
+	`, cid)
+
+	if err != nil {
+		return nil, err
+	}
+
+	entries := []*pb.Entry{}
+	for rows.Next() {
+		var e pb.Entry
+		var u pb.User
+		var d string
+		err := rows.Scan(
+			&e.Id,
+			&d,
+			&e.Title,
+			&e.Comment,
+			&e.Url,
+			&e.ImageUrl,
+			&u.Id,
+			&u.Name,
+			&u.IconUrl,
+		)
+		if err != nil {
+			return nil, err
+		}
+		t, err := time.Parse("2006-01-02", d)
+		if err != nil {
+			return nil, err
+		}
+		e.Owner = &u
+		e.Date = &pb.Date{Year: int32(t.Year()), Month: int32(t.Month()), Day: int32(t.Day())}
+		entries = append(entries, &e)
+	}
+
+	return entries, nil
 }
