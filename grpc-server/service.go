@@ -46,7 +46,22 @@ func (s *Service) serve(addr string) {
 
 // ListCalendars lists calendars.
 func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest) (*pb.ListCalendarsResponse, error) {
-	rows, err := s.db.Query(`
+	conditionQueries := []string{"c.year = ?"}
+	limitQuery := ""
+	conditionValues := []interface{}{in.GetYear()}
+	if in.GetUserId() != 0 {
+		conditionQueries = append(conditionQueries, "c.user_id = ?")
+		conditionValues = append(conditionValues, in.GetUserId())
+	}
+	if in.GetQuery() != "" {
+		conditionQueries = append(conditionQueries, "(c.title like ? or c.description like ?)")
+		conditionValues = append(conditionValues, "%"+in.GetQuery()+"%", "%"+in.GetQuery()+"%")
+	}
+	if in.GetPageSize() != 0 {
+		limitQuery = "limit ?"
+		conditionValues = append(conditionValues, in.GetPageSize())
+	}
+	sql := fmt.Sprintf(`
 		select
 			c.id,
 			c.title,
@@ -56,15 +71,18 @@ func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest
 			u.name,
 			u.icon_url
 		from calendars as c
-		inner join users as u on u.id = c.id
-		where c.year = ?
-	`, in.GetYear())
+		inner join users as u on u.id = c.user_id
+		where %s
+		order by c.id desc
+		%s
+	`, strings.Join(conditionQueries, " and "), limitQuery)
+
+	rows, err := s.db.Query(sql, conditionValues...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 	var calendars []*pb.Calendar
-	var cids []interface{}
 	for rows.Next() {
 		var calendar pb.Calendar
 		var user pb.User
@@ -82,40 +100,16 @@ func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest
 		}
 		calendar.Owner = &user
 		calendars = append(calendars, &calendar)
-		cids = append(cids, calendar.Id)
 	}
 
-	interpolations := []string{}
-	for range cids {
-		interpolations = append(interpolations, "?")
-	}
-	sql := fmt.Sprintf(`
-		select
-			calendar_id,
-			count(*)
-		from entries
-		where calendar_id in (%s)
-		group by calendar_id
-	`, strings.Join(interpolations, ","))
-	rows, err = s.db.Query(sql, cids...)
-	if err != nil {
-		return nil, err
-	}
-	entryCounts := map[int64]int32{}
-	for rows.Next() {
-		var cid int64
-		var count int32
-		if err := rows.Scan(&cid, &count); err != nil {
+	if len(calendars) != 0 {
+		err := s.bindEntryCount(calendars)
+		if err != nil {
 			return nil, err
 		}
-		entryCounts[cid] = count
 	}
 
-	for _, c := range calendars {
-		c.EntryCount = entryCounts[c.Id]
-	}
-
-	return &pb.ListCalendarsResponse{Year: in.GetYear(), Calendars: calendars}, nil
+	return &pb.ListCalendarsResponse{Calendars: calendars}, nil
 }
 
 // GetCalendar returns a calendar.
@@ -163,26 +157,113 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 
 // UpdateCalendar updates the calendar.
 func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarRequest) (*pb.Calendar, error) {
-	return &pb.Calendar{}, nil
+	currentUser, err := s.getCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	stmt, err := s.db.Prepare("update calendars set title = ?, description = ? where id = ? and user_id = ?")
+	if err != nil {
+		return nil, err
+	}
+	_, err = stmt.Exec(in.GetTitle(), in.GetDescription(), in.GetCalendarId(), currentUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	var calendar calendar
+	err = s.db.QueryRow("select id, user_id, title, description, year from calendars where id = ?", in.GetCalendarId()).Scan(&calendar.ID, &calendar.UserID, &calendar.Title, &calendar.Description, &calendar.Year)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Calendar{Id: calendar.ID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}, nil
 }
 
-// DeleteCalendar updates the calendar.
+// DeleteCalendar deletes the calendar.
 func (s *Service) DeleteCalendar(ctx context.Context, in *pb.DeleteCalendarRequest) (*empty.Empty, error) {
+	currentUser, err := s.getCurrentUser(ctx)
+	stmt, err := s.db.Prepare("delete from calendars where id = ? and user_id = ?")
+	if err != nil {
+		return nil, err
+	}
+	_, err = stmt.Exec(in.GetCalendarId(), currentUser.ID)
+	if err != nil {
+		return nil, err
+	}
 	return &empty.Empty{}, nil
 }
 
 // CreateEntry creates a entry.
 func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*pb.Entry, error) {
-	return &pb.Entry{}, nil
+	currentUser, err := s.getCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var year int
+	row := s.db.QueryRow("select year from calendars where id = ?", in.GetCalendarId())
+	err = row.Scan(&year)
+	if err != nil {
+		return nil, err
+	}
+
+	day := in.GetDay()
+	if day < 1 || day > 25 {
+		return nil, fmt.Errorf("Invalid day: %d", day)
+	}
+
+	stmt, err := s.db.Prepare("insert into entries(user_id, calendar_id, date) values(?, ?, ?)")
+	if err != nil {
+		return nil, err
+	}
+	dateStr := fmt.Sprintf("%d-12-%d", year, in.GetDay())
+	res, err := stmt.Exec(currentUser.ID, in.GetCalendarId(), dateStr)
+	if err != nil {
+		return nil, err
+	}
+
+	lastID, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	var entryID int64
+	err = s.db.QueryRow("select id from calendars where id = ?", lastID).Scan(&entryID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Entry{Id: entryID}, nil
 }
 
 // UpdateEntry updates the entry.
 func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*pb.Entry, error) {
-	return &pb.Entry{}, nil
+	currentUser, err := s.getCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	stmt, err := s.db.Prepare("update entries set comment = ?, url = ? where id = ? and user_id = ?")
+	if err != nil {
+		return nil, err
+	}
+	_, err = stmt.Exec(in.GetComment(), in.GetUrl(), in.GetEntryId(), currentUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Entry{Id: in.GetEntryId()}, nil
 }
 
 // DeleteEntry deletes the entry.
 func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*empty.Empty, error) {
+	stmt, err := s.db.Prepare("delete from entries where id = ?")
+	if err != nil {
+		return nil, err
+	}
+	_, err = stmt.Exec(in.GetEntryId())
+	if err != nil {
+		return nil, err
+	}
 	return &empty.Empty{}, nil
 }
 
@@ -241,4 +322,36 @@ func (s *Service) getCurrentUser(ctx context.Context) (*user, error) {
 	}
 
 	return &user, nil
+}
+
+func (s *Service) bindEntryCount(calendars []*pb.Calendar) error {
+	ids := []interface{}{}
+	interpolations := []string{}
+
+	for _, c := range calendars {
+		ids = append(ids, c.Id)
+		interpolations = append(interpolations, "?")
+	}
+
+	sql := fmt.Sprintf("select calendar_id, count(*) from entries where calendar_id in (%s) group by calendar_id", strings.Join(interpolations, ","))
+	rows, err := s.db.Query(sql, ids...)
+	if err != nil {
+		return err
+	}
+
+	entryCounts := map[int64]int32{}
+	for rows.Next() {
+		var cid int64
+		var count int32
+		if err := rows.Scan(&cid, &count); err != nil {
+			return err
+		}
+		entryCounts[cid] = count
+	}
+
+	for _, c := range calendars {
+		c.EntryCount = entryCounts[c.Id]
+	}
+
+	return nil
 }

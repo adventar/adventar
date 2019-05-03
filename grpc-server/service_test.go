@@ -46,34 +46,84 @@ func TestMain(m *testing.M) {
 func TestListCalendars(t *testing.T) {
 	cleanupDatabase()
 
-	in := new(pb.ListCalendarsRequest)
+	in := &pb.ListCalendarsRequest{Year: 2019}
 	ctx := context.Background()
 
-	userID, err := createUser()
-	if err != nil {
-		t.Fatal(err)
-	}
-	calendarID, err := createCalendar(userID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, err = createEntry(userID, calendarID)
-	in.Year = 2019
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
+	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
+	createCalendar(t, c)
+
+	e := &entry{userID: u.id, calendarID: c.id, date: "2019-12-01"}
+	createEntry(t, e)
+
 	res, err := service.ListCalendars(ctx, in)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if res.Year != 2019 {
-		t.Errorf("actual: %d, expected: %d", res.Year, 2019)
-	}
+
 	if len(res.Calendars) != 1 {
 		t.Errorf("actual: %d, expected: %d", len(res.Calendars), 1)
 	}
-	if res.Calendars[0].GetOwner().GetId() != userID {
+	if res.Calendars[0].GetOwner().GetId() != u.id {
 		t.Errorf("actual: %d, expected: %d", res.Calendars[0].GetEntryCount(), 1)
 	}
 	if res.Calendars[0].GetEntryCount() != 1 {
 		t.Errorf("actual: %d, expected: %d", res.Calendars[0].GetEntryCount(), 1)
+	}
+}
+
+func TestListCalendarsWithQuery(t *testing.T) {
+	cleanupDatabase()
+
+	in := &pb.ListCalendarsRequest{Query: "test", Year: 2019}
+	ctx := context.Background()
+
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
+	c1 := &calendar{title: "Test title", description: "", userID: u.id, year: 2019}
+	createCalendar(t, c1)
+
+	c2 := &calendar{title: "foo", description: "Calendar test", userID: u.id, year: 2019}
+	createCalendar(t, c2)
+
+	c3 := &calendar{title: "foo", description: "bar", userID: u.id, year: 2019}
+	createCalendar(t, c3)
+
+	res, err := service.ListCalendars(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(res.Calendars) != 2 {
+		t.Errorf("actual: %d, expected: %d", len(res.Calendars), 2)
+	}
+}
+
+func TestListCalendarsWithUserId(t *testing.T) {
+	cleanupDatabase()
+
+	users := []*user{}
+	for _, n := range []string{"u1", "u2", "u3"} {
+		u := &user{name: n, authUID: n}
+		createUser(t, u)
+		c := &calendar{userID: u.id, year: 2019}
+		createCalendar(t, c)
+		users = append(users, u)
+	}
+
+	in := &pb.ListCalendarsRequest{UserId: users[0].id, Year: 2019}
+	ctx := context.Background()
+
+	res, err := service.ListCalendars(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(res.Calendars) != 1 {
+		t.Errorf("actual: %d, expected: %d", len(res.Calendars), 1)
 	}
 }
 
@@ -83,15 +133,13 @@ func TestGetCalendar(t *testing.T) {
 	in := new(pb.GetCalendarRequest)
 	ctx := context.Background()
 
-	userID, err := createUser()
-	if err != nil {
-		t.Fatal(err)
-	}
-	id, err := createCalendar(userID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	in.CalendarId = id
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
+	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
+	createCalendar(t, c)
+
+	in.CalendarId = c.id
 
 	res, err := service.GetCalendar(ctx, in)
 	if err != nil {
@@ -106,10 +154,9 @@ func TestGetCalendar(t *testing.T) {
 func TestCreateCalendar(t *testing.T) {
 	cleanupDatabase()
 
-	_, err := createUser()
-	if err != nil {
-		t.Fatal(err)
-	}
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
 	in := &pb.CreateCalendarRequest{Title: "foo", Description: "bar"}
 	md := make(map[string][]string)
 	md["authorization"] = append(md["authorization"], "x")
@@ -135,13 +182,13 @@ func TestCreateCalendar(t *testing.T) {
 
 func TestSignInIfUserExists(t *testing.T) {
 	cleanupDatabase()
-	_, err := createUser()
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
 	in := &pb.SignInRequest{Jwt: ""}
 	ctx := context.Background()
-	_, err = service.SignIn(ctx, in)
+	_, err := service.SignIn(ctx, in)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -198,50 +245,86 @@ func cleanupDatabase() {
 	}
 }
 
-func createUser() (int64, error) {
+type user struct {
+	id           int64
+	name         string
+	authUID      string
+	authProvider string
+	iconURL      string
+}
+
+func createUser(t *testing.T, u *user) {
 	stmt, err := db.Prepare("insert into users (name, auth_uid, auth_provider, icon_url) values (?, ?, ?, ?)")
 	defer stmt.Close()
 
 	if err != nil {
-		return 0, err
+		t.Fatal(err)
 	}
 
-	res, err := stmt.Exec("test user", "xxx", "google", "")
+	res, err := stmt.Exec(u.name, u.authUID, u.authProvider, u.iconURL)
 	if err != nil {
-		return 0, err
+		t.Fatal(err)
 	}
 
-	return res.LastInsertId()
+	u.id, err = res.LastInsertId()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
-func createCalendar(userID int64) (int64, error) {
+type calendar struct {
+	id          int64
+	userID      int64
+	title       string
+	description string
+	year        int
+}
+
+func createCalendar(t *testing.T, c *calendar) {
 	stmt, err := db.Prepare("insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)")
 	defer stmt.Close()
 
 	if err != nil {
-		return 0, err
+		t.Fatal(err)
 	}
 
-	res, err := stmt.Exec(userID, "test title", "test description", 2019)
+	res, err := stmt.Exec(c.userID, c.title, c.description, c.year)
 	if err != nil {
-		return 0, err
+		t.Fatal(err)
 	}
 
-	return res.LastInsertId()
+	c.id, err = res.LastInsertId()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
-func createEntry(userID int64, calendarID int64) (int64, error) {
+type entry struct {
+	id         int64
+	calendarID int64
+	userID     int64
+	date       string
+	url        string
+	comment    string
+	title      string
+	imageURL   string
+}
+
+func createEntry(t *testing.T, e *entry) {
 	stmt, err := db.Prepare("insert into entries(user_id, calendar_id, date, url, comment, title, image_url) values(?, ?, ?, ?, ?, ?, ?)")
 	defer stmt.Close()
 
 	if err != nil {
-		return 0, err
+		t.Fatal(err)
 	}
 
-	res, err := stmt.Exec(userID, calendarID, "2019-12-01", "", "", "", "")
+	res, err := stmt.Exec(e.userID, e.calendarID, e.date, e.url, e.comment, e.title, e.imageURL)
 	if err != nil {
-		return 0, err
+		t.Fatal(err)
 	}
 
-	return res.LastInsertId()
+	e.id, err = res.LastInsertId()
+	if err != nil {
+		t.Fatal(err)
+	}
 }
