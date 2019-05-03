@@ -3,11 +3,17 @@ syntax = "proto3";
 package adventar.v1;
 import "adventar/v1/resources.proto";
 
-message ListCalendarsRequest { int64 year = 1; }
+message ListCalendarsRequest {
+  int64 year = 1;
+  int64 user_id = 2;
+  string query = 3;
+  int32 page_size = 4;
+  // string page_token = 5;
+}
 
 message ListCalendarsResponse {
-  int64 year = 1;
-  repeated Calendar calendars = 2;
+  repeated Calendar calendars = 1;
+  // string next_page_token = 2;
 }
 
 message GetCalendarRequest { int64 calendar_id = 1; }
@@ -32,7 +38,7 @@ message DeleteCalendarRequest { int64 calendar_id = 1; }
 
 message CreateEntryRequest {
   int64 calendar_id = 1;
-  Date date = 2;
+  int32 day = 2;
 }
 
 message UpdateEntryRequest {
