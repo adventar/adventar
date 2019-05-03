@@ -242,10 +242,12 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 	if err != nil {
 		return nil, err
 	}
+
 	stmt, err := s.db.Prepare("update entries set comment = ?, url = ? where id = ? and user_id = ?")
 	if err != nil {
 		return nil, err
 	}
+
 	_, err = stmt.Exec(in.GetComment(), in.GetUrl(), in.GetEntryId(), currentUser.ID)
 	if err != nil {
 		return nil, err
@@ -256,14 +258,21 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 
 // DeleteEntry deletes the entry.
 func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*empty.Empty, error) {
-	stmt, err := s.db.Prepare("delete from entries where id = ?")
+	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
 		return nil, err
 	}
-	_, err = stmt.Exec(in.GetEntryId())
+
+	stmt, err := s.db.Prepare("delete from entries where id = ? and user_id = ?")
 	if err != nil {
 		return nil, err
 	}
+
+	_, err = stmt.Exec(in.GetEntryId(), currentUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &empty.Empty{}, nil
 }
 
