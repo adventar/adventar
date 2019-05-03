@@ -416,6 +416,7 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 		from entries as e
 		inner join users as u on u.id = e.user_id
 		where e.calendar_id = ?
+		order by e.date
 	`, cid)
 
 	if err != nil {
