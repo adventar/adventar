@@ -323,6 +323,30 @@ func (s *Service) SignIn(ctx context.Context, in *pb.SignInRequest) (*empty.Empt
 	return &empty.Empty{}, nil
 }
 
+// UpdateUser updates user info.
+func (s *Service) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest) (*pb.User, error) {
+	currentUser, err := s.getCurrentUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+	name := in.GetName()
+	if name == "" {
+		return nil, fmt.Errorf("name is blank")
+	}
+
+	stmt, err := s.db.Prepare("update users set name = ? where id = ?")
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = stmt.Exec(name, currentUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.User{Id: currentUser.ID, Name: name}, nil
+}
+
 func (s *Service) getCurrentUser(ctx context.Context) (*user, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {

@@ -50,3 +50,5 @@ message UpdateEntryRequest {
 message DeleteEntryRequest { int64 entry_id = 1; }
 
 message SignInRequest { string jwt = 1; }
+
+message UpdateUserRequest { string name = 1; }

@@ -232,6 +232,33 @@ func TestSignInIfUserDoesNotExist(t *testing.T) {
 	}
 }
 
+func TestUpdateUser(t *testing.T) {
+	cleanupDatabase()
+
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
+	in := &pb.UpdateUserRequest{Name: "changed"}
+	md := make(map[string][]string)
+	md["authorization"] = append(md["authorization"], "x")
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+
+	_, err := service.UpdateUser(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var name string
+	err = db.QueryRow("select name from users where id = ?", u.id).Scan(&name)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if name != "changed" {
+		t.Errorf("actual: %s, expected: %s", name, "changed")
+	}
+}
+
 func cleanupDatabase() {
 	rows, err := db.Query("show tables")
 
