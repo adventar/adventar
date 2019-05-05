@@ -205,6 +205,79 @@ func (s *Service) DeleteCalendar(ctx context.Context, in *pb.DeleteCalendarReque
 	return &empty.Empty{}, nil
 }
 
+// ListEntries lists entries.
+func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*pb.ListEntriesResponse, error) {
+	conditionQueries := []string{"e.user_id = ?"}
+	conditionValues := []interface{}{in.GetUserId()}
+
+	if in.GetYear() != 0 {
+		conditionQueries = append(conditionQueries, "c.year = ?")
+		conditionValues = append(conditionValues, in.GetYear())
+	}
+
+	sql := fmt.Sprintf(`
+		select
+			e.id,
+			e.date,
+			e.title,
+			e.comment,
+			e.url,
+			e.image_url,
+			c.id,
+			c.title,
+			c.description,
+			u.id,
+			u.name,
+			u.icon_url
+		from entries as e
+		inner join users as u on u.id = e.user_id
+		inner join calendars as c on c.id = e.calendar_id
+		where %s
+		order by e.date
+	`, strings.Join(conditionQueries, " and "))
+
+	rows, err := s.db.Query(sql, conditionValues...)
+	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	entries := []*pb.Entry{}
+	for rows.Next() {
+		var e pb.Entry
+		var c pb.Calendar
+		var u pb.User
+		var d string
+		err := rows.Scan(
+			&e.Id,
+			&d,
+			&e.Title,
+			&e.Comment,
+			&e.Url,
+			&e.ImageUrl,
+			&c.Id,
+			&c.Title,
+			&c.Description,
+			&u.Id,
+			&u.Name,
+			&u.IconUrl,
+		)
+		if err != nil {
+			return nil, err
+		}
+		t, err := time.Parse("2006-01-02", d)
+		if err != nil {
+			return nil, err
+		}
+		e.Calendar = &c
+		e.Owner = &u
+		e.Date = &pb.Date{Year: int32(t.Year()), Month: int32(t.Month()), Day: int32(t.Day())}
+		entries = append(entries, &e)
+	}
+
+	return &pb.ListEntriesResponse{Entries: entries}, nil
+}
+
 // CreateEntry creates a entry.
 func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*pb.Entry, error) {
 	currentUser, err := s.getCurrentUser(ctx)

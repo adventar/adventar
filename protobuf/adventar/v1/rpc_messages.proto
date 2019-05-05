@@ -36,6 +36,13 @@ message UpdateCalendarRequest {
 
 message DeleteCalendarRequest { int64 calendar_id = 1; }
 
+message ListEntriesRequest {
+  int64 user_id = 1;
+  int32 year = 2;
+}
+
+message ListEntriesResponse { repeated Entry entries = 1; }
+
 message CreateEntryRequest {
   int64 calendar_id = 1;
   int32 day = 2;

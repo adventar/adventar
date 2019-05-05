@@ -13,6 +13,7 @@ service Adventar {
   rpc UpdateCalendar(UpdateCalendarRequest) returns (Calendar) {}
   rpc DeleteCalendar(DeleteCalendarRequest) returns (google.protobuf.Empty) {}
 
+  rpc ListEntries(ListEntriesRequest) returns (ListEntriesResponse) {}
   rpc CreateEntry(CreateEntryRequest) returns (Entry) {}
   rpc UpdateEntry(UpdateEntryRequest) returns (Entry) {}
   rpc DeleteEntry(DeleteEntryRequest) returns (google.protobuf.Empty) {}
