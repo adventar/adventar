@@ -186,15 +186,80 @@ func TestCreateCalendar(t *testing.T) {
 	}
 
 	var count int
-	db.QueryRow("select count(*) from calendars").Scan(&count)
+	err = db.QueryRow("select count(*) from calendars").Scan(&count)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if count != 1 {
 		t.Errorf("actual: %d, expected: 1", count)
 	}
 
 	var title string
-	db.QueryRow("select title from calendars where id = ?", calendar.Id).Scan(&title)
+	err = db.QueryRow("select title from calendars where id = ?", calendar.Id).Scan(&title)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if title != "foo" {
 		t.Errorf("actual: %s, expected: foo", title)
+	}
+}
+
+func TestUpdateCalendar(t *testing.T) {
+	cleanupDatabase()
+
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
+	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
+	createCalendar(t, c)
+
+	in := &pb.UpdateCalendarRequest{CalendarId: c.id, Title: "foo", Description: "bar"}
+	md := make(map[string][]string)
+	md["authorization"] = append(md["authorization"], "x")
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+
+	_, err := service.UpdateCalendar(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var title string
+	var description string
+	err = db.QueryRow("select title, description from calendars where id = ?", c.id).Scan(&title, &description)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if title != "foo" {
+		t.Errorf("actual: %s, expected: foo", title)
+	}
+	if description != "bar" {
+		t.Errorf("actual: %s, expected: bar", description)
+	}
+}
+
+func TestDeleteCalendar(t *testing.T) {
+	cleanupDatabase()
+
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
+	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
+	createCalendar(t, c)
+
+	in := &pb.DeleteCalendarRequest{CalendarId: c.id}
+	md := make(map[string][]string)
+	md["authorization"] = append(md["authorization"], "x")
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+
+	_, err := service.DeleteCalendar(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var count int
+	err = db.QueryRow("select count(*) from calendars where id = ?", c.id).Scan(&count)
+	if count != 0 {
+		t.Errorf("actual: %d, expected: 0", count)
 	}
 }
 
