@@ -20,15 +20,20 @@ type verifier interface {
 	VerifyIDToken(string) *AuthResult
 }
 
+type metaFetcher interface {
+	Fetch(string) (*SiteMeta, error)
+}
+
 // Service holds data used by grpc functions.
 type Service struct {
-	db       *sql.DB
-	verifier verifier
+	db          *sql.DB
+	verifier    verifier
+	metaFetcher metaFetcher
 }
 
 // NewService creates a new Service.
-func NewService(db *sql.DB, verifier verifier) *Service {
-	return &Service{db: db, verifier: verifier}
+func NewService(db *sql.DB, verifier verifier, metaFetcher metaFetcher) *Service {
+	return &Service{db: db, verifier: verifier, metaFetcher: metaFetcher}
 }
 
 func (s *Service) serve(addr string) {
@@ -147,6 +152,7 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
 
 	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), time.Now().Year())
 	if err != nil {
@@ -177,6 +183,8 @@ func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarReque
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
+
 	_, err = stmt.Exec(in.GetTitle(), in.GetDescription(), in.GetCalendarId(), currentUser.ID)
 	if err != nil {
 		return nil, err
@@ -198,6 +206,8 @@ func (s *Service) DeleteCalendar(ctx context.Context, in *pb.DeleteCalendarReque
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
+
 	_, err = stmt.Exec(in.GetCalendarId(), currentUser.ID)
 	if err != nil {
 		return nil, err
@@ -301,6 +311,8 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
+
 	dateStr := fmt.Sprintf("%d-12-%d", year, in.GetDay())
 	res, err := stmt.Exec(currentUser.ID, in.GetCalendarId(), dateStr)
 	if err != nil {
@@ -332,13 +344,41 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 	if err != nil {
 		return nil, err
 	}
+	defer stmt.Close()
 
 	_, err = stmt.Exec(in.GetComment(), in.GetUrl(), in.GetEntryId(), currentUser.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.Entry{Id: in.GetEntryId()}, nil
+	if in.GetUrl() != "" {
+		m, err := s.metaFetcher.Fetch(in.GetUrl())
+		// TODO: Ignore error
+		if err != nil {
+			return nil, err
+		}
+		stmt, err = s.db.Prepare("update entries set title = ?, image_url = ? where id = ? and user_id = ?")
+		if err != nil {
+			return nil, err
+		}
+		defer stmt.Close()
+
+		_, err = stmt.Exec(m.Title, m.ImageURL, in.GetEntryId(), currentUser.ID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var comment string
+	var url string
+	var title string
+	var imageURL string
+	err = s.db.QueryRow("select comment, url, title, image_url from entries where id = ?", in.GetEntryId()).Scan(&comment, &url, &title, &imageURL)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Entry{Id: in.GetEntryId(), Comment: comment, Url: url, Title: title, ImageUrl: imageURL}, nil
 }
 
 // DeleteEntry deletes the entry.
@@ -348,6 +388,7 @@ func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*
 		return nil, err
 	}
 
+	// TODO: Calendar owner can cancel entry
 	stmt, err := s.db.Prepare("delete from entries where id = ? and user_id = ?")
 	if err != nil {
 		return nil, err

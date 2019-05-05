@@ -16,6 +16,7 @@ func main() {
 	defer db.Close()
 
 	v := &firebaseVerifier{}
-	s := NewService(db, v)
+	f := &siteMetaFetcher{}
+	s := NewService(db, v, f)
 	s.serve(":8080")
 }

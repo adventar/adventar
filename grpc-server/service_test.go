@@ -29,6 +29,12 @@ func (v *testVerifier) VerifyIDToken(s string) *main.AuthResult {
 	}
 }
 
+type testMetaFetcher struct{}
+
+func (tmf *testMetaFetcher) Fetch(url string) (*main.SiteMeta, error) {
+	return &main.SiteMeta{Title: "site title", ImageURL: "http://example.com/image"}, nil
+}
+
 func TestMain(m *testing.M) {
 	var err error
 	db, err = sql.Open("mysql", "root@tcp(127.0.0.1:3306)/adventar_test")
@@ -38,7 +44,8 @@ func TestMain(m *testing.M) {
 	defer db.Close()
 
 	v := &testVerifier{}
-	service = main.NewService(db, v)
+	f := &testMetaFetcher{}
+	service = main.NewService(db, v, f)
 	code := m.Run()
 	os.Exit(code)
 }
@@ -188,6 +195,45 @@ func TestCreateCalendar(t *testing.T) {
 	db.QueryRow("select title from calendars where id = ?", calendar.Id).Scan(&title)
 	if title != "foo" {
 		t.Errorf("actual: %s, expected: foo", title)
+	}
+}
+
+func TestUpdateEntry(t *testing.T) {
+	cleanupDatabase()
+
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
+	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
+	createCalendar(t, c)
+
+	e := &entry{userID: u.id, calendarID: c.id, date: "2019-12-01"}
+	createEntry(t, e)
+
+	in := &pb.UpdateEntryRequest{EntryId: e.id, Comment: "comment", Url: "http://example.com"}
+	md := make(map[string][]string)
+	md["authorization"] = append(md["authorization"], "x")
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+
+	entry, err := service.UpdateEntry(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if entry.Comment != "comment" {
+		t.Errorf("actual: %s, expected: comment", entry.Comment)
+	}
+
+	if entry.Url != "http://example.com" {
+		t.Errorf("actual: %s, expected: http://example.com", entry.Url)
+	}
+
+	if entry.Title != "site title" {
+		t.Errorf("actual: %s, expected: site title", entry.Title)
+	}
+
+	if entry.ImageUrl != "http://example.com/image" {
+		t.Errorf("actual: %s, expected: http://example.com/image", entry.ImageUrl)
 	}
 }
 
