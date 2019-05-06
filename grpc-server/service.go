@@ -307,7 +307,8 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 		return nil, fmt.Errorf("Invalid day: %d", day)
 	}
 
-	stmt, err := s.db.Prepare("insert into entries(user_id, calendar_id, date) values(?, ?, ?)")
+	// TODO: Specify default value by schema definition.
+	stmt, err := s.db.Prepare("insert into entries(user_id, calendar_id, date, comment, url, title, image_url) values(?, ?, ?, '', '', '', '')")
 	if err != nil {
 		return nil, err
 	}
