@@ -62,7 +62,7 @@ func TestListCalendars(t *testing.T) {
 	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
 	createCalendar(t, c)
 
-	e := &entry{userID: u.id, calendarID: c.id, date: "2019-12-01"}
+	e := &entry{userID: u.id, calendarID: c.id, day: 1}
 	createEntry(t, e)
 
 	res, err := service.ListCalendars(ctx, in)
@@ -146,7 +146,7 @@ func TestGetCalendar(t *testing.T) {
 	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
 	createCalendar(t, c)
 
-	e := &entry{userID: u.id, calendarID: c.id, date: "2019-12-01"}
+	e := &entry{userID: u.id, calendarID: c.id, day: 1}
 	createEntry(t, e)
 
 	in.CalendarId = c.id
@@ -281,13 +281,13 @@ func TestListEntries(t *testing.T) {
 	c2 := &calendar{title: "a", description: "b", userID: u1.id, year: 2018}
 	createCalendar(t, c2)
 
-	e1 := &entry{userID: u1.id, calendarID: c1.id, date: "2019-12-01"}
+	e1 := &entry{userID: u1.id, calendarID: c1.id, day: 1}
 	createEntry(t, e1)
 
-	e2 := &entry{userID: u1.id, calendarID: c2.id, date: "2018-12-01"}
+	e2 := &entry{userID: u1.id, calendarID: c2.id, day: 1}
 	createEntry(t, e2)
 
-	e3 := &entry{userID: u2.id, calendarID: c1.id, date: "2019-12-02"}
+	e3 := &entry{userID: u2.id, calendarID: c1.id, day: 2}
 	createEntry(t, e3)
 
 	in := &pb.ListEntriesRequest{UserId: u1.id, Year: 2019}
@@ -328,15 +328,15 @@ func TestCreateEntry(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var d string
+	var day int32
 	var cid int64
 	var uid int64
-	err = db.QueryRow("select date, calendar_id, user_id from entries where id = ?", entry.Id).Scan(&d, &cid, &uid)
+	err = db.QueryRow("select day, calendar_id, user_id from entries where id = ?", entry.Id).Scan(&day, &cid, &uid)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if d != "2019-12-01" {
-		t.Errorf("actual: %s, expected: 2019-12-01", d)
+	if day != 1 {
+		t.Errorf("actual: %d, expected: 2019-12-01", day)
 	}
 	if cid != c.id {
 		t.Errorf("actual: %d, expected: %d", c.id, cid)
@@ -355,7 +355,7 @@ func TestUpdateEntry(t *testing.T) {
 	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
 	createCalendar(t, c)
 
-	e := &entry{userID: u.id, calendarID: c.id, date: "2019-12-01"}
+	e := &entry{userID: u.id, calendarID: c.id, day: 1}
 	createEntry(t, e)
 
 	in := &pb.UpdateEntryRequest{EntryId: e.id, Comment: "comment", Url: "http://example.com"}
@@ -394,7 +394,7 @@ func TestDeleteEntry(t *testing.T) {
 	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
 	createCalendar(t, c)
 
-	e := &entry{userID: u.id, calendarID: c.id, date: "2019-12-01"}
+	e := &entry{userID: u.id, calendarID: c.id, day: 1}
 	createEntry(t, e)
 
 	in := &pb.DeleteEntryRequest{EntryId: e.id}
@@ -567,7 +567,7 @@ type entry struct {
 	id         int64
 	calendarID int64
 	userID     int64
-	date       string
+	day        int32
 	url        string
 	comment    string
 	title      string
@@ -575,14 +575,14 @@ type entry struct {
 }
 
 func createEntry(t *testing.T, e *entry) {
-	stmt, err := db.Prepare("insert into entries(user_id, calendar_id, date, url, comment, title, image_url) values(?, ?, ?, ?, ?, ?, ?)")
+	stmt, err := db.Prepare("insert into entries(user_id, calendar_id, day, url, comment, title, image_url) values(?, ?, ?, ?, ?, ?, ?)")
 	defer stmt.Close()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	res, err := stmt.Exec(e.userID, e.calendarID, e.date, e.url, e.comment, e.title, e.imageURL)
+	res, err := stmt.Exec(e.userID, e.calendarID, e.day, e.url, e.comment, e.title, e.imageURL)
 	if err != nil {
 		t.Fatal(err)
 	}

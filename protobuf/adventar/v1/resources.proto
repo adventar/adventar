@@ -2,12 +2,6 @@ syntax = "proto3";
 
 package adventar.v1;
 
-message Date {
-  int32 year = 1;
-  int32 month = 2;
-  int32 day = 3;
-}
-
 message User {
   int64 id = 1;
   string name = 2;
@@ -27,7 +21,7 @@ message Entry {
   int64 id = 1;
   User owner = 2;
   Calendar calendar = 3;
-  Date date = 4;
+  int32 day = 4;
   string comment = 5;
   string url = 6;
   string title = 7;

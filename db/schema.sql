@@ -26,7 +26,7 @@ CREATE TABLE `entries` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) NOT NULL,
   `calendar_id` bigint(20) NOT NULL,
-  `date` date NOT NULL,
+  `day` tinyint unsigned NOT NULL,
   `comment` text NOT NULL,
   `url` text NOT NULL,
   `title` text NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE `entries` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp,
   `updated_at` datetime NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_entries_on_calendar_id_and_date` (`calendar_id`,`date`) USING BTREE,
+  UNIQUE KEY `index_entries_on_calendar_id_and_day` (`calendar_id`,`day`) USING BTREE,
   CONSTRAINT `fk_entries_calendar_id` FOREIGN KEY (calendar_id) REFERENCES calendars (id) ON DELETE CASCADE,
   CONSTRAINT `fk_entries_user_id` FOREIGN KEY (user_id) REFERENCES users (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

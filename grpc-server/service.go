@@ -228,7 +228,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 	sql := fmt.Sprintf(`
 		select
 			e.id,
-			e.date,
+			e.day,
 			e.title,
 			e.comment,
 			e.url,
@@ -243,7 +243,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 		inner join users as u on u.id = e.user_id
 		inner join calendars as c on c.id = e.calendar_id
 		where %s
-		order by e.date
+		order by e.day
 	`, strings.Join(conditionQueries, " and "))
 
 	rows, err := s.db.Query(sql, conditionValues...)
@@ -257,10 +257,9 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 		var e pb.Entry
 		var c pb.Calendar
 		var u pb.User
-		var d string
 		err := rows.Scan(
 			&e.Id,
-			&d,
+			&e.Day,
 			&e.Title,
 			&e.Comment,
 			&e.Url,
@@ -275,13 +274,8 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 		if err != nil {
 			return nil, err
 		}
-		t, err := time.Parse("2006-01-02", d)
-		if err != nil {
-			return nil, err
-		}
 		e.Calendar = &c
 		e.Owner = &u
-		e.Date = &pb.Date{Year: int32(t.Year()), Month: int32(t.Month()), Day: int32(t.Day())}
 		entries = append(entries, &e)
 	}
 
@@ -308,14 +302,13 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 	}
 
 	// TODO: Specify default value by schema definition.
-	stmt, err := s.db.Prepare("insert into entries(user_id, calendar_id, date, comment, url, title, image_url) values(?, ?, ?, '', '', '', '')")
+	stmt, err := s.db.Prepare("insert into entries(user_id, calendar_id, day, comment, url, title, image_url) values(?, ?, ?, '', '', '', '')")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	dateStr := fmt.Sprintf("%d-12-%d", year, in.GetDay())
-	res, err := stmt.Exec(currentUser.ID, in.GetCalendarId(), dateStr)
+	res, err := stmt.Exec(currentUser.ID, in.GetCalendarId(), day)
 	if err != nil {
 		return nil, err
 	}
@@ -520,7 +513,7 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 	rows, err := s.db.Query(`
 		select
 			e.id,
-			e.date,
+			e.day,
 			e.title,
 			e.comment,
 			e.url,
@@ -531,7 +524,7 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 		from entries as e
 		inner join users as u on u.id = e.user_id
 		where e.calendar_id = ?
-		order by e.date
+		order by e.day
 	`, cid)
 
 	if err != nil {
@@ -542,10 +535,9 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 	for rows.Next() {
 		var e pb.Entry
 		var u pb.User
-		var d string
 		err := rows.Scan(
 			&e.Id,
-			&d,
+			&e.Day,
 			&e.Title,
 			&e.Comment,
 			&e.Url,
@@ -557,12 +549,7 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 		if err != nil {
 			return nil, err
 		}
-		t, err := time.Parse("2006-01-02", d)
-		if err != nil {
-			return nil, err
-		}
 		e.Owner = &u
-		e.Date = &pb.Date{Year: int32(t.Year()), Month: int32(t.Month()), Day: int32(t.Day())}
 		entries = append(entries, &e)
 	}
 
