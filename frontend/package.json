@@ -9,7 +9,10 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "lint": "yarn run lint:eslint && yarn run lint:prettier",
+    "lint:eslint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "lint:prettier": "prettier --list-different --ignore-path .gitignore '**/*.{vue,js}'",
+    "fix": "prettier --write --ignore-path .gitignore '**/*.{vue,js}'",
     "test": "jest"
   },
   "dependencies": {
