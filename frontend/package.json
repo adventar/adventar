@@ -10,7 +10,6 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "precommit": "npm run lint",
     "test": "jest"
   },
   "dependencies": {
@@ -37,7 +36,6 @@
     "eslint-plugin-standard": ">=4.0.0",
     "eslint-plugin-vue": "^5.2.2",
     "jest": "^24.1.0",
-    "nodemon": "^1.18.9",
     "prettier": "^1.16.4",
     "vue-jest": "^3.0.3"
   }
