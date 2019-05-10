@@ -1,18 +1,14 @@
-import pkg from "./package";
+import NuxtConfiguration from "@nuxt/config";
 
-export default {
+const config: NuxtConfiguration = {
   mode: "spa",
 
   /*
    ** Headers of the page
    */
   head: {
-    title: pkg.name,
-    meta: [
-      { charset: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: pkg.description }
-    ],
+    title: "Adventar",
+    meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1" }],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
   },
 
@@ -45,7 +41,7 @@ export default {
      */
     extend(config, ctx) {
       // Run ESLint on save
-      if (ctx.isDev && ctx.isClient) {
+      if (ctx.isDev && ctx.isClient && config.module) {
         config.module.rules.push({
           enforce: "pre",
           test: /\.(js|vue)$/,
@@ -56,3 +52,5 @@ export default {
     }
   }
 };
+
+export default config;
