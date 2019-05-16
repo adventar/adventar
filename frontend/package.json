@@ -11,7 +11,8 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore .",
     "fix": "eslint --ext .js,.ts,.vue --ignore-path .gitignore . --fix",
-    "test": "jest"
+    "test": "jest",
+    "proto": "protoc -I ../protobuf ../protobuf/adventar/v1/*.proto --js_out=import_style=commonjs:lib --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:lib"
   },
   "dependencies": {
     "@nuxtjs/pwa": "^3.0.0-beta.16",
