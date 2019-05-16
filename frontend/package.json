@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@nuxtjs/pwa": "^3.0.0-beta.16",
+    "google-protobuf": "^3.8.0-rc.1",
+    "grpc-web": "^1.0.4",
     "nuxt": "^2.4.0",
     "nuxt-property-decorator": "^2.1.3"
   },
