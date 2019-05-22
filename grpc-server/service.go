@@ -6,12 +6,21 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/adventar/adventar/grpc-server/adventar/v1"
 )
@@ -42,7 +51,31 @@ func (s *Service) serve(addr string) {
 		log.Fatal(err)
 	}
 
-	server := grpc.NewServer()
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetOutput(os.Stdout)
+	// logrus.SetFormatter(&logrus.JSONFormatter{})
+	logger := logrus.WithFields(logrus.Fields{})
+	opts := []grpc_logrus.Option{
+		grpc_logrus.WithDurationField(func(duration time.Duration) (key string, value interface{}) {
+			return "grpc.time_ns", duration.Nanoseconds()
+		}),
+	}
+
+	grpc_logrus.ReplaceGrpcLogger(logger)
+
+	server := grpc.NewServer(
+		grpc_middleware.WithUnaryServerChain(
+			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+			grpc_logrus.UnaryServerInterceptor(logger, opts...),
+			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+				resp, err := handler(ctx, req)
+				if err != nil {
+					fmt.Printf("%+v\n", err)
+				}
+				return resp, err
+			},
+		),
+	)
 	pb.RegisterAdventarServer(server, s)
 	if err := server.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)
@@ -122,13 +155,18 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 	var calendar calendar
 	row := s.db.QueryRow("select id, user_id, title, description, year from calendars where id = ?", in.GetCalendarId())
 	err := row.Scan(&calendar.ID, &calendar.UserID, &calendar.Title, &calendar.Description, &calendar.Year)
+
+	if err == sql.ErrNoRows {
+		return nil, status.Error(codes.NotFound, "Calendar not found")
+	}
+
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Database query error")
 	}
 
 	entries, err := s.findEntries(calendar.ID)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to find entries")
 	}
 
 	pbCalendar := &pb.Calendar{
@@ -528,7 +566,7 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 	`, cid)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Query failed")
 	}
 
 	entries := []*pb.Entry{}
