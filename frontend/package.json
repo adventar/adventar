@@ -9,10 +9,10 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore .",
-    "fix": "eslint --ext .js,.ts,.vue --ignore-path .gitignore . --fix",
+    "lint": "eslint --ext .js,.ts,.vue .",
+    "fix": "eslint --ext .js,.ts,.vue . --fix",
     "test": "jest",
-    "proto": "protoc -I ../protobuf ../protobuf/adventar/v1/*.proto --js_out=import_style=commonjs:lib --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:lib"
+    "proto": "rm -rf lib/grpc && mkdir lib/grpc && protoc -I ../protobuf ../protobuf/adventar/v1/*.proto --js_out=import_style=commonjs:lib/grpc --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:lib/grpc"
   },
   "dependencies": {
     "@nuxtjs/pwa": "^3.0.0-beta.16",
@@ -44,6 +44,7 @@
     "jest": "^24.1.0",
     "prettier": "^1.16.4",
     "ts-jest": "^24.0.2",
+    "ts-node": "^8.1.0",
     "vue-jest": "^3.0.3"
   }
 }

@@ -36,19 +36,28 @@ const config: NuxtConfiguration = {
    ** Build configuration
    */
   build: {
+    babel: {
+      ignore: [/\/lib\/grpc\//]
+    },
     /*
      ** You can extend webpack config here
      */
     extend(config, ctx) {
+      if (ctx.isClient) config.devtool = "#source-map";
+
+      // if (config.module) {
+      //   config.module.rules[2] = {};
+      // }
+
       // Run ESLint on save
-      if (ctx.isDev && ctx.isClient && config.module) {
-        config.module.rules.push({
-          enforce: "pre",
-          test: /\.(js|vue)$/,
-          loader: "eslint-loader",
-          exclude: /(node_modules)/
-        });
-      }
+      // if (ctx.isDev && ctx.isClient && config.module) {
+      //   config.module.rules.push({
+      //     enforce: "pre",
+      //     test: /\.(js|vue)$/,
+      //     loader: "eslint-loader",
+      //     exclude: /(node_modules)/
+      //   });
+      // }
     }
   }
 };

@@ -16,6 +16,16 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import Logo from "~/components/Logo.vue";
 
+import { GetCalendarRequest } from "~/lib/grpc/adventar/v1/adventar_pb";
+import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
+const client = new AdventarClient("http://localhost:8000", null, null);
+const request = new GetCalendarRequest();
+request.setCalendarId(3);
+client.getCalendar(request, {}, (err, res) => {
+  console.log(err);
+  console.log(res.getCalendar().getTitle());
+});
+
 @Component({
   components: {
     Logo

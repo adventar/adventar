@@ -1,0 +1,3 @@
+lib/grpc/
+node_modules/
+.nuxt/
