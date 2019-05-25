@@ -11,6 +11,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.4.2
+	golang.org/x/xerrors v0.0.0-20190513163551-3ee3066db522
 	google.golang.org/api v0.5.0
 	google.golang.org/grpc v1.19.0
 )

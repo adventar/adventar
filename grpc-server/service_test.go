@@ -20,13 +20,13 @@ var (
 
 type testVerifier struct{}
 
-func (v *testVerifier) VerifyIDToken(s string) *main.AuthResult {
+func (v *testVerifier) VerifyIDToken(s string) (*main.AuthResult, error) {
 	return &main.AuthResult{
 		Name:         "foo",
 		IconURL:      "http://example.com/icon",
 		AuthProvider: "google",
 		AuthUID:      "xxx",
-	}
+	}, nil
 }
 
 type testMetaFetcher struct{}
