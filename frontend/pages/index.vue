@@ -1,9 +1,22 @@
 <template>
-  <h1>Adventar</h1>
+  <div>
+    <h1>Adventar</h1>
+
+    <h2>Login</h2>
+    <ul>
+      <li><button @click="login('google')">Google でログイン</button></li>
+      <li><button @click="login('github')">GitHub でログイン</button></li>
+      <li><button @click="login('twitter')">Twitter でログイン</button></li>
+      <li><button @click="login('facebook')">Facebook でログイン</button></li>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
+import { initFirebase, loginWithFirebase } from "~/lib/Firebase";
+
+initFirebase();
 
 // import { GetCalendarRequest } from "~/lib/grpc/adventar/v1/adventar_pb";
 // import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
@@ -16,7 +29,11 @@ import { Component, Vue } from "nuxt-property-decorator";
 // });
 
 @Component
-export default class extends Vue {}
+export default class extends Vue {
+  login(provider) {
+    loginWithFirebase(provider);
+  }
+}
 </script>
 
 <style></style>
