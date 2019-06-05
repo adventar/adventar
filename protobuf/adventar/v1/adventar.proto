@@ -18,6 +18,6 @@ service Adventar {
   rpc UpdateEntry(UpdateEntryRequest) returns (Entry) {}
   rpc DeleteEntry(DeleteEntryRequest) returns (google.protobuf.Empty) {}
 
-  rpc SignIn(SignInRequest) returns (google.protobuf.Empty) {}
+  rpc SignIn(SignInRequest) returns (User) {}
   rpc UpdateUser(UpdateUserRequest) returns (User) {}
 }

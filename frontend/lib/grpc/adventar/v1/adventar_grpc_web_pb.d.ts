@@ -91,8 +91,8 @@ export class AdventarClient {
     request: SignInRequest,
     metadata: grpcWeb.Metadata | undefined,
     callback: (err: grpcWeb.Error,
-               response: Empty) => void
-  ): grpcWeb.ClientReadableStream<Empty>;
+               response: User) => void
+  ): grpcWeb.ClientReadableStream<User>;
 
   updateUser(
     request: UpdateUserRequest,
@@ -156,7 +156,7 @@ export class AdventarPromiseClient {
   signIn(
     request: SignInRequest,
     metadata?: grpcWeb.Metadata
-  ): Promise<Empty>;
+  ): Promise<User>;
 
   updateUser(
     request: UpdateUserRequest,

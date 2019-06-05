@@ -596,15 +596,15 @@ proto.adventar.v1.AdventarPromiseClient.prototype.deleteEntry =
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
  *   !proto.adventar.v1.SignInRequest,
- *   !proto.google.protobuf.Empty>}
+ *   !proto.adventar.v1.User>}
  */
 const methodInfo_Adventar_SignIn = new grpc.web.AbstractClientBase.MethodInfo(
-  google_protobuf_empty_pb.Empty,
+  adventar_v1_resources_pb.User,
   /** @param {!proto.adventar.v1.SignInRequest} request */
   function(request) {
     return request.serializeBinary();
   },
-  google_protobuf_empty_pb.Empty.deserializeBinary
+  adventar_v1_resources_pb.User.deserializeBinary
 );
 
 
@@ -613,9 +613,9 @@ const methodInfo_Adventar_SignIn = new grpc.web.AbstractClientBase.MethodInfo(
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.google.protobuf.Empty)}
+ * @param {function(?grpc.web.Error, ?proto.adventar.v1.User)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.google.protobuf.Empty>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.adventar.v1.User>|undefined}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarClient.prototype.signIn =
@@ -634,7 +634,7 @@ proto.adventar.v1.AdventarClient.prototype.signIn =
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.google.protobuf.Empty>}
+ * @return {!Promise<!proto.adventar.v1.User>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.signIn =
