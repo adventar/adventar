@@ -13,9 +13,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { initializeFirebaseApp, loginWithFirebase } from "~/lib/Firebase";
-
-initializeFirebaseApp();
+import { loginWithFirebase } from "~/plugins/firebase";
 
 @Component
 export default class extends Vue {

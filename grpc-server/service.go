@@ -525,7 +525,7 @@ func (s *Service) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest) (*pb
 		return nil, xerrors.Errorf("Failed query to update user: %w", err)
 	}
 
-	return &pb.User{Id: currentUser.ID, Name: name}, nil
+	return &pb.User{Id: currentUser.ID, Name: name, IconUrl: currentUser.IconURL}, nil
 }
 
 func (s *Service) getCurrentUser(ctx context.Context) (*user, error) {
