@@ -27,10 +27,14 @@ export function loginWithFirebase(provider: string): void {
   }
 }
 
+export function logoutWithFirebase(): Promise<void> {
+  return firebase.auth().signOut();
+}
+
 export function getToken(): Promise<string | null> {
   const user = firebase.auth().currentUser;
   if (user) {
-    return user.getIdToken(true);
+    return user.getIdToken();
   } else {
     return Promise.resolve(null);
   }
@@ -44,7 +48,7 @@ export default function({ app }) {
     }
 
     user
-      .getIdToken(true)
+      .getIdToken()
       .then(token => signIn(token))
       .then(user => app.store.commit("setUser", user))
       .catch(err => {

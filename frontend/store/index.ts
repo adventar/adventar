@@ -1,6 +1,6 @@
 export function state() {
   return {
-    user: null
+    user: false
   };
 }
 
