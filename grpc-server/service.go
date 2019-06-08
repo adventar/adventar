@@ -373,12 +373,9 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 	}
 
 	var entryID int64
-	err = s.db.QueryRow("select id from calendars where id = ?", lastID).Scan(&entryID)
-	if err == sql.ErrNoRows {
-		return nil, status.Errorf(codes.NotFound, "Calendar not found")
-	}
+	err = s.db.QueryRow("select id from entries where id = ?", lastID).Scan(&entryID)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch calendar: %w", err)
+		return nil, xerrors.Errorf("Failed query to fetch entry: %w", err)
 	}
 
 	return &pb.Entry{Id: entryID}, nil
