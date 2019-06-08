@@ -1,4 +1,4 @@
-import { SignInRequest, UpdateUserRequest, GetCalendarRequest, CreateCalendarRequest, ListCalendarsRequest } from "~/lib/grpc/adventar/v1/adventar_pb";
+import { SignInRequest, UpdateUserRequest, GetCalendarRequest, CreateCalendarRequest, ListCalendarsRequest, CreateEntryRequest, DeleteEntryRequest } from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
 const client = new AdventarClient("http://localhost:8000", null, null);
 
@@ -14,7 +14,14 @@ export type Calendar = {
   description: string;
   year: number;
   entryCount: number;
+  entries?: Entry[];
 };
+
+export type Entry = {
+  id: number;
+  owner?: User;
+  day?: number;
+}
 
 export function signIn(token: string): Promise<User> {
   const request = new SignInRequest();
@@ -94,6 +101,17 @@ export function getCalendar(id: number): Promise<Calendar> {
           description: calendar.getDescription(),
           year: calendar.getYear(),
           entryCount: calendar.getEntryCount(),
+          entries: res.getEntriesList().map(entry => {
+            return {
+              id: entry.getId(),
+              owner: {
+                id: entry.getOwner().getId(),
+                name: entry.getOwner().getName(),
+                iconUrl: entry.getOwner().getIconUrl(),
+              },
+              day: entry.getDay(),
+            };
+          })
         });
       }
     });
@@ -121,6 +139,48 @@ export function listCalendar(): Promise<Calendar[]> {
           }
         })
         resolve(calendars)
+      }
+    });
+  });
+}
+
+type createEntryParams = {
+  calendarId: number;
+  day: number;
+  token: string;
+}
+export function createEntry({ calendarId, day, token }: createEntryParams): Promise<Entry> {
+  const request = new CreateEntryRequest();
+  request.setCalendarId(calendarId);
+  request.setDay(day);
+
+  return new Promise((resolve, reject) => {
+    client.createEntry(request, { authorization: token }, (err, res) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        resolve({ id: res.getId() });
+      }
+    });
+  });
+}
+
+type deleteEntryParams = {
+  entryId: number;
+  token: string;
+}
+export function deleteEntry({ entryId, token }: deleteEntryParams): Promise<void> {
+  const request = new DeleteEntryRequest();
+  request.setEntryId(entryId);
+
+  return new Promise((resolve, reject) => {
+    client.deleteEntry(request, { authorization: token }, (err) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        resolve();
       }
     });
   });
