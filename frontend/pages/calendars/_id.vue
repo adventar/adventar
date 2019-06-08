@@ -2,8 +2,12 @@
   <div>
     <advHeader />
     <div v-if="calendar">
-      <h2>{{ calendar.title }}</h2>
-      <h2>{{ calendar.description }}</h2>
+      <h2>{{ calendar.title }} Advent Calendar {{ calendar.year }}</h2>
+      <p>{{ calendar.description }}</p>
+      <hr />
+      <ul>
+        <li v-for="day in days" :key="day">{{ calendar.year }}/12/{{ day }}</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -19,9 +23,8 @@ import advHeader from "~/components/header.vue";
 export default class extends Vue {
   async asyncData({ params }) {
     const calendar = await getCalendar(Number(params.id));
-    return {
-      calendar
-    };
+    const days = Array.from({ length: 25 }, (_, k) => k + 1);
+    return { calendar, days };
   }
 }
 </script>

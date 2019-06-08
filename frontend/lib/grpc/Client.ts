@@ -1,4 +1,4 @@
-import { SignInRequest, UpdateUserRequest, GetCalendarRequest, CreateCalendarRequest } from "~/lib/grpc/adventar/v1/adventar_pb";
+import { SignInRequest, UpdateUserRequest, GetCalendarRequest, CreateCalendarRequest, ListCalendarsRequest } from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
 const client = new AdventarClient("http://localhost:8000", null, null);
 
@@ -12,6 +12,8 @@ export type Calendar = {
   id: number;
   title: string;
   description: string;
+  year: number;
+  entryCount: number;
 };
 
 export function signIn(token: string): Promise<User> {
@@ -90,7 +92,35 @@ export function getCalendar(id: number): Promise<Calendar> {
           id: calendar.getId(),
           title: calendar.getTitle(),
           description: calendar.getDescription(),
+          year: calendar.getYear(),
+          entryCount: calendar.getEntryCount(),
         });
+      }
+    });
+  });
+}
+
+export function listCalendar(): Promise<Calendar[]> {
+  const request = new ListCalendarsRequest();
+  request.setYear(2019);
+  request.setPageSize(20);
+
+  return new Promise((resolve, reject) => {
+    client.listCalendars(request, {}, (err, res) => {
+      if (err) {
+        reject(err);
+      }
+      else {
+        const calendars = res.getCalendarsList().map(calendar => {
+          return {
+            id: calendar.getId(),
+            title: calendar.getTitle(),
+            description: calendar.getDescription(),
+            year: calendar.getYear(),
+            entryCount: calendar.getEntryCount(),
+          }
+        })
+        resolve(calendars)
       }
     });
   });
