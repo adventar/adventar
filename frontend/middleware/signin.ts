@@ -1,4 +1,4 @@
-import { getRedirectResult } from "~/plugins/firebase";
+import { getRedirectResult } from "~/plugins/auth";
 
 export default function({ store }) {
   return getRedirectResult(store);

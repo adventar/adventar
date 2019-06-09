@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import { createCalendar } from "~/lib/GrpcClient";
-import { getToken } from "~/plugins/firebase";
+import { getToken } from "~/plugins/auth";
 import advHeader from "~/components/header.vue";
 
 @Component({

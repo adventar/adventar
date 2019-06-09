@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { loginWithFirebase, logoutWithFirebase } from "~/plugins/firebase";
+import { loginWithFirebase, logoutWithFirebase } from "~/plugins/auth";
 
 @Component
 export default class extends Vue {

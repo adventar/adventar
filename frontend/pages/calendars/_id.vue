@@ -23,7 +23,7 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import { getCalendar, createEntry, deleteEntry } from "~/lib/GrpcClient";
 import { Calendar, Entry } from "~/types/adventar";
-import { getToken } from "~/plugins/firebase";
+import { getToken } from "~/plugins/auth";
 import advHeader from "~/components/header.vue";
 
 @Component({
