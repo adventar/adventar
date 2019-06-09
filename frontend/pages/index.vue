@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { listCalendar } from "~/lib/grpc/Client";
+import { listCalendar } from "~/lib/GrpcClient";
 import advHeader from "~/components/header.vue";
 
 @Component({

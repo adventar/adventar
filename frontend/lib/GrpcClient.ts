@@ -1,27 +1,7 @@
 import { SignInRequest, UpdateUserRequest, GetCalendarRequest, CreateCalendarRequest, ListCalendarsRequest, CreateEntryRequest, DeleteEntryRequest } from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
+import { User, Calendar, Entry } from "~/types/adventar"
 const client = new AdventarClient("http://localhost:8000", null, null);
-
-export type User = {
-  id: number;
-  name: string;
-  iconUrl: string;
-};
-
-export type Calendar = {
-  id: number;
-  title: string;
-  description: string;
-  year: number;
-  entryCount: number;
-  entries?: Entry[];
-};
-
-export type Entry = {
-  id: number;
-  owner?: User;
-  day?: number;
-}
 
 export function signIn(token: string): Promise<User> {
   const request = new SignInRequest();
