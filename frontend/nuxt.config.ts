@@ -34,7 +34,20 @@ const config: NuxtConfiguration = {
   /*
    ** Nuxt.js modules
    */
-  modules: ["@nuxtjs/pwa"],
+  modules: ["@nuxtjs/pwa", "nuxt-fontawesome"],
+
+  fontawesome: {
+    imports: [
+      {
+        set: "@fortawesome/free-solid-svg-icons",
+        icons: ["fas"]
+      },
+      {
+        set: "@fortawesome/free-brands-svg-icons",
+        icons: ["fab"]
+      }
+    ]
+  },
 
   /*
    ** Build configuration
