@@ -1,6 +1,6 @@
 <template>
   <div>
-    <advHeader />
+    <GlobalHeader />
     <h2>Setting</h2>
     <ul>
       <li>id: {{ $store.state.user.id }}</li>
@@ -15,10 +15,10 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import { updateUser } from "~/lib/GrpcClient";
 import { getToken } from "~/plugins/auth";
-import advHeader from "~/components/header.vue";
+import GlobalHeader from "~/components/GlobalHeader.vue";
 
 @Component({
-  components: { advHeader },
+  components: { GlobalHeader },
   middleware: "requireUser"
 })
 export default class extends Vue {

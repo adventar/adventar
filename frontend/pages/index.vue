@@ -1,6 +1,6 @@
 <template>
   <div>
-    <advHeader />
+    <GlobalHeader />
 
     <ul>
       <li v-for="calendar in calendars" :key="calendar.id">
@@ -14,10 +14,10 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import { listCalendar } from "~/lib/GrpcClient";
-import advHeader from "~/components/header.vue";
+import GlobalHeader from "~/components/GlobalHeader.vue";
 
 @Component({
-  components: { advHeader }
+  components: { GlobalHeader }
 })
 export default class extends Vue {
   async asyncData() {

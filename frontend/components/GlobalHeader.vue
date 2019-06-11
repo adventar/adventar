@@ -1,15 +1,15 @@
 <template>
-  <header class="Header">
-    <div class="Header-inner">
-      <h1 class="Header-logo"><nuxt-link to="/">Adventar</nuxt-link></h1>
-      <div class="Header-right">
+  <header class="GlobalHeader">
+    <div class="GlobalHeader-inner">
+      <h1 class="GlobalHeader-logo"><nuxt-link to="/">Adventar</nuxt-link></h1>
+      <div class="GlobalHeader-right">
         <div v-if="$store.state.user">
-          <span role="button" @click.stop="showDropdown = true" class="Header-menuBtn">
-            <img :src="$store.state.user.iconUrl" class="Header-userIcon" width="25" height="25" />
+          <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
+            <img :src="$store.state.user.iconUrl" class="GlobalHeader-userIcon" width="25" height="25" />
             {{ $store.state.user.name }}
             <font-awesome-icon icon="sort-down" />
           </span>
-          <div class="Header-dropdown is-login" v-if="showDropdown" @click.stop>
+          <div class="GlobalHeader-dropdown is-login" v-if="showDropdown" @click.stop>
             <ul>
               <li>
                 <nuxt-link to="/calendars/new">カレンダーを作る</nuxt-link>
@@ -27,10 +27,10 @@
           </div>
         </div>
         <div v-else>
-          <span role="button" @click.stop="showDropdown = true" class="Header-menuBtn">
+          <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
             Log In <font-awesome-icon icon="sign-in-alt" />
           </span>
-          <div class="Header-dropdown" v-if="showDropdown" @click.stop>
+          <div class="GlobalHeader-dropdown" v-if="showDropdown" @click.stop>
             <ul>
               <li>
                 <span role="button" @click="login('google')">
@@ -92,59 +92,59 @@ export default class extends Vue {
 </script>
 
 <style scoped>
-.Header {
+.GlobalHeader {
   border-bottom: 1px solid #ccc;
 }
 
-.Header-inner {
+.GlobalHeader-inner {
   max-width: 1000px;
   padding: 0 12px;
   margin: 0 auto;
   position: relative;
 }
 
-.Header-right {
+.GlobalHeader-right {
   position: absolute;
   right: 10px;
   top: 15px;
 }
 
-.Header-logo {
+.GlobalHeader-logo {
   margin: 0;
   padding: 10px;
   font-size: 24px;
   font-weight: bold;
 }
-.Header-logo a {
+.GlobalHeader-logo a {
   color: #e4523d;
   text-transform: uppercase;
   text-decoration: none;
 }
 
-.Header-menuBtn {
+.GlobalHeader-menuBtn {
   color: #666;
   cursor: pointer;
   display: block;
   padding-bottom: 10px;
 }
 
-.Header-menuBtn:hover {
+.GlobalHeader-menuBtn:hover {
   color: #000;
 }
 
-.Header-menuBtn .Header-userIcon {
+.GlobalHeader-menuBtn .GlobalHeader-userIcon {
   border-radius: 50%;
   vertical-align: middle;
   margin-right: 5px;
 }
 
-.Header-dropdown {
+.GlobalHeader-dropdown {
   position: absolute;
   width: 100%;
   z-index: 1;
 }
 
-.Header-dropdown ul {
+.GlobalHeader-dropdown ul {
   /* display: none; */
   border: 1px solid #dadada;
   border-radius: 3px;
@@ -156,18 +156,18 @@ export default class extends Vue {
   float: right;
 }
 
-.Header-dropdown.is-login ul {
+.GlobalHeader-dropdown.is-login ul {
   width: 140px;
 }
 
-.Header-dropdown li {
+.GlobalHeader-dropdown li {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.Header-dropdown li [role="button"],
-.Header-dropdown li a {
+.GlobalHeader-dropdown li [role="button"],
+.GlobalHeader-dropdown li a {
   display: block;
   color: #666;
   font-size: 13px;
@@ -176,13 +176,13 @@ export default class extends Vue {
   cursor: pointer;
 }
 
-.Header-dropdown li [role="button"]:hover,
-.Header-dropdown li a:hover {
+.GlobalHeader-dropdown li [role="button"]:hover,
+.GlobalHeader-dropdown li a:hover {
   color: #fff;
   background: #e45541;
 }
 
-.Header-dropdown li svg {
+.GlobalHeader-dropdown li svg {
   margin-right: 5px;
 }
 </style>

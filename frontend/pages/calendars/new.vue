@@ -1,6 +1,6 @@
 <template>
   <div>
-    <advHeader />
+    <GlobalHeader />
 
     <h2>カレンダーを作る</h2>
 
@@ -18,10 +18,10 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import { createCalendar } from "~/lib/GrpcClient";
 import { getToken } from "~/plugins/auth";
-import advHeader from "~/components/header.vue";
+import GlobalHeader from "~/components/GlobalHeader.vue";
 
 @Component({
-  components: { advHeader }
+  components: { GlobalHeader }
 })
 export default class extends Vue {
   title = "";

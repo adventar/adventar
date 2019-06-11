@@ -1,6 +1,6 @@
 <template>
   <div>
-    <advHeader />
+    <GlobalHeader />
     <div v-if="calendar">
       <h2>{{ calendar.title }} Advent Calendar {{ calendar.year }}</h2>
       <p>{{ calendar.description }}</p>
@@ -24,10 +24,10 @@ import { Component, Vue } from "nuxt-property-decorator";
 import { getCalendar, createEntry, deleteEntry } from "~/lib/GrpcClient";
 import { Calendar, Entry } from "~/types/adventar";
 import { getToken } from "~/plugins/auth";
-import advHeader from "~/components/header.vue";
+import GlobalHeader from "~/components/GlobalHeader.vue";
 
 @Component({
-  components: { advHeader }
+  components: { GlobalHeader }
 })
 export default class extends Vue {
   calendar: Calendar;
