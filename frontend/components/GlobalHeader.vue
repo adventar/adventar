@@ -11,7 +11,7 @@
           </span>
           <div class="GlobalHeader-dropdown is-login" v-if="showDropdown" @click.stop>
             <ul>
-              <li>
+              <li v-if="calendarCreatable">
                 <nuxt-link to="/calendars/new">カレンダーを作る</nuxt-link>
               </li>
               <li>
@@ -63,10 +63,12 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import { loginWithFirebase, logoutWithFirebase } from "~/plugins/auth";
+import { getCalendarCreatable } from "~/lib/Configuration";
 
 @Component
 export default class extends Vue {
   showDropdown = false;
+  calendarCreatable = getCalendarCreatable();
 
   mounted() {
     document.addEventListener("click", this.handleClickDocument);
@@ -93,12 +95,11 @@ export default class extends Vue {
 
 <style scoped>
 .GlobalHeader {
-  border-bottom: 1px solid #ccc;
 }
 
 .GlobalHeader-inner {
   max-width: 1000px;
-  padding: 0 12px;
+  padding: 6px 12px;
   margin: 0 auto;
   position: relative;
 }
@@ -106,12 +107,12 @@ export default class extends Vue {
 .GlobalHeader-right {
   position: absolute;
   right: 10px;
-  top: 15px;
+  top: 18px;
 }
 
 .GlobalHeader-logo {
   margin: 0;
-  padding: 10px;
+  padding: 10px 0;
   font-size: 24px;
   font-weight: bold;
 }
