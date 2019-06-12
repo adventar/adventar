@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="handleSubmit">
-    <input type="text" v-model="q" />
+    <input type="text" v-model="query" />
     <button><font-awesome-icon icon="search" /></button>
   </form>
 </template>
@@ -11,11 +11,17 @@ import { Component, Vue, Prop } from "nuxt-property-decorator";
 @Component
 export default class extends Vue {
   @Prop(Number) readonly year!: number;
+  @Prop(String) readonly defaultQuery: string;
 
-  q = "";
+  query: string;
+
+  created() {
+    console.log(this.defaultQuery);
+    this.query = this.defaultQuery || "";
+  }
 
   handleSubmit() {
-    this.$router.push(`/calendars?year=${this.year}&q=${this.q}`);
+    this.$router.push(`/calendars?year=${this.year}&query=${this.query}`);
   }
 }
 </script>
@@ -39,7 +45,7 @@ input[type="text"] {
 button {
   position: absolute;
   right: 12px;
-  top: 3px;
+  top: 5px;
   color: #666;
   background: none;
   border: none;

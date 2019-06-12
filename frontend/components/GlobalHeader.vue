@@ -70,7 +70,7 @@ export default class extends Vue {
   showDropdown = false;
   calendarCreatable = getCalendarCreatable();
 
-  mounted() {
+  created() {
     document.addEventListener("click", this.handleClickDocument);
   }
 

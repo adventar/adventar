@@ -2,30 +2,40 @@
   <div>
     <GlobalHeader />
 
-    <h2>カレンダーを作る</h2>
+    <PageHeader>カレンダーを作る</PageHeader>
 
-    <h3>タイトル</h3>
-    <input v-model="title" type="text" /> Advent Calendar 20xx
+    <main>
+      <section>
+        <SectionHeader>タイトル</SectionHeader>
+        <input v-model="title" type="text" /> Advent Calendar {{ currentYear }}
+      </section>
 
-    <h3>概要</h3>
-    <textarea v-model="description"></textarea>
+      <section>
+        <SectionHeader>概要</SectionHeader>
+        <textarea v-model="description"></textarea>
+      </section>
 
-    <button @click="submit()">作成</button>
+      <button @click="submit()">作成</button>
+    </main>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import { createCalendar } from "~/lib/GrpcClient";
+import { getCurrentYear } from "~/lib/Configuration";
 import { getToken } from "~/plugins/auth";
 import GlobalHeader from "~/components/GlobalHeader.vue";
+import PageHeader from "~/components/PageHeader.vue";
+import SectionHeader from "~/components/SectionHeader.vue";
 
 @Component({
-  components: { GlobalHeader }
+  components: { GlobalHeader, PageHeader, SectionHeader }
 })
 export default class extends Vue {
-  title = "";
-  description = "";
+  title: string = "";
+  description: string = "";
+  currentYear: number = getCurrentYear();
 
   async submit() {
     const token = await getToken();

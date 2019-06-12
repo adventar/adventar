@@ -2,10 +2,10 @@
   <div>
     <GlobalHeader />
 
-    <PageHeader>{{ currentYear }}年のAdvent Calnedar</PageHeader>
+    <PageHeader>{{ year }}年のAdvent Calnedar</PageHeader>
 
     <main>
-      <CalendarSearchForm :year="currentYear" style="margin-bottom: 30px" />
+      <CalendarSearchForm :year="year" :defaultQuery="query" style="margin-bottom: 30px" />
       <CalendarList :calendars="calendars" />
     </main>
   </div>
@@ -14,7 +14,6 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import { listCalendar } from "~/lib/GrpcClient";
-import { getCurrentYear } from "~/lib/Configuration";
 import { Calendar } from "~/types/adventar";
 import GlobalHeader from "~/components/GlobalHeader.vue";
 import PageHeader from "~/components/PageHeader.vue";
@@ -25,13 +24,14 @@ import CalendarList from "~/components/CalendarList.vue";
   components: { GlobalHeader, PageHeader, CalendarSearchForm, CalendarList }
 })
 export default class extends Vue {
-  currentYear = getCurrentYear();
+  year: number;
+  query: string;
   calendars: Calendar[] = [];
 
   async created() {
-    const pageSize = 20;
-    const calendars = await listCalendar({ year: this.currentYear, pageSize });
-    this.calendars = calendars;
+    this.year = Number(this.$route.query.year);
+    this.query = String(this.$route.query.query || "");
+    this.calendars = await listCalendar({ year: this.year, query: this.query });
   }
 }
 </script>

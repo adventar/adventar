@@ -1,6 +1,14 @@
-import { SignInRequest, UpdateUserRequest, GetCalendarRequest, CreateCalendarRequest, ListCalendarsRequest, CreateEntryRequest, DeleteEntryRequest } from "~/lib/grpc/adventar/v1/adventar_pb";
+import {
+  SignInRequest,
+  UpdateUserRequest,
+  GetCalendarRequest,
+  CreateCalendarRequest,
+  ListCalendarsRequest,
+  CreateEntryRequest,
+  DeleteEntryRequest
+} from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
-import { User, Calendar, Entry } from "~/types/adventar"
+import { User, Calendar, Entry } from "~/types/adventar";
 const client = new AdventarClient("http://localhost:8000", null, null);
 
 export function signIn(token: string): Promise<User> {
@@ -11,12 +19,11 @@ export function signIn(token: string): Promise<User> {
     client.signIn(request, {}, (err, res) => {
       if (err) {
         reject(err);
-      }
-      else {
+      } else {
         resolve({
           id: res.getId(),
           name: res.getName(),
-          iconUrl: res.getIconUrl(),
+          iconUrl: res.getIconUrl()
         });
       }
     });
@@ -31,12 +38,11 @@ export function updateUser(name: string, token: string): Promise<User> {
     client.updateUser(request, { authorization: token }, (err, res) => {
       if (err) {
         reject(err);
-      }
-      else {
+      } else {
         resolve({
           id: res.getId(),
           name: res.getName(),
-          iconUrl: res.getIconUrl(),
+          iconUrl: res.getIconUrl()
         });
       }
     });
@@ -46,7 +52,7 @@ type createCalendarParams = {
   title: string;
   description: string;
   token: string;
-}
+};
 export function createCalendar({ title, description, token }: createCalendarParams): Promise<number> {
   const request = new CreateCalendarRequest();
   request.setTitle(title);
@@ -56,8 +62,7 @@ export function createCalendar({ title, description, token }: createCalendarPara
     client.createCalendar(request, { authorization: token }, (err, res) => {
       if (err) {
         reject(err);
-      }
-      else {
+      } else {
         resolve(res.getId());
       }
     });
@@ -72,8 +77,7 @@ export function getCalendar(id: number): Promise<Calendar> {
     client.getCalendar(request, {}, (err, res) => {
       if (err) {
         reject(err);
-      }
-      else {
+      } else {
         const calendar = res.getCalendar();
         resolve({
           id: calendar.getId(),
@@ -87,9 +91,9 @@ export function getCalendar(id: number): Promise<Calendar> {
               owner: {
                 id: entry.getOwner().getId(),
                 name: entry.getOwner().getName(),
-                iconUrl: entry.getOwner().getIconUrl(),
+                iconUrl: entry.getOwner().getIconUrl()
               },
-              day: entry.getDay(),
+              day: entry.getDay()
             };
           })
         });
@@ -98,27 +102,32 @@ export function getCalendar(id: number): Promise<Calendar> {
   });
 }
 
-export function listCalendar(): Promise<Calendar[]> {
+interface listCalendarsParams {
+  readonly year: number;
+  readonly pageSize?: number;
+  readonly query?: string;
+}
+export function listCalendar({ year, pageSize, query }: listCalendarsParams): Promise<Calendar[]> {
   const request = new ListCalendarsRequest();
-  request.setYear(2019);
-  request.setPageSize(20);
+  request.setYear(year);
+  request.setPageSize(pageSize || 0);
+  request.setQuery(query || "");
 
   return new Promise((resolve, reject) => {
     client.listCalendars(request, {}, (err, res) => {
       if (err) {
         reject(err);
-      }
-      else {
+      } else {
         const calendars = res.getCalendarsList().map(calendar => {
           return {
             id: calendar.getId(),
             title: calendar.getTitle(),
             description: calendar.getDescription(),
             year: calendar.getYear(),
-            entryCount: calendar.getEntryCount(),
-          }
-        })
-        resolve(calendars)
+            entryCount: calendar.getEntryCount()
+          };
+        });
+        resolve(calendars);
       }
     });
   });
@@ -128,7 +137,7 @@ type createEntryParams = {
   calendarId: number;
   day: number;
   token: string;
-}
+};
 export function createEntry({ calendarId, day, token }: createEntryParams): Promise<Entry> {
   const request = new CreateEntryRequest();
   request.setCalendarId(calendarId);
@@ -138,8 +147,7 @@ export function createEntry({ calendarId, day, token }: createEntryParams): Prom
     client.createEntry(request, { authorization: token }, (err, res) => {
       if (err) {
         reject(err);
-      }
-      else {
+      } else {
         resolve({ id: res.getId() });
       }
     });
@@ -149,17 +157,16 @@ export function createEntry({ calendarId, day, token }: createEntryParams): Prom
 type deleteEntryParams = {
   entryId: number;
   token: string;
-}
+};
 export function deleteEntry({ entryId, token }: deleteEntryParams): Promise<void> {
   const request = new DeleteEntryRequest();
   request.setEntryId(entryId);
 
   return new Promise((resolve, reject) => {
-    client.deleteEntry(request, { authorization: token }, (err) => {
+    client.deleteEntry(request, { authorization: token }, err => {
       if (err) {
         reject(err);
-      }
-      else {
+      } else {
         resolve();
       }
     });
