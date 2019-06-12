@@ -652,6 +652,63 @@ proto.adventar.v1.AdventarPromiseClient.prototype.signIn =
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adventar.v1.GetUserRequest,
+ *   !proto.adventar.v1.User>}
+ */
+const methodInfo_Adventar_GetUser = new grpc.web.AbstractClientBase.MethodInfo(
+  adventar_v1_resources_pb.User,
+  /** @param {!proto.adventar.v1.GetUserRequest} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  adventar_v1_resources_pb.User.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adventar.v1.GetUserRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adventar.v1.User)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adventar.v1.User>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adventar.v1.AdventarClient.prototype.getUser =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adventar.v1.Adventar/GetUser',
+      request,
+      metadata || {},
+      methodInfo_Adventar_GetUser,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adventar.v1.GetUserRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adventar.v1.User>}
+ *     The XHR Node Readable Stream
+ */
+proto.adventar.v1.AdventarPromiseClient.prototype.getUser =
+    function(request, metadata) {
+  var _this = this;
+  return new Promise(function (resolve, reject) {
+    _this.delegateClient_.getUser(
+      request, metadata, function (error, response) {
+        error ? reject(error) : resolve(response);
+      });
+  });
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
  *   !proto.adventar.v1.UpdateUserRequest,
  *   !proto.adventar.v1.User>}
  */

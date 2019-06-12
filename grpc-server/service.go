@@ -501,6 +501,23 @@ func (s *Service) SignIn(ctx context.Context, in *pb.SignInRequest) (*pb.User, e
 	return u, nil
 }
 
+// GetUser returns a user info.
+func (s *Service) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.User, error) {
+	var user user
+	row := s.db.QueryRow("select id, name, icon_url from users where id = ?", in.GetUserId())
+	err := row.Scan(&user.ID, &user.Name, &user.IconURL)
+
+	if err == sql.ErrNoRows {
+		return nil, status.Error(codes.NotFound, "User not found")
+	}
+
+	if err != nil {
+		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
+	}
+
+	return &pb.User{Id: user.ID, Name: user.Name, IconUrl: user.IconURL}, nil
+}
+
 // UpdateUser updates user info.
 func (s *Service) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest) (*pb.User, error) {
 	currentUser, err := s.getCurrentUser(ctx)

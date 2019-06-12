@@ -8,6 +8,7 @@ import {
   Entry,
   GetCalendarRequest,
   GetCalendarResponse,
+  GetUserRequest,
   ListCalendarsRequest,
   ListCalendarsResponse,
   ListEntriesRequest,
@@ -94,6 +95,13 @@ export class AdventarClient {
                response: User) => void
   ): grpcWeb.ClientReadableStream<User>;
 
+  getUser(
+    request: GetUserRequest,
+    metadata: grpcWeb.Metadata | undefined,
+    callback: (err: grpcWeb.Error,
+               response: User) => void
+  ): grpcWeb.ClientReadableStream<User>;
+
   updateUser(
     request: UpdateUserRequest,
     metadata: grpcWeb.Metadata | undefined,
@@ -155,6 +163,11 @@ export class AdventarPromiseClient {
 
   signIn(
     request: SignInRequest,
+    metadata?: grpcWeb.Metadata
+  ): Promise<User>;
+
+  getUser(
+    request: GetUserRequest,
     metadata?: grpcWeb.Metadata
   ): Promise<User>;
 

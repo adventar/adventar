@@ -5,7 +5,8 @@ import {
   CreateCalendarRequest,
   ListCalendarsRequest,
   CreateEntryRequest,
-  DeleteEntryRequest
+  DeleteEntryRequest,
+  GetUserRequest
 } from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
 import { User, Calendar, Entry } from "~/types/adventar";
@@ -168,6 +169,25 @@ export function deleteEntry({ entryId, token }: deleteEntryParams): Promise<void
         reject(err);
       } else {
         resolve();
+      }
+    });
+  });
+}
+
+export function getUser(id: number): Promise<User> {
+  const request = new GetUserRequest();
+  request.setUserId(id);
+
+  return new Promise((resolve, reject) => {
+    client.getUser(request, {}, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({
+          id: res.getId(),
+          name: res.getName(),
+          iconUrl: res.getIconUrl()
+        });
       }
     });
   });

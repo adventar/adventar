@@ -163,6 +163,21 @@ export namespace GetCalendarResponse {
   }
 }
 
+export class GetUserRequest {
+  constructor ();
+  getUserId(): number;
+  setUserId(a: number): void;
+  toObject(): GetUserRequest.AsObject;
+  serializeBinary(): Uint8Array;
+  static deserializeBinary: (bytes: {}) => GetUserRequest;
+}
+
+export namespace GetUserRequest {
+  export type AsObject = {
+    userId: number;
+  }
+}
+
 export class ListCalendarsRequest {
   constructor ();
   getYear(): number;
