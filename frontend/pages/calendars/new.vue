@@ -5,17 +5,20 @@
     <PageHeader>カレンダーを作る</PageHeader>
 
     <main>
-      <section>
-        <SectionHeader>タイトル</SectionHeader>
-        <input v-model="title" type="text" /> Advent Calendar {{ currentYear }}
-      </section>
+      <form @submit.prevent="submit()">
+        <section>
+          <SectionHeader>タイトル</SectionHeader>
+          <input v-model="title" type="text" /> Advent Calendar {{ currentYear }}
+        </section>
 
-      <section>
-        <SectionHeader>概要</SectionHeader>
-        <textarea v-model="description"></textarea>
-      </section>
+        <section>
+          <SectionHeader>概要</SectionHeader>
+          <textarea v-model="description"></textarea>
+          <p class="note">Markdown記法が使えます。</p>
+        </section>
 
-      <button @click="submit()">作成</button>
+        <button type="submit">作成</button>
+      </form>
     </main>
   </div>
 </template>
@@ -39,9 +42,6 @@ export default class extends Vue {
 
   async submit() {
     const token = await getToken();
-    if (!token) {
-      throw new Error("Token is null");
-    }
     const calendarId = await createCalendar({
       title: this.title,
       description: this.description,
@@ -51,3 +51,36 @@ export default class extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.note {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #666;
+}
+
+input[type="text"] {
+  font-size: 16px;
+  width: 300px;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+textarea {
+  width: 500px;
+  height: 200px;
+  font-size: 14px;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+button[type="submit"] {
+  font-size: 16px;
+  color: #fff;
+  border: 2px solid #28a745;
+  background-color: #28a745;
+  padding: 8px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>

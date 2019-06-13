@@ -4,6 +4,7 @@
     <div v-if="calendar">
       <h2>{{ calendar.title }} Advent Calendar {{ calendar.year }}</h2>
       <p>{{ calendar.description }}</p>
+      <nuxt-link :to="`/calendars/${calendar.id}/edit`">編集</nuxt-link>
       <hr />
       <ul>
         <li v-for="item in listDays()" :key="item.day">
@@ -41,18 +42,12 @@ export default class extends Vue {
   async onClickCreateEntry(day): Promise<void> {
     const calendarId = this.calendar.id;
     const token = await getToken();
-    if (!token) {
-      throw new Error("Token is null");
-    }
     await createEntry({ calendarId, day, token });
     this.calendar = await getCalendar(this.calendar.id);
   }
 
   async onClickDeleteEntry(entryId): Promise<void> {
     const token = await getToken();
-    if (!token) {
-      throw new Error("Token is null");
-    }
     await deleteEntry({ entryId, token });
     this.calendar = await getCalendar(this.calendar.id);
   }

@@ -35,12 +35,12 @@ export function logoutWithFirebase(): Promise<void> {
   return firebase.auth().signOut();
 }
 
-export function getToken(): Promise<string | null> {
+export function getToken(): Promise<string> {
   const user = firebase.auth().currentUser;
   if (user) {
     return user.getIdToken();
   } else {
-    return Promise.resolve(null);
+    return Promise.reject(new Error("currentUser is null"));
   }
 }
 
@@ -67,7 +67,7 @@ function handleAuthStateChanged(store): Promise<void> {
         })
         .catch(err => {
           store.commit("setUser", null);
-          console.log(err);
+          console.error(err);
           reject(err);
         });
     });

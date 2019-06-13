@@ -16,7 +16,6 @@ export default class extends Vue {
   query: string;
 
   created() {
-    console.log(this.defaultQuery);
     this.query = this.defaultQuery || "";
   }
 

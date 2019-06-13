@@ -47,9 +47,6 @@ export default class extends Vue {
 
   async onChangeName(e) {
     const token = await getToken();
-    if (token === null) {
-      throw new Error("Token is null");
-    }
     const user = await updateUser(e.target.value, token);
     this.$store.commit("setUser", user);
     this.editmode = false;

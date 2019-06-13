@@ -3,6 +3,8 @@ import {
   UpdateUserRequest,
   GetCalendarRequest,
   CreateCalendarRequest,
+  UpdateCalendarRequest,
+  DeleteCalendarRequest,
   ListCalendarsRequest,
   CreateEntryRequest,
   DeleteEntryRequest,
@@ -49,6 +51,7 @@ export function updateUser(name: string, token: string): Promise<User> {
     });
   });
 }
+
 type createCalendarParams = {
   title: string;
   description: string;
@@ -65,6 +68,48 @@ export function createCalendar({ title, description, token }: createCalendarPara
         reject(err);
       } else {
         resolve(res.getId());
+      }
+    });
+  });
+}
+
+type updateCalendarParams = {
+  id: number;
+  title: string;
+  description: string;
+  token: string;
+};
+export function updateCalendar({ id, title, description, token }: updateCalendarParams): Promise<void> {
+  const request = new UpdateCalendarRequest();
+  request.setCalendarId(id);
+  request.setTitle(title);
+  request.setDescription(description);
+
+  return new Promise((resolve, reject) => {
+    client.updateCalendar(request, { authorization: token }, err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+type deleteCalendarParams = {
+  id: number;
+  token: string;
+};
+export function deleteCalendar({ id, token }: deleteCalendarParams): Promise<void> {
+  const request = new DeleteCalendarRequest();
+  request.setCalendarId(id);
+
+  return new Promise((resolve, reject) => {
+    client.deleteCalendar(request, { authorization: token }, err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
       }
     });
   });
