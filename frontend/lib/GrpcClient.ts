@@ -7,11 +7,12 @@ import {
   DeleteCalendarRequest,
   ListCalendarsRequest,
   CreateEntryRequest,
+  UpdateEntryRequest,
   DeleteEntryRequest,
   GetUserRequest
 } from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
-import { User, Calendar, Entry } from "~/types/adventar";
+import { User, Calendar } from "~/types/adventar";
 const client = new AdventarClient("http://localhost:8000", null, null);
 
 export function signIn(token: string): Promise<User> {
@@ -130,6 +131,11 @@ export function getCalendar(id: number): Promise<Calendar> {
           title: calendar.getTitle(),
           description: calendar.getDescription(),
           year: calendar.getYear(),
+          owner: {
+            id: calendar.getOwner().getId(),
+            name: calendar.getOwner().getName(),
+            iconUrl: calendar.getOwner().getIconUrl()
+          },
           entryCount: calendar.getEntryCount(),
           entries: res.getEntriesList().map(entry => {
             return {
@@ -139,7 +145,11 @@ export function getCalendar(id: number): Promise<Calendar> {
                 name: entry.getOwner().getName(),
                 iconUrl: entry.getOwner().getIconUrl()
               },
-              day: entry.getDay()
+              day: entry.getDay(),
+              comment: entry.getComment(),
+              url: entry.getUrl(),
+              title: entry.getTitle(),
+              imageUrl: entry.getImageUrl()
             };
           })
         });
@@ -170,6 +180,11 @@ export function listCalendar({ year, pageSize, query }: listCalendarsParams): Pr
             title: calendar.getTitle(),
             description: calendar.getDescription(),
             year: calendar.getYear(),
+            owner: {
+              id: calendar.getOwner().getId(),
+              name: calendar.getOwner().getName(),
+              iconUrl: calendar.getOwner().getIconUrl()
+            },
             entryCount: calendar.getEntryCount()
           };
         });
@@ -184,7 +199,7 @@ type createEntryParams = {
   day: number;
   token: string;
 };
-export function createEntry({ calendarId, day, token }: createEntryParams): Promise<Entry> {
+export function createEntry({ calendarId, day, token }: createEntryParams): Promise<number> {
   const request = new CreateEntryRequest();
   request.setCalendarId(calendarId);
   request.setDay(day);
@@ -194,7 +209,30 @@ export function createEntry({ calendarId, day, token }: createEntryParams): Prom
       if (err) {
         reject(err);
       } else {
-        resolve({ id: res.getId() });
+        resolve(res.getId());
+      }
+    });
+  });
+}
+
+type updateEntryParams = {
+  entryId: number;
+  comment: string;
+  url: string;
+  token: string;
+};
+export function updateEntry({ entryId, comment, url, token }: updateEntryParams): Promise<number> {
+  const request = new UpdateEntryRequest();
+  request.setEntryId(entryId);
+  request.setComment(comment);
+  request.setUrl(url);
+
+  return new Promise((resolve, reject) => {
+    client.updateEntry(request, { authorization: token }, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res.getId());
       }
     });
   });

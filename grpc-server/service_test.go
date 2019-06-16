@@ -153,7 +153,7 @@ func TestGetCalendar(t *testing.T) {
 
 	res, err := service.GetCalendar(ctx, in)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("%+v", err)
 	}
 
 	if res.Calendar.Id != in.CalendarId {

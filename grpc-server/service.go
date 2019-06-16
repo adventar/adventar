@@ -154,8 +154,30 @@ func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest
 // GetCalendar returns a calendar.
 func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*pb.GetCalendarResponse, error) {
 	var calendar calendar
-	row := s.db.QueryRow("select id, user_id, title, description, year from calendars where id = ?", in.GetCalendarId())
-	err := row.Scan(&calendar.ID, &calendar.UserID, &calendar.Title, &calendar.Description, &calendar.Year)
+	var user user
+	selectSQL := `
+		select
+			c.id,
+			c.title,
+			c.description,
+			c.year,
+			u.id,
+			u.name,
+			u.icon_url
+		from calendars as c
+		inner join users as u on u.id = c.user_id
+		where c.id = ?
+	`
+	row := s.db.QueryRow(selectSQL, in.GetCalendarId())
+	err := row.Scan(
+		&calendar.ID,
+		&calendar.Title,
+		&calendar.Description,
+		&calendar.Year,
+		&user.ID,
+		&user.Name,
+		&user.IconURL,
+	)
 
 	if err == sql.ErrNoRows {
 		return nil, status.Error(codes.NotFound, "Calendar not found")
@@ -170,11 +192,13 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 		return nil, xerrors.Errorf("Failed to find entries: %w", err)
 	}
 
+	pbUser := &pb.User{Id: user.ID, Name: user.Name, IconUrl: user.IconURL}
 	pbCalendar := &pb.Calendar{
 		Id:          calendar.ID,
 		Title:       calendar.Title,
 		Description: calendar.Description,
 		Year:        calendar.Year,
+		Owner:       pbUser,
 		EntryCount:  int32(len(entries)),
 	}
 	return &pb.GetCalendarResponse{Calendar: pbCalendar, Entries: entries}, nil

@@ -7,6 +7,7 @@ export interface User {
 export interface Calendar {
   id: number;
   title: string;
+  owner: User;
   description: string;
   year: number;
   entryCount: number;
@@ -15,6 +16,10 @@ export interface Calendar {
 
 export interface Entry {
   id: number;
-  owner?: User;
-  day?: number;
+  owner: User;
+  day: number;
+  comment: string;
+  url: string;
+  title: string;
+  imageUrl: string;
 }
