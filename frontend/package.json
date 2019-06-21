@@ -11,8 +11,7 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.ts,.vue .",
     "fix": "eslint --ext .js,.ts,.vue . --fix",
-    "test": "jest",
-    "proto": "rm -rf lib/grpc && mkdir lib/grpc && protoc -I ../protobuf -I $GOPATH/src/github.com/googleapis/googleapis --js_out=import_style=commonjs:lib/grpc --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:lib/grpc ../protobuf/adventar/v1/*.proto $GOPATH/src/github.com/googleapis/googleapis/google/api/{annotations,http}.proto"
+    "test": "jest"
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^5.9.0",

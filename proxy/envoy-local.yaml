@@ -1,0 +1,63 @@
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address: { address: 0.0.0.0, port_value: 9901 }
+
+static_resources:
+  listeners:
+    - name: listener1
+      address:
+        socket_address: { address: 0.0.0.0, port_value: 8000 }
+      filter_chains:
+        - filters:
+            - name: envoy.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+                stat_prefix: grpc_json
+                codec_type: AUTO
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                    - name: local_service
+                      domains: ["*"]
+                      routes:
+                        - match: { prefix: "/" }
+                          route: { cluster: grpc, timeout: { seconds: 60 } }
+                      cors:
+                        allow_origin:
+                          - "*"
+                        allow_methods: GET, PUT, DELETE, POST, OPTIONS
+                        allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,authorization
+                        max_age: "1728000"
+                        expose_headers: custom-header-1,grpc-status,grpc-message
+                        enabled: true
+                http_filters:
+                  - name: envoy.grpc_web
+                  - name: envoy.cors
+                  - name: envoy.grpc_json_transcoder
+                    config:
+                      proto_descriptor: "/etc/envoy/proto.pb"
+                      services: ["adventar.v1.Adventar"]
+                      print_options:
+                        add_whitespace: true
+                        always_print_primitive_fields: true
+                        always_print_enums_as_ints: false
+                        preserve_proto_field_names: false
+                  - name: envoy.router
+
+  clusters:
+    - name: grpc
+      connect_timeout: 1.25s
+      type: logical_dns
+      lb_policy: round_robin
+      dns_lookup_family: V4_ONLY
+      http2_protocol_options: {}
+      load_assignment:
+        cluster_name: grpc
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: host.docker.internal
+                      port_value: 8080
