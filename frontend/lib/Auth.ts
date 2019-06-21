@@ -20,6 +20,14 @@ export function saveUser(user: User | null): void {
   }
 }
 
+export function initFirebase(): void {
+  firebase.initializeApp({
+    apiKey: process.env.firebaseApiKey,
+    authDomain: process.env.firebaseAuthDomain,
+    projectId: process.env.firebaseProjectId
+  });
+}
+
 export function loginWithFirebase(provider: string): void {
   sessionStorage.setItem(SIGNIN_STORAGE_KEY, SIGNIN_STORAGE_VALUE);
   switch (provider) {
@@ -99,5 +107,3 @@ export function handleAuthStateChanged(store): Promise<void> {
     });
   });
 }
-
-export { firebase };

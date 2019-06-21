@@ -3,6 +3,13 @@ import NuxtConfiguration from "@nuxt/config";
 const config: NuxtConfiguration = {
   mode: "universal",
 
+  env: {
+    apiBaseUrl: process.env.API_BASE_URL || "http://localhost:8000",
+    firebaseApiKey: process.env.FIREBASE_API_KEY || "AIzaSyCDGROd2Z-2rWjHl-cDepyGnuQ975cpqQo",
+    firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN || "api-project-837626752936.firebaseapp.com",
+    firebaseProjectId: process.env.FIREBASE_PROJECT_ID || "api-project-837626752936"
+  },
+
   /*
    ** Headers of the page
    */
