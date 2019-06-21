@@ -1,7 +1,7 @@
 import NuxtConfiguration from "@nuxt/config";
 
 const config: NuxtConfiguration = {
-  mode: "spa",
+  mode: "universal",
 
   /*
    ** Headers of the page
@@ -29,7 +29,7 @@ const config: NuxtConfiguration = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ["~/plugins/auth"],
+  plugins: [{ src: "~/plugins/auth", ssr: false }],
 
   /*
    ** Nuxt.js modules

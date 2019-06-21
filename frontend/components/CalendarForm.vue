@@ -27,7 +27,7 @@ import { Component, Vue, Prop } from "nuxt-property-decorator";
 import { Calendar } from "~/types/adventar";
 import { createCalendar, updateCalendar, deleteCalendar } from "~/lib/GrpcClient";
 import { getCurrentYear } from "~/lib/Configuration";
-import { getToken } from "~/plugins/auth";
+import { getToken } from "~/lib/Auth";
 import SectionHeader from "~/components/SectionHeader.vue";
 
 @Component({

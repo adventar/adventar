@@ -2,67 +2,69 @@
   <header class="GlobalHeader">
     <div class="GlobalHeader-inner">
       <h1 class="GlobalHeader-logo"><nuxt-link to="/">Adventar</nuxt-link></h1>
-      <div class="GlobalHeader-right">
-        <div v-if="$store.state.user">
-          <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
-            <img :src="$store.state.user.iconUrl" class="GlobalHeader-userIcon" width="25" height="25" />
-            {{ $store.state.user.name }}
-            <font-awesome-icon icon="sort-down" />
-          </span>
-          <div class="GlobalHeader-dropdown is-login" v-if="showDropdown" @click.stop>
-            <ul>
-              <li v-if="calendarCreatable">
-                <nuxt-link to="/calendars/new">カレンダーを作る</nuxt-link>
-              </li>
-              <li>
-                <nuxt-link :to="`/users/${$store.state.user.id}`">マイページ</nuxt-link>
-              </li>
-              <li>
-                <nuxt-link to="/setting">ユーザー設定</nuxt-link>
-              </li>
-              <li>
-                <span role="button" @click="logout()">ログアウト</span>
-              </li>
-            </ul>
+      <no-ssr>
+        <div class="GlobalHeader-right">
+          <div v-if="$store.state.user">
+            <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
+              <img :src="$store.state.user.iconUrl" class="GlobalHeader-userIcon" width="25" height="25" />
+              {{ $store.state.user.name }}
+              <font-awesome-icon icon="sort-down" />
+            </span>
+            <div class="GlobalHeader-dropdown is-login" v-if="showDropdown" @click.stop>
+              <ul>
+                <li v-if="calendarCreatable">
+                  <nuxt-link to="/calendars/new">カレンダーを作る</nuxt-link>
+                </li>
+                <li>
+                  <nuxt-link :to="`/users/${$store.state.user.id}`">マイページ</nuxt-link>
+                </li>
+                <li>
+                  <nuxt-link to="/setting">ユーザー設定</nuxt-link>
+                </li>
+                <li>
+                  <span role="button" @click="logout()">ログアウト</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div v-else>
+            <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
+              Log In <font-awesome-icon icon="sign-in-alt" />
+            </span>
+            <div class="GlobalHeader-dropdown" v-if="showDropdown" @click.stop>
+              <ul>
+                <li>
+                  <span role="button" @click="login('google')">
+                    <font-awesome-icon :icon="['fab', 'google']" /> Google でログイン
+                  </span>
+                </li>
+                <li>
+                  <span role="button" @click="login('github')">
+                    <font-awesome-icon :icon="['fab', 'github']" /> GitHub でログイン
+                  </span>
+                </li>
+                <li>
+                  <span role="button" @click="login('twitter')">
+                    <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter でログイン
+                  </span>
+                </li>
+                <li>
+                  <span role="button" @click="login('facebook')">
+                    <font-awesome-icon :icon="['fab', 'facebook']" /> Facebook でログイン
+                  </span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-        <div v-else>
-          <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
-            Log In <font-awesome-icon icon="sign-in-alt" />
-          </span>
-          <div class="GlobalHeader-dropdown" v-if="showDropdown" @click.stop>
-            <ul>
-              <li>
-                <span role="button" @click="login('google')">
-                  <font-awesome-icon :icon="['fab', 'google']" /> Google でログイン
-                </span>
-              </li>
-              <li>
-                <span role="button" @click="login('github')">
-                  <font-awesome-icon :icon="['fab', 'github']" /> GitHub でログイン
-                </span>
-              </li>
-              <li>
-                <span role="button" @click="login('twitter')">
-                  <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter でログイン
-                </span>
-              </li>
-              <li>
-                <span role="button" @click="login('facebook')">
-                  <font-awesome-icon :icon="['fab', 'facebook']" /> Facebook でログイン
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      </no-ssr>
     </div>
   </header>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { loginWithFirebase, logoutWithFirebase } from "~/plugins/auth";
+import { loginWithFirebase, logoutWithFirebase } from "~/lib/Auth";
 import { getCalendarCreatable } from "~/lib/Configuration";
 
 @Component
@@ -70,7 +72,15 @@ export default class extends Vue {
   showDropdown = false;
   calendarCreatable = getCalendarCreatable();
 
-  created() {
+  // created() {
+  //   if (process.server) return;
+  //   // ????
+  //   // this.$store.commit("setUser", JSON.parse(localStorage.getItem("adventar.user") || ""));
+  //   console.log("crewate");
+  //   console.log(this.$store.state.user);
+  // }
+
+  mounted() {
     document.addEventListener("click", this.handleClickDocument);
   }
 

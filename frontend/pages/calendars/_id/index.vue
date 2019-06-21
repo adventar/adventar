@@ -123,10 +123,42 @@
 import dayjs from "dayjs";
 import { Component, Vue } from "nuxt-property-decorator";
 import { getCalendar, createEntry, updateEntry, deleteEntry } from "~/lib/GrpcClient";
+import * as RestClient from "~/lib/RestClient";
 import { calendarColor } from "~/lib/utils/Colors";
 import { Calendar, Entry } from "~/types/adventar";
-import { getToken } from "~/plugins/auth";
+import { getToken } from "~/lib/Auth";
 import GlobalHeader from "~/components/GlobalHeader.vue";
+
+function getRows(calendar: Calendar): any[] {
+  const year = calendar.year;
+  const endDay = dayjs(new Date(year, 11, 25));
+  let currentDay = dayjs(new Date(year, 11, 1)).startOf("week");
+
+  const entryMapByDay: { [key: number]: Entry } = {};
+  if (calendar !== null && calendar.entries !== undefined) {
+    calendar.entries.forEach(entry => {
+      if (entry.day) {
+        entryMapByDay[entry.day] = entry;
+      }
+    });
+  }
+
+  const rows: any[] = [];
+  while (currentDay <= endDay) {
+    const cells: any[] = [];
+    for (let i = 0; i < 7; i++) {
+      const day = currentDay.date();
+      const entry = entryMapByDay[day] || null;
+      const entryable = currentDay.month() === 11 && day <= 25;
+      const cell = { day, entry, entryable };
+      cells.push(cell);
+      currentDay = currentDay.add(1, "day");
+    }
+    rows.push(cells);
+  }
+
+  return rows;
+}
 
 @Component({
   components: { GlobalHeader }
@@ -136,10 +168,18 @@ export default class extends Vue {
   displayedPopupCellDay: number | null;
   rows: any[];
 
-  async created() {
-    document.addEventListener("click", this.handleClickDocument);
+  async asyncData({ params }) {
+    if (process.server) {
+      const calendar = await RestClient.getCalendar(params.id);
+      const rows = getRows(calendar);
+      return { calendar, rows };
+    }
+  }
+
+  async mounted() {
     this.calendar = await getCalendar(Number(this.$route.params.id));
-    this.rows = this.getRows(this.calendar);
+    this.rows = getRows(this.calendar);
+    document.addEventListener("click", this.handleClickDocument);
   }
 
   destroyed() {
@@ -156,40 +196,9 @@ export default class extends Vue {
     };
   }
 
-  getRows(calendar: Calendar): any[] {
-    const year = calendar.year;
-    const endDay = dayjs(new Date(year, 11, 25));
-    let currentDay = dayjs(new Date(year, 11, 1)).startOf("week");
-
-    const entryMapByDay: { [key: number]: Entry } = {};
-    if (calendar !== null && calendar.entries !== undefined) {
-      calendar.entries.forEach(entry => {
-        if (entry.day) {
-          entryMapByDay[entry.day] = entry;
-        }
-      });
-    }
-
-    const rows: any[] = [];
-    while (currentDay <= endDay) {
-      const cells: any[] = [];
-      for (let i = 0; i < 7; i++) {
-        const day = currentDay.date();
-        const entry = entryMapByDay[day] || null;
-        const entryable = currentDay.month() === 11 && day <= 25;
-        const cell = { day, entry, entryable };
-        cells.push(cell);
-        currentDay = currentDay.add(1, "day");
-      }
-      rows.push(cells);
-    }
-
-    return rows;
-  }
-
   async refetchCalendar() {
     this.calendar = await getCalendar(this.calendar!.id);
-    this.rows = this.getRows(this.calendar);
+    this.rows = getRows(this.calendar);
   }
 
   async handleClickCreateEntry(day): Promise<void> {
@@ -250,9 +259,8 @@ export default class extends Vue {
     return entry.owner.id === this.$store.state.user.id;
   }
 
-  isFutureEntry(entry): boolean {
+  isFutureEntry(_): boolean {
     // TODO
-    console.log(entry);
     return false;
   }
 

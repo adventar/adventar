@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="user">
     <GlobalHeader />
 
     <PageHeader>
@@ -28,11 +28,12 @@ import CalendarList from "~/components/CalendarList.vue";
   components: { GlobalHeader, PageHeader, SectionHeader, CalendarList }
 })
 export default class extends Vue {
-  user: User;
-  async asyncData({ params }) {
-    const userId = params.id;
-    const user = await getUser(userId);
-    return { user };
+  user: User | null = null;
+
+  async mounted() {
+    const userId = this.$route.params.id;
+    const user = await getUser(Number(userId));
+    this.user = user;
   }
 }
 </script>

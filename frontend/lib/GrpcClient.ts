@@ -13,7 +13,8 @@ import {
 } from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
 import { User, Calendar } from "~/types/adventar";
-const client = new AdventarClient("http://localhost:8000", null, null);
+import { API_ENDPOINT } from "~/lib/Configuration";
+const client = new AdventarClient(API_ENDPOINT, null, null);
 
 export function signIn(token: string): Promise<User> {
   const request = new SignInRequest();

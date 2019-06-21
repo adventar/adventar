@@ -26,7 +26,7 @@ import CalendarForm from "~/components/CalendarForm.vue";
 export default class extends Vue {
   calendar: Calendar | null = null;
 
-  async created() {
+  async mounted() {
     // TODO: 404 if not found
     this.calendar = await getCalendar(Number(this.$route.params.id));
   }

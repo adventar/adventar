@@ -28,7 +28,7 @@ export default class extends Vue {
   currentYear = getCurrentYear();
   calendars: Calendar[] = [];
 
-  async created() {
+  async mounted() {
     const pageSize = 20;
     const calendars = await listCalendar({ year: this.currentYear, pageSize });
     this.calendars = calendars;

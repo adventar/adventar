@@ -13,5 +13,6 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	golang.org/x/xerrors v0.0.0-20190513163551-3ee3066db522
 	google.golang.org/api v0.5.0
+	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
 	google.golang.org/grpc v1.19.0
 )
