@@ -19,6 +19,5 @@ const colors = [
 ];
 
 export function calendarColor(calendarId: number): string {
-  const index = Math.floor(colors.length / calendarId);
-  return colors[index];
+  return colors[calendarId % colors.length];
 }
