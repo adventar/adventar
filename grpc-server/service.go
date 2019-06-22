@@ -220,7 +220,8 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), time.Now().Year())
+	// Todo: Set year with env var
+	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), 2018)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to insert into calendar: %w", err)
 	}
