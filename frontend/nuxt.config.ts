@@ -65,7 +65,7 @@ const config: NuxtConfiguration = {
    */
   build: {
     babel: {
-      ignore: [/\/lib\/grpc\//]
+      ignore: ["./lib/grpc"]
     },
     /*
      ** You can extend webpack config here
