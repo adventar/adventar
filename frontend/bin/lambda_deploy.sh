@@ -1,7 +1,7 @@
 #!/bin/bash
 
 yarn install
-API_BASE_URL=https://grpc-dev.adventar.org yarn run build
+BUILD_MODE=universal API_BASE_URL=https://grpc-dev.adventar.org yarn run build
 tsc --outDir .nuxt nuxt.config.ts
 rm -rf handler.zip
 zip handler.zip -rq lambda.js .nuxt node_modules

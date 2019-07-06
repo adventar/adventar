@@ -1,7 +1,11 @@
 import NuxtConfiguration from "@nuxt/config";
 
 const config: NuxtConfiguration = {
-  mode: process.env.BUILD_MODE === "spa" ? "spa" : "universal",
+  mode: process.env.BUILD_MODE === "universal" ? "universal" : "spa",
+
+  server: {
+    port: 3333
+  },
 
   env: {
     apiBaseUrl: process.env.API_BASE_URL || "http://localhost:8000",
