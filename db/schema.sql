@@ -1,8 +1,8 @@
 CREATE TABLE `users` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `auth_uid` varchar(255) NOT NULL,
-  `auth_provider` varchar(255) NOT NULL,
+  `auth_provider` varchar(20) NOT NULL,
   `icon_url` text NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp,
   `updated_at` datetime NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
@@ -11,11 +11,11 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `calendars` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) NOT NULL,
-  `title` text NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int unsigned NOT NULL,
+  `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
-  `year` int(11) NOT NULL,
+  `year` smallint unsigned NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp,
   `updated_at` datetime NOT NULL DEFAULT current_timestamp ON UPDATE current_timestamp,
   PRIMARY KEY (`id`),
@@ -23,9 +23,9 @@ CREATE TABLE `calendars` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `entries` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) NOT NULL,
-  `calendar_id` bigint(20) NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int unsigned NOT NULL,
+  `calendar_id` int unsigned NOT NULL,
   `day` tinyint unsigned NOT NULL,
   `comment` text NOT NULL,
   `url` text NOT NULL,
