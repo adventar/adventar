@@ -8,7 +8,7 @@
           <h2>{{ calendar.title }} Advent Calendar {{ calendar.year }}</h2>
           <div>{{ calendar.entries.length }}/25人</div>
           <div>
-            作成者: <img :src="calendar.owner.iconUrl" class="userIcon" width="22" height="22" />
+            作成者: <UserIcon :user="calendar.owner" size="22" />
             {{ calendar.owner.name }}
           </div>
           <div>{{ toMarkdown(calendar.description) }}</div>
@@ -66,7 +66,7 @@
                   <span class="day">{{ cell.day }}</span>
                   <div v-if="cell.entry">
                     <div class="calendarTable-entryUser">
-                      <img :src="cell.entry.owner.iconUrl" class="userIcon" />
+                      <UserIcon :user="cell.entry.owner" size="50" />
                       <div>{{ cell.entry.owner.name }}</div>
                     </div>
                     <span
@@ -98,7 +98,7 @@
           <tr v-for="entry in calendar.entries" :key="entry.day">
             <th class="date">12/{{ entry.day }}</th>
             <td class="user">
-              <img :src="entry.owner.iconUrl" class="userIcon" />
+              <UserIcon :user="entry.owner" size="24" />
               {{ entry.owner.name }}
             </td>
             <td class="body">
@@ -128,6 +128,7 @@ import { calendarColor } from "~/lib/utils/Colors";
 import { Calendar, Entry } from "~/types/adventar";
 import { getToken } from "~/lib/Auth";
 import GlobalHeader from "~/components/GlobalHeader.vue";
+import UserIcon from "~/components/UserIcon.vue";
 
 function getRows(calendar: Calendar): any[] {
   const year = calendar.year;
@@ -161,7 +162,7 @@ function getRows(calendar: Calendar): any[] {
 }
 
 @Component({
-  components: { GlobalHeader }
+  components: { GlobalHeader, UserIcon }
 })
 export default class extends Vue {
   calendar: Calendar | null = null;

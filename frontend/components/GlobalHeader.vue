@@ -6,7 +6,7 @@
         <div class="GlobalHeader-right">
           <div v-if="$store.state.user">
             <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
-              <img :src="$store.state.user.iconUrl" class="GlobalHeader-userIcon" width="25" height="25" />
+              <UserIcon class="GlobalHeader-userIcon" :user="$store.state.user" size="24" />
               {{ $store.state.user.name }}
               <font-awesome-icon icon="sort-down" />
             </span>
@@ -66,8 +66,11 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import { loginWithFirebase, logoutWithFirebase } from "~/lib/Auth";
 import { getCalendarCreatable } from "~/lib/Configuration";
+import UserIcon from "~/components/UserIcon.vue";
 
-@Component
+@Component({
+  components: { UserIcon }
+})
 export default class extends Vue {
   showDropdown = false;
   calendarCreatable = getCalendarCreatable();
@@ -144,8 +147,6 @@ export default class extends Vue {
 }
 
 .GlobalHeader-menuBtn .GlobalHeader-userIcon {
-  border-radius: 50%;
-  vertical-align: middle;
   margin-right: 5px;
 }
 
