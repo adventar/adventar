@@ -1,0 +1,8 @@
+[default]
+protoPath = ['../protobuf']
+protoFile = ['adventar/v1/adventar.proto']
+package = 'adventar.v1'
+service = 'Adventar'
+
+[server]
+port = '8080'
