@@ -1,18 +1,19 @@
 import {
   SignInRequest,
   UpdateUserRequest,
+  ListCalendarsRequest,
   GetCalendarRequest,
   CreateCalendarRequest,
   UpdateCalendarRequest,
   DeleteCalendarRequest,
-  ListCalendarsRequest,
+  ListEntriesRequest,
   CreateEntryRequest,
   UpdateEntryRequest,
   DeleteEntryRequest,
   GetUserRequest
 } from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
-import { User, Calendar } from "~/types/adventar";
+import { User, Calendar, Entry } from "~/types/adventar";
 
 const client = new AdventarClient(process.env.apiBaseUrl || "", null, null);
 
@@ -161,13 +162,15 @@ export function getCalendar(id: number): Promise<Calendar> {
 
 interface listCalendarsParams {
   readonly year: number;
+  readonly userId?: number;
   readonly pageSize?: number;
   readonly query?: string;
 }
-export function listCalendar({ year, pageSize, query }: listCalendarsParams): Promise<Calendar[]> {
+export function listCalendars({ year, userId, pageSize, query }: listCalendarsParams): Promise<Calendar[]> {
   const request = new ListCalendarsRequest();
   request.setYear(year);
   request.setPageSize(pageSize || 0);
+  request.setUserId(userId || 0);
   request.setQuery(query || "");
 
   return new Promise((resolve, reject) => {
@@ -191,6 +194,45 @@ export function listCalendar({ year, pageSize, query }: listCalendarsParams): Pr
         });
         resolve(calendars);
       }
+    });
+  });
+}
+
+type listEntriesParams = {
+  year: number;
+  userId: number;
+};
+export function listEntries({ year, userId }: listEntriesParams): Promise<Entry[]> {
+  const request = new ListEntriesRequest();
+  request.setYear(year);
+  request.setUserId(userId);
+  return new Promise((resolve, reject) => {
+    client.listEntries(request, {}, (err, res) => {
+      if (err) {
+        return reject(err);
+      }
+
+      const entries = res.getEntriesList().map(entry => {
+        return {
+          id: entry.getId(),
+          owner: {
+            id: entry.getOwner().getId(),
+            name: entry.getOwner().getName(),
+            iconUrl: entry.getOwner().getIconUrl()
+          },
+          calendar: {
+            id: entry.getCalendar().getId(),
+            title: entry.getCalendar().getTitle()
+          },
+          day: entry.getDay(),
+          comment: entry.getComment(),
+          url: entry.getUrl(),
+          title: entry.getTitle(),
+          imageUrl: entry.getImageUrl()
+        };
+      });
+
+      resolve(entries);
     });
   });
 }

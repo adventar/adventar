@@ -22,4 +22,5 @@ export interface Entry {
   url: string;
   title: string;
   imageUrl: string;
+  calendar?: Pick<Calendar, "id" | "title">;
 }

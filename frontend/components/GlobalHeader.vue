@@ -16,7 +16,7 @@
                   <nuxt-link to="/calendars/new">カレンダーを作る</nuxt-link>
                 </li>
                 <li>
-                  <nuxt-link :to="`/users/${$store.state.user.id}`">マイページ</nuxt-link>
+                  <nuxt-link :to="`/users/${$store.state.user.id}`">自分のカレンダー</nuxt-link>
                 </li>
                 <li>
                   <nuxt-link to="/setting">ユーザー設定</nuxt-link>

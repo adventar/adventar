@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import { listCalendar } from "~/lib/GrpcClient";
+import { listCalendars } from "~/lib/GrpcClient";
 import { Calendar } from "~/types/adventar";
 import GlobalHeader from "~/components/GlobalHeader.vue";
 import PageHeader from "~/components/PageHeader.vue";
@@ -31,7 +31,7 @@ export default class extends Vue {
   async created() {
     this.year = Number(this.$route.query.year);
     this.query = String(this.$route.query.query || "");
-    this.calendars = await listCalendar({ year: this.year, query: this.query });
+    this.calendars = await listCalendars({ year: this.year, query: this.query });
   }
 }
 </script>

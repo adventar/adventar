@@ -272,7 +272,7 @@ export default class extends Vue {
 }
 </script>
 
-<style sciped>
+<style scoped>
 header {
   color: #fff;
 }

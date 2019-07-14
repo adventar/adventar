@@ -320,7 +320,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 		inner join users as u on u.id = e.user_id
 		inner join calendars as c on c.id = e.calendar_id
 		where %s
-		order by e.day
+		order by e.day, e.id
 	`, strings.Join(conditionQueries, " and "))
 
 	rows, err := s.db.Query(sql, conditionValues...)

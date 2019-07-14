@@ -33,6 +33,12 @@ export default class extends Vue {
 </script>
 
 <style scoped>
+.CalendarList::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
 ul {
   margin: 0;
   padding: 0;
