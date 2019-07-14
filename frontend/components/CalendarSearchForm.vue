@@ -10,7 +10,6 @@ import { Component, Vue, Prop } from "nuxt-property-decorator";
 
 @Component
 export default class extends Vue {
-  @Prop(Number) readonly year!: number;
   @Prop(String) readonly defaultQuery: string;
 
   query: string;
@@ -20,7 +19,7 @@ export default class extends Vue {
   }
 
   handleSubmit() {
-    this.$router.push(`/calendars?year=${this.year}&query=${this.query}`);
+    this.$emit("submit", this.query);
   }
 }
 </script>

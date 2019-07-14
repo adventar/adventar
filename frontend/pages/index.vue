@@ -5,7 +5,7 @@
     <PageHeader>{{ currentYear }}年のAdvent Calnedar</PageHeader>
 
     <main>
-      <CalendarSearchForm :year="currentYear" style="margin-bottom: 30px" />
+      <CalendarSearchForm @submit="handleSubmit" style="margin-bottom: 30px" />
       <CalendarList :calendars="calendars" />
     </main>
   </div>
@@ -32,6 +32,10 @@ export default class extends Vue {
     const pageSize = 20;
     const calendars = await listCalendars({ year: this.currentYear, pageSize });
     this.calendars = calendars;
+  }
+
+  async handleSubmit(query) {
+    this.$router.push(`/calendars?year=${this.currentYear}&query=${query}`);
   }
 }
 </script>

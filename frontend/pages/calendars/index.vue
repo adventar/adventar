@@ -5,7 +5,7 @@
     <PageHeader>{{ year }}年のAdvent Calnedar</PageHeader>
 
     <main>
-      <CalendarSearchForm :year="year" :defaultQuery="query" style="margin-bottom: 30px" />
+      <CalendarSearchForm :defaultQuery="query" @submit="handleSubmit" style="margin-bottom: 30px" />
       <CalendarList :calendars="calendars" />
     </main>
   </div>
@@ -31,6 +31,11 @@ export default class extends Vue {
   async created() {
     this.year = Number(this.$route.query.year);
     this.query = String(this.$route.query.query || "");
+    this.calendars = await listCalendars({ year: this.year, query: this.query });
+  }
+
+  async handleSubmit(query) {
+    this.query = query;
     this.calendars = await listCalendars({ year: this.year, query: this.query });
   }
 }
