@@ -22,9 +22,9 @@ export function saveUser(user: User | null): void {
 
 export function initFirebase(): void {
   firebase.initializeApp({
-    apiKey: process.env.firebaseApiKey,
-    authDomain: process.env.firebaseAuthDomain,
-    projectId: process.env.firebaseProjectId
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID
   });
 }
 

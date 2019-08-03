@@ -15,7 +15,7 @@ import {
 import { AdventarClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
 import { User, Calendar, Entry } from "~/types/adventar";
 
-const client = new AdventarClient(process.env.apiBaseUrl || "", null, null);
+const client = new AdventarClient(process.env.API_BASE_URL || "", null, null);
 
 export function signIn(token: string): Promise<User> {
   const request = new SignInRequest();

@@ -8,10 +8,10 @@ const config: NuxtConfiguration = {
   },
 
   env: {
-    apiBaseUrl: process.env.API_BASE_URL || "http://localhost:8000",
-    firebaseApiKey: process.env.FIREBASE_API_KEY || "AIzaSyCDGROd2Z-2rWjHl-cDepyGnuQ975cpqQo",
-    firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN || "api-project-837626752936.firebaseapp.com",
-    firebaseProjectId: process.env.FIREBASE_PROJECT_ID || "api-project-837626752936"
+    API_BASE_URL: process.env.API_BASE_URL || "http://localhost:8000",
+    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY || "AIzaSyCDGROd2Z-2rWjHl-cDepyGnuQ975cpqQo",
+    FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN || "api-project-837626752936.firebaseapp.com",
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID || "api-project-837626752936"
   },
 
   /*
