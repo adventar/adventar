@@ -19,6 +19,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
     "@nuxtjs/pwa": "^3.0.0-beta.16",
     "dayjs": "^1.8.14",
+    "express": "^4.17.1",
     "firebase": "^6.2.4",
     "google-protobuf": "^3.9.0-rc.1",
     "grpc-web": "^1.0.4",
@@ -49,8 +50,11 @@
     "eslint-plugin-vue": "^5.2.3",
     "jest": "^24.1.0",
     "prettier": "^1.18.2",
+    "serverless": "^1.49.0",
+    "serverless-webpack": "^5.3.1",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
-    "vue-jest": "^3.0.3"
+    "vue-jest": "^3.0.3",
+    "webpack-node-externals": "^1.7.2"
   }
 }

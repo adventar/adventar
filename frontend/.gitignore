@@ -84,3 +84,5 @@ dist
 sw.*
 
 *.zip
+
+.webpack

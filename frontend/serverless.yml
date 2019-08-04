@@ -1,0 +1,33 @@
+service:
+  name: adventar-frontend
+
+plugins:
+  - serverless-webpack
+
+provider:
+  name: aws
+  stage: prod
+  runtime: nodejs10.x
+  region: ap-northeast-1
+  deploymentBucket:
+    name: adventar
+  deploymentPrefix: serverless-deploy
+  apiGateway:
+    logs: true
+  environment:
+    API_BASE_URL: ${env:API_BASE_URL, 'http://localhost:8000'}
+
+custom:
+  webpack:
+    packager: 'yarn'
+
+functions:
+  main:
+    handler: server.handler
+    events:
+      - http:
+          method: get
+          path: calendars/{id}
+      - http:
+          method: get
+          path: users/{id}
