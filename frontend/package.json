@@ -20,6 +20,7 @@
     "@nuxtjs/pwa": "^3.0.0-beta.16",
     "dayjs": "^1.8.14",
     "express": "^4.17.1",
+    "feed": "^4.0.0",
     "firebase": "^6.2.4",
     "google-protobuf": "^3.9.0-rc.1",
     "grpc-web": "^1.0.4",

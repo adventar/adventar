@@ -2,7 +2,7 @@ import { Nuxt } from "nuxt";
 import serverless from "serverless-http";
 import express from "express";
 import config from "~/nuxt.config";
-import { getCalendar } from "~/lib/RestClient";
+import { generateCalendarFeed } from "~/server/Feed";
 
 const app = express();
 const nuxt = new Nuxt({
@@ -14,9 +14,9 @@ const nuxt = new Nuxt({
 
 app.get("/calendars/:id.rss", async (req, res) => {
   const id = Number(req.params.id);
-  const calendar = await getCalendar(id);
-  console.log(calendar);
-  res.send("ok");
+  const feed = await generateCalendarFeed(id);
+  res.header["Content-Type"] = "application/rss+xml; charset=utf-8";
+  res.send(feed);
 });
 
 app.get("/users/:id.ical", (req, res) => {
