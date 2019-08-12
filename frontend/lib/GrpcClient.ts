@@ -222,7 +222,8 @@ export function listEntries({ year, userId }: listEntriesParams): Promise<Entry[
           },
           calendar: {
             id: entry.getCalendar().getId(),
-            title: entry.getCalendar().getTitle()
+            title: entry.getCalendar().getTitle(),
+            year: entry.getCalendar().getYear()
           },
           day: entry.getDay(),
           comment: entry.getComment(),

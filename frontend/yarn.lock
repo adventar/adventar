@@ -7007,6 +7007,13 @@ https-proxy-agent@^2.2.1, https-proxy-agent@^2.2.2:
     agent-base "^4.3.0"
     debug "^3.1.0"
 
+ical-generator@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/ical-generator/-/ical-generator-1.7.2.tgz#0719fe39f9c15e3058ddb10a63a270cd53d9401b"
+  integrity sha512-sJyIuCRh/1PSyJtuF0pcE2BHavI6yOzp29RgUMARgjfZ6sLdLpfBaKffydAzu4E4ZYNk6oBanvrt+0WxpEyqcA==
+  dependencies:
+    moment-timezone "^0.5.26"
+
 iconv-lite@0.4.24, iconv-lite@^0.4.24, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
   version "0.4.24"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.24.tgz#2022b4b25fbddc21d2f524974a474aafe733908b"
@@ -9046,7 +9053,14 @@ mkdirp@0.5.1, mkdirp@0.x, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@~0
   dependencies:
     minimist "0.0.8"
 
-moment@^2.24.0:
+moment-timezone@^0.5.26:
+  version "0.5.26"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.26.tgz#c0267ca09ae84631aa3dc33f65bedbe6e8e0d772"
+  integrity sha512-sFP4cgEKTCymBBKgoxZjYzlSovC20Y6J7y3nanDc5RoBIXKlZhoYwBoZGe3flwU6A372AcRwScH8KiwV6zjy1g==
+  dependencies:
+    moment ">= 2.9.0"
+
+"moment@>= 2.9.0", moment@^2.24.0:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==

@@ -19,12 +19,12 @@ export class Calendar {
 
 export namespace Calendar {
   export type AsObject = {
-    id: number;
-    owner: User;
-    title: string;
-    description: string;
-    year: number;
-    entryCount: number;
+    Id: number;
+    Owner: User;
+    Title: string;
+    Description: string;
+    Year: number;
+    EntryCount: number;
   }
 }
 
@@ -41,8 +41,8 @@ export class CreateCalendarRequest {
 
 export namespace CreateCalendarRequest {
   export type AsObject = {
-    title: string;
-    description: string;
+    Title: string;
+    Description: string;
   }
 }
 
@@ -59,8 +59,8 @@ export class CreateEntryRequest {
 
 export namespace CreateEntryRequest {
   export type AsObject = {
-    calendarId: number;
-    day: number;
+    CalendarId: number;
+    Day: number;
   }
 }
 
@@ -75,7 +75,7 @@ export class DeleteCalendarRequest {
 
 export namespace DeleteCalendarRequest {
   export type AsObject = {
-    calendarId: number;
+    CalendarId: number;
   }
 }
 
@@ -90,7 +90,7 @@ export class DeleteEntryRequest {
 
 export namespace DeleteEntryRequest {
   export type AsObject = {
-    entryId: number;
+    EntryId: number;
   }
 }
 
@@ -119,14 +119,14 @@ export class Entry {
 
 export namespace Entry {
   export type AsObject = {
-    id: number;
-    owner: User;
-    calendar: Calendar;
-    day: number;
-    comment: string;
-    url: string;
-    title: string;
-    imageUrl: string;
+    Id: number;
+    Owner: User;
+    Calendar: Calendar;
+    Day: number;
+    Comment: string;
+    Url: string;
+    Title: string;
+    ImageUrl: string;
   }
 }
 
@@ -141,7 +141,7 @@ export class GetCalendarRequest {
 
 export namespace GetCalendarRequest {
   export type AsObject = {
-    calendarId: number;
+    CalendarId: number;
   }
 }
 
@@ -158,8 +158,8 @@ export class GetCalendarResponse {
 
 export namespace GetCalendarResponse {
   export type AsObject = {
-    calendar: Calendar;
-    entriesList: Entry[];
+    Calendar: Calendar;
+    EntriesList: Entry[];
   }
 }
 
@@ -174,7 +174,7 @@ export class GetUserRequest {
 
 export namespace GetUserRequest {
   export type AsObject = {
-    userId: number;
+    UserId: number;
   }
 }
 
@@ -195,10 +195,10 @@ export class ListCalendarsRequest {
 
 export namespace ListCalendarsRequest {
   export type AsObject = {
-    year: number;
-    userId: number;
-    query: string;
-    pageSize: number;
+    Year: number;
+    UserId: number;
+    Query: string;
+    PageSize: number;
   }
 }
 
@@ -213,7 +213,7 @@ export class ListCalendarsResponse {
 
 export namespace ListCalendarsResponse {
   export type AsObject = {
-    calendarsList: Calendar[];
+    CalendarsList: Calendar[];
   }
 }
 
@@ -230,8 +230,8 @@ export class ListEntriesRequest {
 
 export namespace ListEntriesRequest {
   export type AsObject = {
-    userId: number;
-    year: number;
+    UserId: number;
+    Year: number;
   }
 }
 
@@ -246,7 +246,7 @@ export class ListEntriesResponse {
 
 export namespace ListEntriesResponse {
   export type AsObject = {
-    entriesList: Entry[];
+    EntriesList: Entry[];
   }
 }
 
@@ -261,7 +261,7 @@ export class SignInRequest {
 
 export namespace SignInRequest {
   export type AsObject = {
-    jwt: string;
+    Jwt: string;
   }
 }
 
@@ -280,9 +280,9 @@ export class UpdateCalendarRequest {
 
 export namespace UpdateCalendarRequest {
   export type AsObject = {
-    calendarId: number;
-    title: string;
-    description: string;
+    CalendarId: number;
+    Title: string;
+    Description: string;
   }
 }
 
@@ -301,9 +301,9 @@ export class UpdateEntryRequest {
 
 export namespace UpdateEntryRequest {
   export type AsObject = {
-    entryId: number;
-    comment: string;
-    url: string;
+    EntryId: number;
+    Comment: string;
+    Url: string;
   }
 }
 
@@ -318,7 +318,7 @@ export class UpdateUserRequest {
 
 export namespace UpdateUserRequest {
   export type AsObject = {
-    name: string;
+    Name: string;
   }
 }
 
@@ -337,9 +337,9 @@ export class User {
 
 export namespace User {
   export type AsObject = {
-    id: number;
-    name: string;
-    iconUrl: string;
+    Id: number;
+    Name: string;
+    IconUrl: string;
   }
 }
 
@@ -354,4 +354,3 @@ export namespace Empty {
   export type AsObject = {
   }
 }
-

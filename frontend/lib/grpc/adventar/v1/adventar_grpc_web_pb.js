@@ -100,7 +100,7 @@ const methodInfo_Adventar_ListCalendars = new grpc.web.AbstractClientBase.Method
 /**
  * @param {!proto.adventar.v1.ListCalendarsRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.ListCalendarsResponse)}
  *     callback The callback function(error, response)
@@ -112,7 +112,7 @@ proto.adventar.v1.AdventarClient.prototype.listCalendars =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/ListCalendars',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_ListCalendars,
       callback);
 };
@@ -121,17 +121,16 @@ proto.adventar.v1.AdventarClient.prototype.listCalendars =
 /**
  * @param {!proto.adventar.v1.ListCalendarsRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.ListCalendarsResponse>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.listCalendars =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.listCalendars(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.listCalendars(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -157,7 +156,7 @@ const methodInfo_Adventar_GetCalendar = new grpc.web.AbstractClientBase.MethodIn
 /**
  * @param {!proto.adventar.v1.GetCalendarRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.GetCalendarResponse)}
  *     callback The callback function(error, response)
@@ -169,7 +168,7 @@ proto.adventar.v1.AdventarClient.prototype.getCalendar =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/GetCalendar',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_GetCalendar,
       callback);
 };
@@ -178,17 +177,16 @@ proto.adventar.v1.AdventarClient.prototype.getCalendar =
 /**
  * @param {!proto.adventar.v1.GetCalendarRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.GetCalendarResponse>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.getCalendar =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.getCalendar(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.getCalendar(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -214,7 +212,7 @@ const methodInfo_Adventar_CreateCalendar = new grpc.web.AbstractClientBase.Metho
 /**
  * @param {!proto.adventar.v1.CreateCalendarRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.Calendar)}
  *     callback The callback function(error, response)
@@ -226,7 +224,7 @@ proto.adventar.v1.AdventarClient.prototype.createCalendar =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/CreateCalendar',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_CreateCalendar,
       callback);
 };
@@ -235,17 +233,16 @@ proto.adventar.v1.AdventarClient.prototype.createCalendar =
 /**
  * @param {!proto.adventar.v1.CreateCalendarRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.Calendar>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.createCalendar =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.createCalendar(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.createCalendar(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -271,7 +268,7 @@ const methodInfo_Adventar_UpdateCalendar = new grpc.web.AbstractClientBase.Metho
 /**
  * @param {!proto.adventar.v1.UpdateCalendarRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.Calendar)}
  *     callback The callback function(error, response)
@@ -283,7 +280,7 @@ proto.adventar.v1.AdventarClient.prototype.updateCalendar =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/UpdateCalendar',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_UpdateCalendar,
       callback);
 };
@@ -292,17 +289,16 @@ proto.adventar.v1.AdventarClient.prototype.updateCalendar =
 /**
  * @param {!proto.adventar.v1.UpdateCalendarRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.Calendar>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.updateCalendar =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.updateCalendar(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.updateCalendar(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -328,7 +324,7 @@ const methodInfo_Adventar_DeleteCalendar = new grpc.web.AbstractClientBase.Metho
 /**
  * @param {!proto.adventar.v1.DeleteCalendarRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.google.protobuf.Empty)}
  *     callback The callback function(error, response)
@@ -340,7 +336,7 @@ proto.adventar.v1.AdventarClient.prototype.deleteCalendar =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/DeleteCalendar',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_DeleteCalendar,
       callback);
 };
@@ -349,17 +345,16 @@ proto.adventar.v1.AdventarClient.prototype.deleteCalendar =
 /**
  * @param {!proto.adventar.v1.DeleteCalendarRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.google.protobuf.Empty>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.deleteCalendar =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.deleteCalendar(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.deleteCalendar(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -385,7 +380,7 @@ const methodInfo_Adventar_ListEntries = new grpc.web.AbstractClientBase.MethodIn
 /**
  * @param {!proto.adventar.v1.ListEntriesRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.ListEntriesResponse)}
  *     callback The callback function(error, response)
@@ -397,7 +392,7 @@ proto.adventar.v1.AdventarClient.prototype.listEntries =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/ListEntries',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_ListEntries,
       callback);
 };
@@ -406,17 +401,16 @@ proto.adventar.v1.AdventarClient.prototype.listEntries =
 /**
  * @param {!proto.adventar.v1.ListEntriesRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.ListEntriesResponse>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.listEntries =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.listEntries(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.listEntries(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -442,7 +436,7 @@ const methodInfo_Adventar_CreateEntry = new grpc.web.AbstractClientBase.MethodIn
 /**
  * @param {!proto.adventar.v1.CreateEntryRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.Entry)}
  *     callback The callback function(error, response)
@@ -454,7 +448,7 @@ proto.adventar.v1.AdventarClient.prototype.createEntry =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/CreateEntry',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_CreateEntry,
       callback);
 };
@@ -463,17 +457,16 @@ proto.adventar.v1.AdventarClient.prototype.createEntry =
 /**
  * @param {!proto.adventar.v1.CreateEntryRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.Entry>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.createEntry =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.createEntry(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.createEntry(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -499,7 +492,7 @@ const methodInfo_Adventar_UpdateEntry = new grpc.web.AbstractClientBase.MethodIn
 /**
  * @param {!proto.adventar.v1.UpdateEntryRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.Entry)}
  *     callback The callback function(error, response)
@@ -511,7 +504,7 @@ proto.adventar.v1.AdventarClient.prototype.updateEntry =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/UpdateEntry',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_UpdateEntry,
       callback);
 };
@@ -520,17 +513,16 @@ proto.adventar.v1.AdventarClient.prototype.updateEntry =
 /**
  * @param {!proto.adventar.v1.UpdateEntryRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.Entry>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.updateEntry =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.updateEntry(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.updateEntry(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -556,7 +548,7 @@ const methodInfo_Adventar_DeleteEntry = new grpc.web.AbstractClientBase.MethodIn
 /**
  * @param {!proto.adventar.v1.DeleteEntryRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.google.protobuf.Empty)}
  *     callback The callback function(error, response)
@@ -568,7 +560,7 @@ proto.adventar.v1.AdventarClient.prototype.deleteEntry =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/DeleteEntry',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_DeleteEntry,
       callback);
 };
@@ -577,17 +569,16 @@ proto.adventar.v1.AdventarClient.prototype.deleteEntry =
 /**
  * @param {!proto.adventar.v1.DeleteEntryRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.google.protobuf.Empty>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.deleteEntry =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.deleteEntry(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.deleteEntry(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -613,7 +604,7 @@ const methodInfo_Adventar_SignIn = new grpc.web.AbstractClientBase.MethodInfo(
 /**
  * @param {!proto.adventar.v1.SignInRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.User)}
  *     callback The callback function(error, response)
@@ -625,7 +616,7 @@ proto.adventar.v1.AdventarClient.prototype.signIn =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/SignIn',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_SignIn,
       callback);
 };
@@ -634,17 +625,16 @@ proto.adventar.v1.AdventarClient.prototype.signIn =
 /**
  * @param {!proto.adventar.v1.SignInRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.User>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.signIn =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.signIn(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.signIn(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -670,7 +660,7 @@ const methodInfo_Adventar_GetUser = new grpc.web.AbstractClientBase.MethodInfo(
 /**
  * @param {!proto.adventar.v1.GetUserRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.User)}
  *     callback The callback function(error, response)
@@ -682,7 +672,7 @@ proto.adventar.v1.AdventarClient.prototype.getUser =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/GetUser',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_GetUser,
       callback);
 };
@@ -691,17 +681,16 @@ proto.adventar.v1.AdventarClient.prototype.getUser =
 /**
  * @param {!proto.adventar.v1.GetUserRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.User>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.getUser =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.getUser(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.getUser(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });
@@ -727,7 +716,7 @@ const methodInfo_Adventar_UpdateUser = new grpc.web.AbstractClientBase.MethodInf
 /**
  * @param {!proto.adventar.v1.UpdateUserRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @param {function(?grpc.web.Error, ?proto.adventar.v1.User)}
  *     callback The callback function(error, response)
@@ -739,7 +728,7 @@ proto.adventar.v1.AdventarClient.prototype.updateUser =
   return this.client_.rpcCall(this.hostname_ +
       '/adventar.v1.Adventar/UpdateUser',
       request,
-      metadata || {},
+      metadata,
       methodInfo_Adventar_UpdateUser,
       callback);
 };
@@ -748,17 +737,16 @@ proto.adventar.v1.AdventarClient.prototype.updateUser =
 /**
  * @param {!proto.adventar.v1.UpdateUserRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!Object<string, string>} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.adventar.v1.User>}
  *     The XHR Node Readable Stream
  */
 proto.adventar.v1.AdventarPromiseClient.prototype.updateUser =
     function(request, metadata) {
-  var _this = this;
-  return new Promise(function (resolve, reject) {
-    _this.delegateClient_.updateUser(
-      request, metadata, function (error, response) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.updateUser(
+      request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
   });

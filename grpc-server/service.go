@@ -313,6 +313,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 			c.id,
 			c.title,
 			c.description,
+			c.year,
 			u.id,
 			u.name,
 			u.icon_url
@@ -320,7 +321,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 		inner join users as u on u.id = e.user_id
 		inner join calendars as c on c.id = e.calendar_id
 		where %s
-		order by e.day, e.id
+		order by c.year, e.day, e.id
 	`, strings.Join(conditionQueries, " and "))
 
 	rows, err := s.db.Query(sql, conditionValues...)
@@ -344,6 +345,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 			&c.Id,
 			&c.Title,
 			&c.Description,
+			&c.Year,
 			&u.Id,
 			&u.Name,
 			&u.IconUrl,
