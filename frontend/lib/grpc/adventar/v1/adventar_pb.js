@@ -10,6 +10,7 @@
 var jspb = require('google-protobuf');
 var goog = jspb;
 var global = Function('return this')();
+var proto = {};
 
 var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js');
 goog.object.extend(proto, google_protobuf_empty_pb);
@@ -19,3 +20,4 @@ var adventar_v1_resources_pb = require('../../adventar/v1/resources_pb.js');
 goog.object.extend(proto, adventar_v1_resources_pb);
 var adventar_v1_rpc_messages_pb = require('../../adventar/v1/rpc_messages_pb.js');
 goog.object.extend(proto, adventar_v1_rpc_messages_pb);
+goog.object.extend(exports, proto);
