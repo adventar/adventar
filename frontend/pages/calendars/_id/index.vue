@@ -11,11 +11,11 @@
             作成者: <UserIcon :user="calendar.owner" size="22" />
             {{ calendar.owner.name }}
           </div>
-          <div>{{ toMarkdown(calendar.description) }}</div>
           <nuxt-link :to="`/calendars/${calendar.id}/edit`" v-if="isOwnCalendar(calendar)">編集</nuxt-link>
         </div>
       </header>
       <main>
+        <VueMarkdown>{{ calendar.description }}</VueMarkdown>
         <table class="calendarTable">
           <thead>
             <tr>
@@ -122,6 +122,7 @@
 <script lang="ts">
 import dayjs from "dayjs";
 import { Component, Vue } from "nuxt-property-decorator";
+import VueMarkdown from "vue-markdown";
 import { getCalendar, createEntry, updateEntry, deleteEntry } from "~/lib/GrpcClient";
 import * as RestClient from "~/lib/RestClient";
 import { calendarColor } from "~/lib/utils/Colors";
@@ -162,7 +163,7 @@ function getRows(calendar: Calendar): any[] {
 }
 
 @Component({
-  components: { GlobalHeader, UserIcon }
+  components: { GlobalHeader, UserIcon, VueMarkdown }
 })
 export default class extends Vue {
   calendar: Calendar | null = null;
@@ -263,11 +264,6 @@ export default class extends Vue {
   isFutureEntry(_): boolean {
     // TODO
     return false;
-  }
-
-  toMarkdown(text: string): string {
-    // TODO
-    return text;
   }
 }
 </script>

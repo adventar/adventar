@@ -28,7 +28,8 @@
     "nuxt": "^2.8.1",
     "nuxt-fontawesome": "^0.4.0",
     "nuxt-property-decorator": "^2.3.0",
-    "serverless-http": "^2.0.2"
+    "serverless-http": "^2.0.2",
+    "vue-markdown": "^2.2.4"
   },
   "devDependencies": {
     "@nuxt/typescript": "^2.8.1",
