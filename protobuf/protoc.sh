@@ -19,3 +19,6 @@ protoc \
   --js_out=import_style=commonjs:../frontend/lib/grpc \
   --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:../frontend/lib/grpc \
   adventar/v1/*.proto google/api/*.proto
+
+# hot fix
+gsed -i -e "s/extend(proto/extend(exports/" ../frontend/lib/grpc/adventar/v1/adventar_pb.js
