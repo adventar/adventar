@@ -20,7 +20,13 @@ const config: NuxtConfiguration = {
   head: {
     title: "Adventar",
     meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1" }],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
+    link: [
+      {
+        rel: "icon",
+        type: "image/x-icon",
+        href: process.env.NODE_ENV === "development" ? "/favicon-dev.ico" : "/favicon.ico"
+      }
+    ]
   },
 
   router: {
