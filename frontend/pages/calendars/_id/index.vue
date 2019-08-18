@@ -15,105 +15,109 @@
         </div>
       </header>
       <main>
-        <VueMarkdown>{{ calendar.description }}</VueMarkdown>
-        <table class="calendarTable">
-          <thead>
-            <tr>
-              <th>SUN</th>
-              <th>MON</th>
-              <th>TUE</th>
-              <th>WED</th>
-              <th>THU</th>
-              <th>FRI</th>
-              <th>SAT</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(cells, i) in rows" :key="i">
-              <td v-for="cell in cells" :key="cell.day">
-                <div class="popup" v-if="cell.entryable && displayedPopupCellDay === cell.day" @click.stop>
-                  <span role="button" class="popupCloseBtn" @click="displayedPopupCellDay = null">
-                    <font-awesome-icon icon="times" />
-                  </span>
-                  <form @submit.prevent="handleSubmitPopupForm(cell.entry)">
-                    <div class="popupRow">
-                      <font-awesome-icon icon="comment" />
-                      <input
-                        type="text"
-                        placeholder="記事の内容の予定などを入力してください"
-                        :value="cell.entry.comment"
-                        :ref="`inputComment${cell.entry.day}`"
-                      />
-                    </div>
-                    <div class="popupRow">
-                      <font-awesome-icon icon="link" />
-                      <input
-                        type="text"
-                        placeholder="登録した日になったらURLを入力してください"
-                        :value="cell.entry.url"
-                        :ref="`inputUrl${cell.entry.day}`"
-                      />
-                    </div>
-                    <div class="popupAction">
-                      <button class="submit" type="submit">保存</button>
-                      <span role="button" class="cancel" @click="handleClickDeleteEntry(cell.entry)">
-                        登録をキャンセル
-                      </span>
-                    </div>
-                  </form>
-                </div>
-                <div v-if="cell.entryable" class="inner">
-                  <span class="day">{{ cell.day }}</span>
-                  <div v-if="cell.entry">
-                    <div class="calendarTable-entryUser">
-                      <UserIcon :user="cell.entry.owner" size="50" />
-                      <div>{{ cell.entry.owner.name }}</div>
-                    </div>
-                    <span
-                      class="editBtn"
-                      role="button"
-                      v-if="isOwnEntry(cell.entry)"
-                      @click.stop="handleClickEditEntry(cell.entry)"
-                    >
-                      <font-awesome-icon icon="edit" />
-                    </span>
-                    <span
-                      class="cancelBtn"
-                      role="button"
-                      v-if="forceCancelable(cell.entry)"
-                      @click="handleClickDeleteEntry(cell.entry)"
-                    >
+        <div>
+          <VueMarkdown>{{ calendar.description }}</VueMarkdown>
+          <table class="calendarTable">
+            <thead>
+              <tr>
+                <th>SUN</th>
+                <th>MON</th>
+                <th>TUE</th>
+                <th>WED</th>
+                <th>THU</th>
+                <th>FRI</th>
+                <th>SAT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(cells, i) in rows" :key="i">
+                <td v-for="cell in cells" :key="cell.day">
+                  <div class="popup" v-if="cell.entryable && displayedPopupCellDay === cell.day" @click.stop>
+                    <span role="button" class="popupCloseBtn" @click="displayedPopupCellDay = null">
                       <font-awesome-icon icon="times" />
                     </span>
+                    <form @submit.prevent="handleSubmitPopupForm(cell.entry)">
+                      <div class="popupRow">
+                        <font-awesome-icon icon="comment" />
+                        <input
+                          type="text"
+                          placeholder="記事の内容の予定などを入力してください"
+                          :value="cell.entry.comment"
+                          :ref="`inputComment${cell.entry.day}`"
+                        />
+                      </div>
+                      <div class="popupRow">
+                        <font-awesome-icon icon="link" />
+                        <input
+                          type="text"
+                          placeholder="登録した日になったらURLを入力してください"
+                          :value="cell.entry.url"
+                          :ref="`inputUrl${cell.entry.day}`"
+                        />
+                      </div>
+                      <div class="popupAction">
+                        <button class="submit" type="submit">保存</button>
+                        <span role="button" class="cancel" @click="handleClickDeleteEntry(cell.entry)">
+                          登録をキャンセル
+                        </span>
+                      </div>
+                    </form>
                   </div>
-                  <div v-else class="calendarTable-entryForm">
-                    <button @click="handleClickCreateEntry(cell.day)">登録</button>
+                  <div v-if="cell.entryable" class="inner">
+                    <span class="day">{{ cell.day }}</span>
+                    <div v-if="cell.entry">
+                      <div class="calendarTable-entryUser">
+                        <UserIcon :user="cell.entry.owner" size="50" />
+                        <div>{{ cell.entry.owner.name }}</div>
+                      </div>
+                      <span
+                        class="editBtn"
+                        role="button"
+                        v-if="isOwnEntry(cell.entry)"
+                        @click.stop="handleClickEditEntry(cell.entry)"
+                      >
+                        <font-awesome-icon icon="edit" />
+                      </span>
+                      <span
+                        class="cancelBtn"
+                        role="button"
+                        v-if="forceCancelable(cell.entry)"
+                        @click="handleClickDeleteEntry(cell.entry)"
+                      >
+                        <font-awesome-icon icon="times" />
+                      </span>
+                    </div>
+                    <div v-else class="calendarTable-entryForm">
+                      <button @click="handleClickCreateEntry(cell.day)">登録</button>
+                    </div>
                   </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="entryList">
+            <tr v-for="entry in calendar.entries" :key="entry.day">
+              <th class="date">12/{{ entry.day }}</th>
+              <td class="user">
+                <UserIcon :user="entry.owner" size="24" />
+                {{ entry.owner.name }}
+              </td>
+              <td class="body">
+                <div v-if="entry.comment"><font-awesome-icon icon="comment" /> {{ entry.comment }}</div>
+                <div v-if="entry.title && !isFutureEntry(entry)">
+                  <font-awesome-icon icon="file" /> {{ entry.title }}
+                </div>
+                <div v-if="entry.url && !isFutureEntry(entry)">
+                  <font-awesome-icon icon="link" />
+                  <a :href="entry.url">{{ entry.url }}</a>
                 </div>
               </td>
+              <td class="image">
+                <img :src="entry.imageUrl" v-if="entry.imageUrl && !isFutureEntry(entry)" width="100" height="100" />
+              </td>
             </tr>
-          </tbody>
-        </table>
-        <table class="entryList">
-          <tr v-for="entry in calendar.entries" :key="entry.day">
-            <th class="date">12/{{ entry.day }}</th>
-            <td class="user">
-              <UserIcon :user="entry.owner" size="24" />
-              {{ entry.owner.name }}
-            </td>
-            <td class="body">
-              <div v-if="entry.comment"><font-awesome-icon icon="comment" /> {{ entry.comment }}</div>
-              <div v-if="entry.title && !isFutureEntry(entry)"><font-awesome-icon icon="file" /> {{ entry.title }}</div>
-              <div v-if="entry.url && !isFutureEntry(entry)">
-                <font-awesome-icon icon="link" />
-                <a :href="entry.url">{{ entry.url }}</a>
-              </div>
-            </td>
-            <td class="image">
-              <img :src="entry.imageUrl" v-if="entry.imageUrl && !isFutureEntry(entry)" width="100" height="100" />
-            </td>
-          </tr>
-        </table>
+          </table>
+        </div>
       </main>
     </div>
   </div>

@@ -8,33 +8,35 @@
     </PageHeader>
 
     <main>
-      <ul class="years">
-        <li v-for="y in years" :key="y">
-          <nuxt-link
-            :class="year === y ? 'is-current' : ''"
-            :to="`/users/${user.id}?year=${y}`"
-            @click.native="handleClickYear(y)"
-            >{{ y }}</nuxt-link
-          >
-        </li>
-      </ul>
-
-      <div v-if="loaded">
-        <SectionHeader>作成したカレンダー</SectionHeader>
-        <CalendarList class="calendarList" :calendars="myCalendars" />
-
-        <SectionHeader>登録したカレンダー</SectionHeader>
-        <ul class="entryList">
-          <li v-for="e in myEntries" :key="e.id">
-            <font-awesome-icon :icon="['far', 'calendar']" />
-            {{ formatEntryDate(year, e.day) }}
-            <nuxt-link :to="`/calendars/${e.calendar.id}`">{{ e.calendar.title }}</nuxt-link>
+      <div>
+        <ul class="years">
+          <li v-for="y in years" :key="y">
+            <nuxt-link
+              :class="year === y ? 'is-current' : ''"
+              :to="`/users/${user.id}?year=${y}`"
+              @click.native="handleClickYear(y)"
+              >{{ y }}</nuxt-link
+            >
           </li>
         </ul>
 
-        <SectionHeader>iCal</SectionHeader>
-        <p>Google Calendarなどに読み込むことができます。</p>
-        <input class="icalInput" type="text" @click="handleClickIcalInput" :value="icalUrl" />
+        <div v-if="loaded">
+          <SectionHeader>作成したカレンダー</SectionHeader>
+          <CalendarList class="calendarList" :calendars="myCalendars" />
+
+          <SectionHeader>登録したカレンダー</SectionHeader>
+          <ul class="entryList">
+            <li v-for="e in myEntries" :key="e.id">
+              <font-awesome-icon :icon="['far', 'calendar']" />
+              {{ formatEntryDate(year, e.day) }}
+              <nuxt-link :to="`/calendars/${e.calendar.id}`">{{ e.calendar.title }}</nuxt-link>
+            </li>
+          </ul>
+
+          <SectionHeader>iCal</SectionHeader>
+          <p>Google Calendarなどに読み込むことができます。</p>
+          <input class="icalInput" type="text" @click="handleClickIcalInput" :value="icalUrl" />
+        </div>
       </div>
     </main>
   </div>

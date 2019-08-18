@@ -2,11 +2,13 @@
   <div>
     <GlobalHeader />
 
-    <PageHeader>{{ currentYear }}年のAdvent Calnedar</PageHeader>
+    <div class="hero"></div>
 
     <main>
-      <CalendarSearchForm @submit="handleSubmit" style="margin-bottom: 30px" />
-      <CalendarList :calendars="calendars" />
+      <div>
+        <CalendarSearchForm @submit="handleSubmit" style="margin-bottom: 30px" />
+        <CalendarList :calendars="calendars" />
+      </div>
     </main>
   </div>
 </template>
@@ -39,3 +41,50 @@ export default class extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.hero {
+  background-image: url("~assets/hero.png");
+  background-position: center top;
+  background-size: auto 160px;
+  height: 160px;
+  position: relative;
+}
+
+.hero h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  padding: 20px 0;
+}
+
+.hero a {
+  display: inline-block;
+  padding: 10px;
+  background-color: #efefef;
+  color: #000;
+  border-radius: 5px;
+  text-decoration: none;
+  position: absolute;
+  left: 10px;
+}
+
+.hero a:first-child {
+  bottom: 80px;
+}
+
+.hero a:last-child {
+  bottom: 20px;
+}
+
+@media (min-width: $mq-break-small) {
+  .hero {
+    background-size: auto 280px;
+    height: 280px;
+  }
+  .hero h1 {
+    margin: 0;
+    padding: 40px 0 15px 0;
+  }
+}
+</style>

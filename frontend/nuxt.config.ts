@@ -51,7 +51,7 @@ const config: NuxtConfiguration = {
   /*
    ** Nuxt.js modules
    */
-  modules: ["@nuxtjs/pwa", "nuxt-fontawesome"],
+  modules: ["@nuxtjs/pwa", "nuxt-fontawesome", "@nuxtjs/style-resources"],
 
   fontawesome: {
     imports: [
@@ -68,6 +68,10 @@ const config: NuxtConfiguration = {
         icons: ["far"]
       }
     ]
+  },
+
+  styleResources: {
+    scss: ["./assets/scss/*.scss"]
   },
 
   /*

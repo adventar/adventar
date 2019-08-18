@@ -5,8 +5,10 @@
     <PageHeader>{{ year }}年のAdvent Calnedar</PageHeader>
 
     <main>
-      <CalendarSearchForm :defaultQuery="query" @submit="handleSubmit" style="margin-bottom: 30px" />
-      <CalendarList :calendars="calendars" />
+      <div>
+        <CalendarSearchForm :defaultQuery="query" @submit="handleSubmit" style="margin-bottom: 30px" />
+        <CalendarList :calendars="calendars" />
+      </div>
     </main>
   </div>
 </template>

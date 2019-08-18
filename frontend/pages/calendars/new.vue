@@ -5,20 +5,22 @@
     <PageHeader>カレンダーを作る</PageHeader>
 
     <main>
-      <form @submit.prevent="submit()">
-        <section>
-          <SectionHeader>タイトル</SectionHeader>
-          <input v-model="title" type="text" /> Advent Calendar {{ currentYear }}
-        </section>
+      <div>
+        <form @submit.prevent="submit()">
+          <section>
+            <SectionHeader>タイトル</SectionHeader>
+            <input v-model="title" type="text" /> Advent Calendar {{ currentYear }}
+          </section>
 
-        <section>
-          <SectionHeader>概要</SectionHeader>
-          <textarea v-model="description"></textarea>
-          <p class="note">Markdown記法が使えます。</p>
-        </section>
+          <section>
+            <SectionHeader>概要</SectionHeader>
+            <textarea v-model="description"></textarea>
+            <p class="note">Markdown記法が使えます。</p>
+          </section>
 
-        <button type="submit">作成</button>
-      </form>
+          <button type="submit">作成</button>
+        </form>
+      </div>
     </main>
   </div>
 </template>

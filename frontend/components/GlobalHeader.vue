@@ -1,13 +1,14 @@
 <template>
   <header class="GlobalHeader">
     <div class="GlobalHeader-inner">
-      <h1 class="GlobalHeader-logo"><nuxt-link to="/">Adventar</nuxt-link></h1>
+      <h1 class="GlobalHeader-logo">
+        <nuxt-link to="/"><img src="~/assets/logo.png" alt="Adventar" width="220" height="28"/></nuxt-link>
+      </h1>
       <no-ssr>
         <div class="GlobalHeader-right">
           <div v-if="$store.state.user">
             <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
-              <UserIcon class="GlobalHeader-userIcon" :user="$store.state.user" size="24" />
-              {{ $store.state.user.name }}
+              <UserIcon class="GlobalHeader-userIcon" :user="$store.state.user" size="28" />
               <font-awesome-icon icon="sort-down" />
             </span>
             <div class="GlobalHeader-dropdown is-login" v-if="showDropdown" @click.stop>
@@ -28,8 +29,8 @@
             </div>
           </div>
           <div v-else>
-            <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
-              Log In <font-awesome-icon icon="sign-in-alt" />
+            <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn is-signin">
+              <font-awesome-icon icon="sign-in-alt" />
             </span>
             <div class="GlobalHeader-dropdown" v-if="showDropdown" @click.stop>
               <ul>
@@ -75,14 +76,6 @@ export default class extends Vue {
   showDropdown = false;
   calendarCreatable = getCalendarCreatable();
 
-  // created() {
-  //   if (process.server) return;
-  //   // ????
-  //   // this.$store.commit("setUser", JSON.parse(localStorage.getItem("adventar.user") || ""));
-  //   console.log("crewate");
-  //   console.log(this.$store.state.user);
-  // }
-
   mounted() {
     document.addEventListener("click", this.handleClickDocument);
   }
@@ -106,20 +99,17 @@ export default class extends Vue {
 }
 </script>
 
-<style scoped>
-.GlobalHeader {
-}
-
+<style lang="scss" scoped>
 .GlobalHeader-inner {
   max-width: 1000px;
-  padding: 6px 12px;
   margin: 0 auto;
   position: relative;
+  padding: 5px 12px;
 }
 
 .GlobalHeader-right {
   position: absolute;
-  right: 10px;
+  right: 15px;
   top: 18px;
 }
 
@@ -135,11 +125,20 @@ export default class extends Vue {
   text-decoration: none;
 }
 
+.GlobalHeader-logo img {
+  width: 165px;
+  height: 21px;
+}
+
 .GlobalHeader-menuBtn {
   color: #666;
   cursor: pointer;
   display: block;
   padding-bottom: 10px;
+}
+
+.GlobalHeader-menuBtn.is-signin {
+  font-size: 20px;
 }
 
 .GlobalHeader-menuBtn:hover {
@@ -196,5 +195,20 @@ export default class extends Vue {
 
 .GlobalHeader-dropdown li svg {
   margin-right: 5px;
+}
+
+@media (min-width: $mq-break-small) {
+  .GlobalHeader-inner {
+    padding: 20px 12px;
+  }
+
+  .GlobalHeader-right {
+    top: 32px;
+  }
+
+  .GlobalHeader-logo img {
+    width: 220px;
+    height: 28px;
+  }
 }
 </style>

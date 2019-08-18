@@ -5,27 +5,29 @@
     <PageHeader>ユーザー設定</PageHeader>
 
     <main>
-      <section>
-        <SectionHeader>表示名</SectionHeader>
-        <div v-if="!editmode">
-          <span role="button" class="name" @click="editmode = true">
-            {{ $store.state.user.name }}
-            <font-awesome-icon icon="edit" />
-          </span>
-        </div>
-        <div v-if="editmode">
-          <form @submit.prevent class="inputForm">
-            <input type="text" :value="$store.state.user.name" @change="onChangeName" />
-            <button>Submit</button>
-            <span role="button" class="cancel" @click="editmode = false">Cancel</span>
-          </form>
-        </div>
-      </section>
+      <div>
+        <section>
+          <SectionHeader>表示名</SectionHeader>
+          <div v-if="!editmode">
+            <span role="button" class="name" @click="editmode = true">
+              {{ $store.state.user.name }}
+              <font-awesome-icon icon="edit" />
+            </span>
+          </div>
+          <div v-if="editmode">
+            <form @submit.prevent class="inputForm">
+              <input type="text" :value="$store.state.user.name" @change="onChangeName" />
+              <button>Submit</button>
+              <span role="button" class="cancel" @click="editmode = false">Cancel</span>
+            </form>
+          </div>
+        </section>
 
-      <section style="margin-top: 50px">
-        <SectionHeader>画像</SectionHeader>
-        <img :src="$store.state.user.iconUrl" width="80" height="80" style="border-radius: 80px" />
-      </section>
+        <section style="margin-top: 50px">
+          <SectionHeader>画像</SectionHeader>
+          <img :src="$store.state.user.iconUrl" width="80" height="80" style="border-radius: 80px" />
+        </section>
+      </div>
     </main>
   </div>
 </template>

@@ -12,6 +12,10 @@ body {
 }
 
 main {
+  background-color: #f1f1f1;
+}
+
+main > div {
   max-width: 1000px;
   padding: 30px 12px;
   margin: 0 auto;

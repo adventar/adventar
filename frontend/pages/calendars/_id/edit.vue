@@ -5,8 +5,10 @@
     <PageHeader>カレンダー編集</PageHeader>
 
     <main>
-      <div v-if="calendar">
-        <CalendarForm :calendar="calendar" />
+      <div>
+        <template v-if="calendar">
+          <CalendarForm :calendar="calendar" />
+        </template>
       </div>
     </main>
   </div>
