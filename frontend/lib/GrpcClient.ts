@@ -189,14 +189,21 @@ type createEntryParams = {
   day: number;
   token: string;
 };
-export async function createEntry({ calendarId, day, token }: createEntryParams): Promise<number> {
+export async function createEntry({ calendarId, day, token }: createEntryParams): Promise<Entry> {
   const request = new CreateEntryRequest();
   request.setCalendarId(calendarId);
   request.setDay(day);
 
   const entry = await client.createEntry(request, { authorization: token });
 
-  return entry.getId();
+  return {
+    id: entry.getId(),
+    day: day,
+    comment: entry.getComment(),
+    url: entry.getUrl(),
+    title: entry.getTitle(),
+    imageUrl: entry.getImageUrl()
+  };
 }
 
 type updateEntryParams = {

@@ -1,5 +1,12 @@
 <template>
-  <img :src="src" :alt="`${this.user.name}'s icon`" @error="handleErrorImage()" :width="size" :height="size" />
+  <img
+    class="UserIcon"
+    :src="src"
+    :alt="`${this.user.name}'s icon`"
+    :width="size"
+    :height="size"
+    @error="handleErrorImage()"
+  />
 </template>
 
 <script lang="ts">

@@ -16,7 +16,7 @@ export interface Calendar {
 
 export interface Entry {
   id: number;
-  owner: User;
+  owner?: User;
   day: number;
   comment: string;
   url: string;

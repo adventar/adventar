@@ -1,17 +1,17 @@
 <template>
-  <header class="GlobalHeader">
-    <div class="GlobalHeader-inner">
-      <h1 class="GlobalHeader-logo">
+  <header>
+    <div class="inner">
+      <h1 class="logo">
         <nuxt-link to="/"><img src="~/assets/logo.png" alt="Adventar" width="220" height="28"/></nuxt-link>
       </h1>
       <no-ssr>
-        <div class="GlobalHeader-right">
+        <div class="right">
           <div v-if="$store.state.user">
-            <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn">
-              <UserIcon class="GlobalHeader-userIcon" :user="$store.state.user" size="28" />
+            <span role="button" @click.stop="showDropdown = true" class="menuBtn">
+              <UserIcon class="userIcon" :user="$store.state.user" size="28" />
               <font-awesome-icon icon="sort-down" />
             </span>
-            <div class="GlobalHeader-dropdown is-login" v-if="showDropdown" @click.stop>
+            <div class="dropdown is-login" v-if="showDropdown" @click.stop>
               <ul>
                 <li v-if="calendarCreatable">
                   <nuxt-link to="/calendars/new">カレンダーを作る</nuxt-link>
@@ -29,10 +29,10 @@
             </div>
           </div>
           <div v-else>
-            <span role="button" @click.stop="showDropdown = true" class="GlobalHeader-menuBtn is-signin">
+            <span role="button" @click.stop="showDropdown = true" class="menuBtn is-signin">
               <font-awesome-icon icon="sign-in-alt" />
             </span>
-            <div class="GlobalHeader-dropdown" v-if="showDropdown" @click.stop>
+            <div class="dropdown" v-if="showDropdown" @click.stop>
               <ul>
                 <li>
                   <span role="button" @click="login('google')">
@@ -100,62 +100,62 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.GlobalHeader-inner {
-  max-width: 1000px;
+.inner {
+  max-width: $content-max-width;
   margin: 0 auto;
   position: relative;
   padding: 5px 12px;
 }
 
-.GlobalHeader-right {
+.right {
   position: absolute;
   right: 15px;
   top: 18px;
 }
 
-.GlobalHeader-logo {
+.logo {
   margin: 0;
   padding: 10px 0;
   font-size: 24px;
   font-weight: bold;
 }
-.GlobalHeader-logo a {
+.logo a {
   color: #e4523d;
   text-transform: uppercase;
   text-decoration: none;
 }
 
-.GlobalHeader-logo img {
+.logo img {
   width: 165px;
   height: 21px;
 }
 
-.GlobalHeader-menuBtn {
+.menuBtn {
   color: #666;
   cursor: pointer;
   display: block;
   padding-bottom: 10px;
 }
 
-.GlobalHeader-menuBtn.is-signin {
+.menuBtn.is-signin {
   font-size: 20px;
 }
 
-.GlobalHeader-menuBtn:hover {
+.menuBtn:hover {
   color: #000;
 }
 
-.GlobalHeader-menuBtn .GlobalHeader-userIcon {
+.menuBtn .userIcon {
   margin-right: 5px;
 }
 
-.GlobalHeader-dropdown {
+.dropdown {
   position: absolute;
   width: 100%;
   z-index: 1;
 }
 
-.GlobalHeader-dropdown ul {
+.dropdown ul {
   /* display: none; */
   border: 1px solid #dadada;
   border-radius: 3px;
@@ -167,46 +167,45 @@ export default class extends Vue {
   float: right;
 }
 
-.GlobalHeader-dropdown.is-login ul {
+.dropdown.is-login ul {
   width: 140px;
 }
 
-.GlobalHeader-dropdown li {
+.dropdown li {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.GlobalHeader-dropdown li [role="button"],
-.GlobalHeader-dropdown li a {
+.dropdown li svg {
+  margin-right: 5px;
+}
+
+.dropdown li [role="button"],
+.dropdown li a {
   display: block;
   color: #666;
   font-size: 13px;
   padding: 5px 10px;
   text-decoration: none;
   cursor: pointer;
-}
 
-.GlobalHeader-dropdown li [role="button"]:hover,
-.GlobalHeader-dropdown li a:hover {
-  color: #fff;
-  background: #e45541;
-}
-
-.GlobalHeader-dropdown li svg {
-  margin-right: 5px;
+  &:hover {
+    color: #fff;
+    background: #e45541;
+  }
 }
 
 @media (min-width: $mq-break-small) {
-  .GlobalHeader-inner {
+  .inner {
     padding: 20px 12px;
   }
 
-  .GlobalHeader-right {
+  .right {
     top: 32px;
   }
 
-  .GlobalHeader-logo img {
+  .logo img {
     width: 220px;
     height: 28px;
   }

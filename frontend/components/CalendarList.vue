@@ -94,7 +94,7 @@ li .indicator {
   }
 
   li {
-    width: 47%;
+    width: 30%;
     display: block;
     margin: 0 3% 40px 0;
   }
@@ -156,12 +156,6 @@ li .indicator {
   li [data-value="25"] {
     border-radius: 3px;
     background-color: #5fca6b;
-  }
-}
-
-@media (min-width: $mq-break-middle) {
-  li {
-    width: 30%;
   }
 }
 </style>

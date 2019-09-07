@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<style>
+<style lang="scss">
 body {
   margin: 0;
   padding: 0;
@@ -16,7 +16,7 @@ main {
 }
 
 main > div {
-  max-width: 1000px;
+  max-width: $content-max-width;
   padding: 30px 12px;
   margin: 0 auto;
 }
