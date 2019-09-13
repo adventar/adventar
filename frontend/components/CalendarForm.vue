@@ -1,24 +1,22 @@
 <template>
-  <form @submit.prevent="handleSubmit()">
+  <form class="CalendarForm" @submit.prevent="handleSubmit()">
     <section>
       <SectionHeader>タイトル</SectionHeader>
-      <input v-model="title" type="text" /> Advent Calendar {{ year }}
+      <div class="title"><input v-model="title" type="text" class="inputTitle" /> Advent Calendar {{ year }}</div>
     </section>
 
     <section>
       <SectionHeader>概要</SectionHeader>
-      <textarea v-model="description"></textarea>
+      <textarea v-model="description" class="inputDescription"></textarea>
       <p class="note">Markdown記法が使えます。</p>
     </section>
 
-    <div v-if="calendar">
-      <button type="submit">更新</button>
+    <button type="submit" class="submitBtn">更新</button>
+
+    <template v-if="calendar">
       <br />
       <button type="button" class="deleteBtn" @click="handleDelete()">削除</button>
-    </div>
-    <div v-else>
-      <button type="submit">作成</button>
-    </div>
+    </template>
   </form>
 </template>
 
@@ -90,29 +88,36 @@ export default class extends Vue {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .note {
   margin-top: 10px;
   font-size: 13px;
   color: #666;
 }
 
-input[type="text"] {
-  font-size: 16px;
-  width: 300px;
-  padding: 5px;
-  border: 1px solid #ccc;
+.title {
+  text-align: right;
 }
 
-textarea {
-  width: 500px;
+.inputTitle {
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+}
+
+.inputDescription {
+  box-sizing: border-box;
+  width: 100%;
   height: 200px;
   font-size: 14px;
   padding: 5px;
   border: 1px solid #ccc;
 }
 
-button[type="submit"] {
+.submitBtn {
   font-size: 16px;
   color: #fff;
   border: 2px solid #28a745;
@@ -122,7 +127,20 @@ button[type="submit"] {
   cursor: pointer;
 }
 
-button.deleteBtn {
+@media (min-width: $mq-break-small) {
+  .title {
+    text-align: left;
+  }
+  .inputTitle {
+    width: 340px;
+  }
+
+  .inputDescription {
+    max-width: 600px;
+  }
+}
+
+.deleteBtn {
   font-size: 16px;
   color: #fff;
   border: 2px solid #dc3545;
