@@ -1,7 +1,5 @@
 <template>
   <div>
-    <GlobalHeader />
-
     <PageHeader>ユーザー設定</PageHeader>
 
     <main>
@@ -36,12 +34,11 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import { updateUser } from "~/lib/GrpcClient";
 import { getToken } from "~/lib/Auth";
-import GlobalHeader from "~/components/GlobalHeader.vue";
 import PageHeader from "~/components/PageHeader.vue";
 import SectionHeader from "~/components/SectionHeader.vue";
 
 @Component({
-  components: { GlobalHeader, PageHeader, SectionHeader },
+  components: { PageHeader, SectionHeader },
   middleware: "requireUser"
 })
 export default class extends Vue {

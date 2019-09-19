@@ -1,7 +1,5 @@
 <template>
   <div>
-    <GlobalHeader />
-
     <PageHeader>{{ year }}年のAdvent Calnedar</PageHeader>
 
     <main>
@@ -17,13 +15,12 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import { listCalendars } from "~/lib/GrpcClient";
 import { Calendar } from "~/types/adventar";
-import GlobalHeader from "~/components/GlobalHeader.vue";
 import PageHeader from "~/components/PageHeader.vue";
 import CalendarSearchForm from "~/components/CalendarSearchForm.vue";
 import CalendarList from "~/components/CalendarList.vue";
 
 @Component({
-  components: { GlobalHeader, PageHeader, CalendarSearchForm, CalendarList }
+  components: { PageHeader, CalendarSearchForm, CalendarList }
 })
 export default class extends Vue {
   year: number;
@@ -38,7 +35,9 @@ export default class extends Vue {
 
   async handleSubmit(query) {
     this.query = query;
+    this.calendars = [];
     this.calendars = await listCalendars({ year: this.year, query: this.query });
+    this.$router.push(`/calendars?year=${this.year}&query=${query}`);
   }
 }
 </script>

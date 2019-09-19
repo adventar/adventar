@@ -1,17 +1,24 @@
 <template>
   <div>
+    <GlobalHeader />
     <nuxt />
   </div>
 </template>
+
+<script lang="ts">
+import { Component, Vue } from "nuxt-property-decorator";
+import GlobalHeader from "~/components/GlobalHeader.vue";
+@Component({
+  components: { GlobalHeader }
+})
+export default class extends Vue {}
+</script>
 
 <style lang="scss">
 body {
   margin: 0;
   padding: 0;
   font-family: "Hiragino Kaku Gothic Pro", Meiryo, "MS PGothic", Verdana, Arial, sans-serif;
-}
-
-main {
   background-color: #f1f1f1;
 }
 

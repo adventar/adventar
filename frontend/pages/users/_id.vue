@@ -1,7 +1,5 @@
 <template>
   <div v-if="user">
-    <GlobalHeader />
-
     <PageHeader>
       <img :src="user.iconUrl" width="30" height="30" style="border-radius: 30px; vertical-align: middle;" />
       {{ user.name }}
@@ -48,7 +46,6 @@ import { Component, Watch, Vue } from "nuxt-property-decorator";
 import { User, Calendar, Entry } from "~/types/adventar";
 import { getCurrentYear } from "~/lib/Configuration";
 import { getUser, listCalendars, listEntries } from "~/lib/GrpcClient";
-import GlobalHeader from "~/components/GlobalHeader.vue";
 import PageHeader from "~/components/PageHeader.vue";
 import SectionHeader from "~/components/SectionHeader.vue";
 import CalendarList from "~/components/CalendarList.vue";
@@ -56,7 +53,7 @@ import CalendarList from "~/components/CalendarList.vue";
 const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"];
 
 @Component({
-  components: { GlobalHeader, PageHeader, SectionHeader, CalendarList }
+  components: { PageHeader, SectionHeader, CalendarList }
 })
 export default class extends Vue {
   year: number = getCurrentYear();

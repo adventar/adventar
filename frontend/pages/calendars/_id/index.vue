@@ -1,7 +1,5 @@
 <template>
   <div>
-    <GlobalHeader />
-
     <template v-if="calendar">
       <header class="header" :style="{ backgroundColor: calendarColor() }">
         <div class="inner">
@@ -41,14 +39,13 @@ import * as RestClient from "~/lib/RestClient";
 import { calendarColor } from "~/lib/utils/Colors";
 import { Calendar } from "~/types/adventar";
 import { getToken } from "~/lib/Auth";
-import GlobalHeader from "~/components/GlobalHeader.vue";
 import UserIcon from "~/components/UserIcon.vue";
 import CalendarTable from "~/components/CalendarTable.vue";
 import EntryList from "~/components/EntryList.vue";
 import { Entry } from "~/types/adventar";
 
 @Component({
-  components: { GlobalHeader, UserIcon, VueMarkdown, CalendarTable, EntryList }
+  components: { UserIcon, VueMarkdown, CalendarTable, EntryList }
 })
 export default class extends Vue {
   calendar: Calendar | null = null;
@@ -103,7 +100,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 main > .inner {
-  padding: 0;
+  padding: 0 0 30px 0;
 }
 
 .header {
