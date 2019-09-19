@@ -24,7 +24,7 @@ services:
       MYSQL_DATABASE: adventar_dev
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - 13306:3306
+      - 23306:3306
     volumes:
       - db-data:/var/lib/mysql
 
