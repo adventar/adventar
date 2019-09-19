@@ -10,10 +10,11 @@ import {
   CreateEntryRequest,
   UpdateEntryRequest,
   DeleteEntryRequest,
-  GetUserRequest
+  GetUserRequest,
+  ListCalendarStatsRequest
 } from "~/lib/grpc/adventar/v1/adventar_pb";
 import { AdventarPromiseClient } from "~/lib/grpc/adventar/v1/adventar_grpc_web_pb";
-import { User, Calendar, Entry } from "~/types/adventar";
+import { User, Calendar, Entry, CalendarStat } from "~/types/adventar";
 
 const client = new AdventarPromiseClient(process.env.API_BASE_URL || "", null, null);
 
@@ -245,4 +246,17 @@ export async function getUser(id: number): Promise<User> {
     name: user.getName(),
     iconUrl: user.getIconUrl()
   };
+}
+
+export async function listCalendarStats(): Promise<CalendarStat[]> {
+  const request = new ListCalendarStatsRequest();
+  const res = await client.listCalendarStats(request, {});
+
+  return res.getCalendarStatsList().map(s => {
+    return {
+      year: s.getYear(),
+      calendarsCount: s.getCalendarsCount(),
+      entriesCount: s.getEntriesCount()
+    };
+  });
 }

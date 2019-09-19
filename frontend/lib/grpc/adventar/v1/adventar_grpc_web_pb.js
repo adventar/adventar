@@ -364,6 +364,62 @@ proto.adventar.v1.AdventarPromiseClient.prototype.deleteCalendar =
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adventar.v1.ListCalendarStatsRequest,
+ *   !proto.adventar.v1.ListCalendarStatsResponse>}
+ */
+const methodInfo_Adventar_ListCalendarStats = new grpc.web.AbstractClientBase.MethodInfo(
+  adventar_v1_rpc_messages_pb.ListCalendarStatsResponse,
+  /** @param {!proto.adventar.v1.ListCalendarStatsRequest} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  adventar_v1_rpc_messages_pb.ListCalendarStatsResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adventar.v1.ListCalendarStatsRequest} request The
+ *     request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adventar.v1.ListCalendarStatsResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adventar.v1.ListCalendarStatsResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adventar.v1.AdventarClient.prototype.listCalendarStats =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adventar.v1.Adventar/ListCalendarStats',
+      request,
+      metadata,
+      methodInfo_Adventar_ListCalendarStats,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adventar.v1.ListCalendarStatsRequest} request The
+ *     request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adventar.v1.ListCalendarStatsResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.adventar.v1.AdventarPromiseClient.prototype.listCalendarStats =
+    function(request, metadata) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.listCalendarStats(
+      request, metadata, (error, response) => {
+        error ? reject(error) : resolve(response);
+      });
+  });
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
  *   !proto.adventar.v1.ListEntriesRequest,
  *   !proto.adventar.v1.ListEntriesResponse>}
  */

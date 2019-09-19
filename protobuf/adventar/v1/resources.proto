@@ -27,3 +27,9 @@ message Entry {
   string title = 7;
   string image_url = 8;
 }
+
+message CalendarStat {
+  int32 year = 1;
+  int32 calendars_count = 2;
+  int32 entries_count = 3;
+}

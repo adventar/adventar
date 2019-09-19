@@ -36,6 +36,12 @@ message UpdateCalendarRequest {
 
 message DeleteCalendarRequest { int64 calendar_id = 1; }
 
+message ListCalendarStatsRequest {}
+
+message ListCalendarStatsResponse {
+  repeated CalendarStat calendar_stats = 1;
+}
+
 message ListEntriesRequest {
   int64 user_id = 1;
   int32 year = 2;

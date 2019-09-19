@@ -28,6 +28,27 @@ export namespace Calendar {
   }
 }
 
+export class CalendarStat {
+  constructor ();
+  getYear(): number;
+  setYear(a: number): void;
+  getCalendarsCount(): number;
+  setCalendarsCount(a: number): void;
+  getEntriesCount(): number;
+  setEntriesCount(a: number): void;
+  toObject(): CalendarStat.AsObject;
+  serializeBinary(): Uint8Array;
+  static deserializeBinary: (bytes: {}) => CalendarStat;
+}
+
+export namespace CalendarStat {
+  export type AsObject = {
+    Year: number;
+    CalendarsCount: number;
+    EntriesCount: number;
+  }
+}
+
 export class CreateCalendarRequest {
   constructor ();
   getTitle(): string;
@@ -175,6 +196,33 @@ export class GetUserRequest {
 export namespace GetUserRequest {
   export type AsObject = {
     UserId: number;
+  }
+}
+
+export class ListCalendarStatsRequest {
+  constructor ();
+  toObject(): ListCalendarStatsRequest.AsObject;
+  serializeBinary(): Uint8Array;
+  static deserializeBinary: (bytes: {}) => ListCalendarStatsRequest;
+}
+
+export namespace ListCalendarStatsRequest {
+  export type AsObject = {
+  }
+}
+
+export class ListCalendarStatsResponse {
+  constructor ();
+  getCalendarStatsList(): CalendarStat[];
+  setCalendarStatsList(a: CalendarStat[]): void;
+  toObject(): ListCalendarStatsResponse.AsObject;
+  serializeBinary(): Uint8Array;
+  static deserializeBinary: (bytes: {}) => ListCalendarStatsResponse;
+}
+
+export namespace ListCalendarStatsResponse {
+  export type AsObject = {
+    CalendarStatsList: CalendarStat[];
   }
 }
 

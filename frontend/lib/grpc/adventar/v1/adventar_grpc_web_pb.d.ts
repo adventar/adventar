@@ -1,6 +1,7 @@
 import * as grpcWeb from 'grpc-web';
 import {
   Calendar,
+  CalendarStat,
   CreateCalendarRequest,
   CreateEntryRequest,
   DeleteCalendarRequest,
@@ -9,6 +10,8 @@ import {
   GetCalendarRequest,
   GetCalendarResponse,
   GetUserRequest,
+  ListCalendarStatsRequest,
+  ListCalendarStatsResponse,
   ListCalendarsRequest,
   ListCalendarsResponse,
   ListEntriesRequest,
@@ -59,6 +62,13 @@ export class AdventarClient {
     callback: (err: grpcWeb.Error,
                response: Empty) => void
   ): grpcWeb.ClientReadableStream<Empty>;
+
+  listCalendarStats(
+    request: ListCalendarStatsRequest,
+    metadata: grpcWeb.Metadata,
+    callback: (err: grpcWeb.Error,
+               response: ListCalendarStatsResponse) => void
+  ): grpcWeb.ClientReadableStream<ListCalendarStatsResponse>;
 
   listEntries(
     request: ListEntriesRequest,
@@ -140,6 +150,11 @@ export class AdventarPromiseClient {
     request: DeleteCalendarRequest,
     metadata: grpcWeb.Metadata
   ): Promise<Empty>;
+
+  listCalendarStats(
+    request: ListCalendarStatsRequest,
+    metadata: grpcWeb.Metadata
+  ): Promise<ListCalendarStatsResponse>;
 
   listEntries(
     request: ListEntriesRequest,

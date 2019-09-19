@@ -24,3 +24,9 @@ export interface Entry {
   imageUrl: string;
   calendar?: Pick<Calendar, "id" | "title" | "year">;
 }
+
+export interface CalendarStat {
+  year: number;
+  calendarsCount: number;
+  entriesCount: number;
+}
