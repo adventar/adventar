@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header class="GlobalHeader">
     <div class="inner">
       <h1 class="logo">
         <nuxt-link to="/"><img src="~/assets/logo.png" alt="Adventar" width="220" height="28"/></nuxt-link>
@@ -100,6 +100,9 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.GlobalHeader {
+  background-color: #fff;
+}
 .inner {
   max-width: $content-max-width;
   margin: 0 auto;
@@ -203,6 +206,7 @@ export default class extends Vue {
 
   .right {
     top: 32px;
+    right: 50px;
   }
 
   .logo img {
