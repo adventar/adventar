@@ -2,12 +2,12 @@
   <div>
     <PageHeader>これまでの Adventar Calendar</PageHeader>
     <main>
-      <div>
+      <div class="mainInner">
         <ul class="calendars">
           <li class="item" v-for="stat in stats" :key="stat.year">
             <nuxt-link class="title" :to="`/calendars?year=${stat.year}`">
               <font-awesome-icon :icon="['far', 'calendar']" />
-              {{ stat.year }}年のAdvent Calendar
+              {{ stat.year }}年
             </nuxt-link>
             <span class="label">
               カレンダー<strong>{{ stat.calendarsCount }}</strong>
@@ -52,7 +52,6 @@ export default class extends Vue {
 }
 
 .title {
-  display: block;
   margin-bottom: 5px;
 }
 
@@ -62,12 +61,6 @@ export default class extends Vue {
   border-radius: 3px;
   font-size: 12px;
   padding: 3px 5px;
-  margin: 0 0 0 5px;
-}
-
-@media (min-width: $mq-break-small) {
-  .title {
-    display: inline;
-  }
+  margin: 0 0 0 3px;
 }
 </style>

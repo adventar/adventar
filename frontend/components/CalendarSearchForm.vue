@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleSubmit">
+  <form class="CalendarSearchForm" @submit.prevent="handleSubmit">
     <input type="text" v-model="query" />
     <button><font-awesome-icon icon="search" /></button>
   </form>

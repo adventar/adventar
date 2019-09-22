@@ -2,7 +2,7 @@
   <div>
     <PageHeader>{{ notFound ? "404 Not Found" : "Error" }}</PageHeader>
     <main>
-      <div>
+      <div class="mainInner">
         <div v-if="notFound">お探しのページは見つかりませんでした。</div>
         <div v-else>予期しないエラーが発生しました。</div>
       </div>

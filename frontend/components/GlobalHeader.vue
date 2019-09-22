@@ -4,61 +4,77 @@
       <h1 class="logo">
         <nuxt-link to="/"><img src="~/assets/logo.png" alt="Adventar" width="220" height="28"/></nuxt-link>
       </h1>
-      <no-ssr>
-        <div class="right">
-          <div v-if="$store.state.user">
-            <span role="button" @click.stop="showDropdown = true" class="menuBtn">
-              <UserIcon class="userIcon" :user="$store.state.user" size="28" />
-              <font-awesome-icon icon="sort-down" />
-            </span>
-            <div class="dropdown is-login" v-if="showDropdown" @click.stop>
-              <ul>
-                <li v-if="calendarCreatable">
-                  <nuxt-link to="/calendars/new">カレンダーを作る</nuxt-link>
-                </li>
-                <li>
-                  <nuxt-link :to="`/users/${$store.state.user.id}`">自分のカレンダー</nuxt-link>
-                </li>
-                <li>
-                  <nuxt-link to="/setting">ユーザー設定</nuxt-link>
-                </li>
-                <li>
-                  <span role="button" @click="logout()">ログアウト</span>
-                </li>
-              </ul>
-            </div>
+      <div class="right">
+        <no-ssr>
+          <span role="button" @click.stop="showDropdown()" class="menuBtn">
+            <UserIcon v-if="$store.state.user" class="userIcon" :user="$store.state.user" size="28" />
+            <font-awesome-icon v-else :icon="['fas', 'bars']"></font-awesome-icon>
+          </span>
+          <div class="dropdown" v-if="isShownDropdown" @click.stop>
+            <ul v-if="$store.state.user" class="loginMenu">
+              <li class="user">
+                <UserIcon class="userIcon" :user="$store.state.user" size="28" />
+                {{ $store.state.user.name }}
+              </li>
+              <li>
+                <nuxt-link @click.native="hideDropdown()" to="/calendars/new">
+                  <font-awesome-icon :icon="['fas', 'calendar-plus']" />
+                  カレンダーを作る
+                </nuxt-link>
+              </li>
+              <li>
+                <nuxt-link @click.native="hideDropdown()" :to="`/users/${$store.state.user.id}`">
+                  <font-awesome-icon :icon="['fas', 'user']" /> マイページ
+                </nuxt-link>
+              </li>
+              <li>
+                <nuxt-link @click.native="hideDropdown()" to="/setting">
+                  <font-awesome-icon :icon="['fas', 'cog']" /> 設定
+                </nuxt-link>
+              </li>
+              <li>
+                <span @click.native="hideDropdown()" role="button" @click="logout()">
+                  <font-awesome-icon :icon="['fas', 'sign-out-alt']" /> ログアウト
+                </span>
+              </li>
+            </ul>
+            <ul v-if="!$store.state.user" class="loginMenu">
+              <li>
+                <span @click.native="hideDropdown()" role="button" @click="login('google')">
+                  <font-awesome-icon :icon="['fab', 'google']" /> Google でログイン
+                </span>
+              </li>
+              <li>
+                <span @click.native="hideDropdown()" role="button" @click="login('github')">
+                  <font-awesome-icon :icon="['fab', 'github']" /> GitHub でログイン
+                </span>
+              </li>
+              <li>
+                <span @click.native="hideDropdown()" role="button" @click="login('twitter')">
+                  <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter でログイン
+                </span>
+              </li>
+              <li>
+                <span @click.native="hideDropdown()" role="button" @click="login('facebook')">
+                  <font-awesome-icon :icon="['fab', 'facebook']" /> Facebook でログイン
+                </span>
+              </li>
+            </ul>
+            <ul class="generalMenu">
+              <li>
+                <nuxt-link @click.native="hideDropdown()" to="/archive">
+                  <font-awesome-icon :icon="['fas', 'calendar-minus']" /> 過去のカレンダー
+                </nuxt-link>
+              </li>
+              <li>
+                <nuxt-link @click.native="hideDropdown()" to="/help">
+                  <font-awesome-icon :icon="['fas', 'question-circle']" /> ヘルプ
+                </nuxt-link>
+              </li>
+            </ul>
           </div>
-          <div v-else>
-            <span role="button" @click.stop="showDropdown = true" class="menuBtn is-signin">
-              <font-awesome-icon icon="sign-in-alt" />
-            </span>
-            <div class="dropdown" v-if="showDropdown" @click.stop>
-              <ul>
-                <li>
-                  <span role="button" @click="login('google')">
-                    <font-awesome-icon :icon="['fab', 'google']" /> Google でログイン
-                  </span>
-                </li>
-                <li>
-                  <span role="button" @click="login('github')">
-                    <font-awesome-icon :icon="['fab', 'github']" /> GitHub でログイン
-                  </span>
-                </li>
-                <li>
-                  <span role="button" @click="login('twitter')">
-                    <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter でログイン
-                  </span>
-                </li>
-                <li>
-                  <span role="button" @click="login('facebook')">
-                    <font-awesome-icon :icon="['fab', 'facebook']" /> Facebook でログイン
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </no-ssr>
+        </no-ssr>
+      </div>
     </div>
   </header>
 </template>
@@ -66,15 +82,13 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import { loginWithFirebase, logoutWithFirebase } from "~/lib/Auth";
-import { getCalendarCreatable } from "~/lib/Configuration";
 import UserIcon from "~/components/UserIcon.vue";
 
 @Component({
   components: { UserIcon }
 })
 export default class extends Vue {
-  showDropdown = false;
-  calendarCreatable = getCalendarCreatable();
+  isShownDropdown = false;
 
   mounted() {
     document.addEventListener("click", this.handleClickDocument);
@@ -85,7 +99,15 @@ export default class extends Vue {
   }
 
   handleClickDocument() {
-    this.showDropdown = false;
+    this.hideDropdown();
+  }
+
+  showDropdown() {
+    this.isShownDropdown = true;
+  }
+
+  hideDropdown() {
+    this.isShownDropdown = false;
   }
 
   login(provider) {
@@ -134,10 +156,11 @@ export default class extends Vue {
 }
 
 .menuBtn {
-  color: #666;
+  color: #333;
   cursor: pointer;
   display: block;
   padding-bottom: 10px;
+  font-size: 20px;
 }
 
 .menuBtn.is-signin {
@@ -159,25 +182,35 @@ export default class extends Vue {
 }
 
 .dropdown ul {
-  /* display: none; */
   border: 1px solid #dadada;
   border-radius: 3px;
   background: #fff;
-  width: 180px;
+  width: 200px;
   margin: 0;
-  padding: 8px 0;
+  padding: 0;
   font-size: 14px;
   float: right;
-}
 
-.dropdown.is-login ul {
-  width: 140px;
+  &.loginMenu {
+    border-radius: 3px 3px 0 0;
+  }
+
+  &.generalMenu {
+    border-radius: 0 0 3px 3px;
+    border-top: none;
+  }
 }
 
 .dropdown li {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.dropdown li.user {
+  padding: 5px 10px;
+  margin-bottom: 5px;
+  background-color: #eaeaea;
 }
 
 .dropdown li svg {
@@ -189,7 +222,7 @@ export default class extends Vue {
   display: block;
   color: #666;
   font-size: 13px;
-  padding: 5px 10px;
+  padding: 10px 10px;
   text-decoration: none;
   cursor: pointer;
 
@@ -206,7 +239,7 @@ export default class extends Vue {
 
   .right {
     top: 32px;
-    right: 50px;
+    right: 12px;
   }
 
   .logo img {

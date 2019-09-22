@@ -1,6 +1,6 @@
 <template>
   <ul class="EntryList">
-    <li class="item" :id="`entry-list-${entry.day}`" v-for="entry in calendar.entries" :key="entry.day">
+    <li class="item" v-for="entry in calendar.entries" :key="entry.day">
       <div class="head">
         <div class="date">12/{{ entry.day }}</div>
         <div class="user">
@@ -53,10 +53,6 @@ export default class extends Vue {
   position: relative;
   font-size: 14px;
   clear: both;
-}
-
-.item:target {
-  background-color: #ffe2e7;
 }
 
 .date {

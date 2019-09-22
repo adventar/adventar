@@ -6,8 +6,11 @@
           <h2 class="title">{{ calendar.title }} Advent Calendar {{ calendar.year }}</h2>
           <div>登録数 {{ calendar.entries.length }}/25人</div>
           <div>
-            作成者 <UserIcon :user="calendar.owner" size="22" />
-            {{ calendar.owner.name }}
+            作成者
+            <nuxt-link class="owner" :to="`/users/${calendar.owner.id}`">
+              <UserIcon :user="calendar.owner" size="22" />
+              {{ calendar.owner.name }}
+            </nuxt-link>
           </div>
           <nuxt-link class="editBtn" :to="`/calendars/${calendar.id}/edit`" v-if="isOwnCalendar(calendar)">
             <font-awesome-icon icon="edit"></font-awesome-icon> 編集
@@ -15,7 +18,7 @@
         </div>
       </header>
       <main>
-        <div class="inner">
+        <div class="mainInner">
           <VueMarkdown class="description">{{ calendar.description }}</VueMarkdown>
           <CalendarTable
             :calendar="calendar"
@@ -58,6 +61,7 @@ export default class extends Vue {
   }
 
   async mounted() {
+    // TODO: 404 if not found
     this.calendar = await getCalendar(Number(this.$route.params.id));
   }
 
@@ -99,7 +103,7 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-main > .inner {
+.mainInner {
   padding: 0 0 30px 0;
 }
 
@@ -118,6 +122,11 @@ main > .inner {
   margin: 0 0 20px 0;
   font-size: 20px;
   font-weight: bold;
+}
+
+.owner {
+  text-decoration: none;
+  color: #fff;
 }
 
 .editBtn {

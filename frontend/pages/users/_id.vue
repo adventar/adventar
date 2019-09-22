@@ -1,12 +1,12 @@
 <template>
   <div v-if="user">
     <PageHeader>
-      <img :src="user.iconUrl" width="30" height="30" style="border-radius: 30px; vertical-align: middle;" />
+      <UserIcon :user="user" size="30" />
       {{ user.name }}
     </PageHeader>
 
     <main>
-      <div>
+      <div class="mainInner">
         <ul class="years">
           <li v-for="y in years" :key="y">
             <nuxt-link
@@ -31,9 +31,11 @@
             </li>
           </ul>
 
-          <SectionHeader>iCal</SectionHeader>
-          <p>Google Calendarなどに読み込むことができます。</p>
-          <input class="icalInput" type="text" @click="handleClickIcalInput" :value="icalUrl" />
+          <template v-if="mypage">
+            <SectionHeader>iCal</SectionHeader>
+            <p>投稿の予定をGoogle Calendarなどに読み込むことができます。</p>
+            <input class="icalInput" type="text" @click="handleClickIcalInput" :value="icalUrl" />
+          </template>
         </div>
       </div>
     </main>
@@ -49,11 +51,12 @@ import { getUser, listCalendars, listEntries } from "~/lib/GrpcClient";
 import PageHeader from "~/components/PageHeader.vue";
 import SectionHeader from "~/components/SectionHeader.vue";
 import CalendarList from "~/components/CalendarList.vue";
+import UserIcon from "~/components/UserIcon.vue";
 
 const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"];
 
 @Component({
-  components: { PageHeader, SectionHeader, CalendarList }
+  components: { PageHeader, SectionHeader, CalendarList, UserIcon }
 })
 export default class extends Vue {
   year: number = getCurrentYear();
@@ -88,6 +91,10 @@ export default class extends Vue {
       years.push(y);
     }
     return years.reverse();
+  }
+
+  get mypage(): boolean {
+    return this.user && this.$store.state.user && this.user.id === this.$store.state.user.id;
   }
 
   handleClickIcalInput(event): void {

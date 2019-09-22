@@ -1,7 +1,7 @@
 <template>
   <div class="CalendarList">
-    <ul>
-      <li v-for="calendar in calendars" :key="calendar.id">
+    <ul class="list">
+      <li class="item" v-for="calendar in calendars" :key="calendar.id">
         <nuxt-link
           :to="`/calendars/${calendar.id}`"
           class="title"
@@ -33,12 +33,12 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-ul {
+.list {
   margin: 0;
   padding: 0;
 }
 
-li {
+.item {
   font-size: 14px;
   margin: 0 0 10px 0;
   padding: 0;
@@ -51,7 +51,7 @@ li {
   border-radius: 3px;
 }
 
-li .title {
+.title {
   border-radius: 3px 0 0 3px;
   font-size: 14px;
   padding: 15px;
@@ -62,7 +62,7 @@ li .title {
   text-decoration: none;
 }
 
-li .info {
+.info {
   font-size: 12px;
   width: 25%;
   padding: 0px 10px;
@@ -72,11 +72,11 @@ li .info {
   box-sizing: border-box;
 }
 
-li .counter {
+.counter {
   color: #ef7266;
 }
 
-li .indicator {
+.indicator {
   display: none;
 }
 
@@ -87,19 +87,19 @@ li .indicator {
     clear: both;
   }
 
-  ul {
+  .list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: space-between;
   }
 
-  li {
-    width: 30%;
+  .item {
+    width: 48%;
     display: block;
-    margin: 0 3% 40px 0;
+    margin: 0 0 40px 0;
   }
 
-  li .title {
+  .title {
     display: block;
     display: flex;
     align-items: center;
@@ -114,7 +114,7 @@ li .indicator {
     text-decoration: none;
   }
 
-  li .info {
+  .info {
     width: auto;
     padding: 10px;
     border-radius: 0 0 3px 3px;
@@ -122,11 +122,11 @@ li .indicator {
     height: 40px;
   }
 
-  li .counter {
+  .counter {
     float: right;
   }
 
-  li .indicator {
+  .indicator {
     display: inline-block;
     vertical-align: middle;
     background-color: #f1f1f1;
@@ -138,7 +138,7 @@ li .indicator {
     left: 10px;
   }
 
-  li [data-value] {
+  .item [data-value] {
     position: absolute;
     left: 0;
     top: 0;
@@ -148,14 +148,20 @@ li .indicator {
   }
 
   @for $i from 1 through 25 {
-    li [data-value="#{$i}"] {
+    .item [data-value="#{$i}"] {
       width: $i * 7px;
     }
   }
 
-  li [data-value="25"] {
+  .item [data-value="25"] {
     border-radius: 3px;
     background-color: #5fca6b;
+  }
+}
+
+@media (min-width: $mq-break-medium) {
+  .item {
+    width: 31%;
   }
 }
 </style>

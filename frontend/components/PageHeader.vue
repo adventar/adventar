@@ -11,7 +11,7 @@ import { Component, Vue } from "nuxt-property-decorator";
 export default class extends Vue {}
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .PageHeader {
   background: #80b2d0;
   padding: 15px 0;
@@ -23,8 +23,14 @@ export default class extends Vue {}
   margin: 0 auto;
   padding: 0 12px;
   position: relative;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: normal;
   color: #fff;
+}
+
+@media (min-width: $mq-break-small) {
+  .PageHeader h1 {
+    font-size: 24px;
+  }
 }
 </style>

@@ -3,8 +3,8 @@
     <PageHeader>{{ year }}年のAdvent Calnedar</PageHeader>
 
     <main>
-      <div>
-        <CalendarSearchForm :defaultQuery="query" @submit="handleSubmit" style="margin-bottom: 30px" />
+      <div class="mainInner">
+        <CalendarSearchForm :defaultQuery="query" @submit="handleSubmit" />
         <CalendarList :calendars="calendars" />
       </div>
     </main>
@@ -41,3 +41,23 @@ export default class extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.mainInner {
+  padding-top: 15px;
+}
+
+.CalendarSearchForm {
+  margin-bottom: 15px;
+}
+
+@media (min-width: $mq-break-small) {
+  .mainInner {
+    padding-top: 30px;
+  }
+
+  .CalendarSearchForm {
+    margin-bottom: 30px;
+  }
+}
+</style>

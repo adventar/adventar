@@ -28,10 +28,10 @@
             <div v-if="cell.entryable" class="inner">
               <span class="day">{{ cell.day }}</span>
               <div v-if="cell.entry">
-                <a class="entryUser" :href="`#entry-list-${cell.entry.day}`">
+                <span class="entryUser">
                   <UserIcon :user="cell.entry.owner" size="24" />
                   <div class="userName">{{ cell.entry.owner.name }}</div>
-                </a>
+                </span>
                 <span
                   class="editBtn"
                   role="button"
@@ -320,10 +320,6 @@ export default class extends Vue {
   padding-top: 5px;
   display: block;
   text-decoration: none;
-
-  &:hover {
-    opacity: 0.8;
-  }
 }
 
 .table .userName {

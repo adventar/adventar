@@ -3,11 +3,11 @@
     <div class="hero"></div>
 
     <main>
-      <div>
-        <CalendarSearchForm @submit="handleSubmit" style="margin-bottom: 30px" />
+      <div class="mainInner">
+        <CalendarSearchForm @submit="handleSubmit" />
         <CalendarList :calendars="calendars" />
 
-        <nuxt-link :to="`/calendars?year=${currentYear}`">もっと見る</nuxt-link>
+        <nuxt-link v-if="hasMore" :to="`/calendars?year=${currentYear}`">もっと見る</nuxt-link>
       </div>
     </main>
   </div>
@@ -29,14 +29,19 @@ export default class extends Vue {
   currentYear = getCurrentYear();
   calendars: Calendar[] = [];
 
+  pageSize = 30;
+
   async mounted() {
-    const pageSize = 30;
-    const calendars = await listCalendars({ year: this.currentYear, pageSize });
+    const calendars = await listCalendars({ year: this.currentYear, pageSize: this.pageSize });
     this.calendars = calendars;
   }
 
   async handleSubmit(query) {
     this.$router.push(`/calendars?year=${this.currentYear}&query=${query}`);
+  }
+
+  get hasMore() {
+    return this.calendars.length === this.pageSize;
   }
 }
 </script>
@@ -76,6 +81,14 @@ export default class extends Vue {
   bottom: 20px;
 }
 
+.mainInner {
+  padding-top: 15px;
+}
+
+.CalendarSearchForm {
+  margin-bottom: 15px;
+}
+
 @media (min-width: $mq-break-small) {
   .hero {
     background-size: auto 280px;
@@ -84,6 +97,14 @@ export default class extends Vue {
   .hero h1 {
     margin: 0;
     padding: 40px 0 15px 0;
+  }
+
+  .mainInner {
+    padding-top: 30px;
+  }
+
+  .CalendarSearchForm {
+    margin-bottom: 30px;
   }
 }
 </style>

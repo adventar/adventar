@@ -3,7 +3,7 @@
     <PageHeader>ユーザー設定</PageHeader>
 
     <main>
-      <div>
+      <div class="mainInner">
         <section>
           <SectionHeader>表示名</SectionHeader>
           <div v-if="!editmode">
@@ -19,11 +19,6 @@
               <span role="button" class="cancel" @click="editmode = false">Cancel</span>
             </form>
           </div>
-        </section>
-
-        <section style="margin-top: 50px">
-          <SectionHeader>画像</SectionHeader>
-          <img :src="$store.state.user.iconUrl" width="80" height="80" style="border-radius: 80px" />
         </section>
       </div>
     </main>

@@ -3,7 +3,7 @@
     <PageHeader>カレンダー編集</PageHeader>
 
     <main>
-      <div>
+      <div class="mainInner">
         <template v-if="calendar">
           <CalendarForm :calendar="calendar" />
         </template>

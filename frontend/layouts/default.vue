@@ -22,7 +22,7 @@ body {
   background-color: #f1f1f1;
 }
 
-main > div {
+.mainInner {
   max-width: $content-max-width;
   padding: 30px 12px;
   margin: 0 auto;
