@@ -809,5 +809,61 @@ proto.adventar.v1.AdventarPromiseClient.prototype.updateUser =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.adventar.v1.HealthCheckRequest,
+ *   !proto.adventar.v1.HealthCheckResponse>}
+ */
+const methodInfo_Adventar_HealthCheck = new grpc.web.AbstractClientBase.MethodInfo(
+  adventar_v1_rpc_messages_pb.HealthCheckResponse,
+  /** @param {!proto.adventar.v1.HealthCheckRequest} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  adventar_v1_rpc_messages_pb.HealthCheckResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.adventar.v1.HealthCheckRequest} request The
+ *     request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.adventar.v1.HealthCheckResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.adventar.v1.HealthCheckResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.adventar.v1.AdventarClient.prototype.healthCheck =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/adventar.v1.Adventar/HealthCheck',
+      request,
+      metadata,
+      methodInfo_Adventar_HealthCheck,
+      callback);
+};
+
+
+/**
+ * @param {!proto.adventar.v1.HealthCheckRequest} request The
+ *     request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.adventar.v1.HealthCheckResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.adventar.v1.AdventarPromiseClient.prototype.healthCheck =
+    function(request, metadata) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.healthCheck(
+      request, metadata, (error, response) => {
+        error ? reject(error) : resolve(response);
+      });
+  });
+};
+
+
 module.exports = proto.adventar.v1;
 

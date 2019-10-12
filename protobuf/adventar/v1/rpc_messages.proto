@@ -67,3 +67,9 @@ message SignInRequest { string jwt = 1; }
 message GetUserRequest { int64 user_id = 1; }
 
 message UpdateUserRequest { string name = 1; }
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  string state = 1;
+}

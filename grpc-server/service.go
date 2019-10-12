@@ -712,3 +712,8 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 
 	return entries, nil
 }
+
+// HealthCheck returns current status.
+func (s *Service) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
+	return &pb.HealthCheckResponse{State: "healthy"}, nil
+}

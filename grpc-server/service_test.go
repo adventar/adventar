@@ -544,6 +544,21 @@ func TestUpdateUser(t *testing.T) {
 	}
 }
 
+func TestHealthCheck(t *testing.T) {
+	in := &pb.HealthCheckRequest{}
+
+	ctx := context.Background()
+
+	res, err := service.HealthCheck(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if res.State != "healthy" {
+		t.Errorf("actual: %s, expected: %s", res.State, "healthy")
+	}
+}
+
 func cleanupDatabase() {
 	rows, err := db.Query("show tables")
 

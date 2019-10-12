@@ -32,4 +32,10 @@ service Adventar {
   rpc SignIn(SignInRequest) returns (User) {}
   rpc GetUser(GetUserRequest) returns (User) {}
   rpc UpdateUser(UpdateUserRequest) returns (User) {}
+
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {
+    option (google.api.http) = {
+      get : "/health_check"
+    };
+  }
 }

@@ -199,6 +199,33 @@ export namespace GetUserRequest {
   }
 }
 
+export class HealthCheckRequest {
+  constructor ();
+  toObject(): HealthCheckRequest.AsObject;
+  serializeBinary(): Uint8Array;
+  static deserializeBinary: (bytes: {}) => HealthCheckRequest;
+}
+
+export namespace HealthCheckRequest {
+  export type AsObject = {
+  }
+}
+
+export class HealthCheckResponse {
+  constructor ();
+  getState(): string;
+  setState(a: string): void;
+  toObject(): HealthCheckResponse.AsObject;
+  serializeBinary(): Uint8Array;
+  static deserializeBinary: (bytes: {}) => HealthCheckResponse;
+}
+
+export namespace HealthCheckResponse {
+  export type AsObject = {
+    State: string;
+  }
+}
+
 export class ListCalendarStatsRequest {
   constructor ();
   toObject(): ListCalendarStatsRequest.AsObject;

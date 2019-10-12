@@ -10,6 +10,8 @@ import {
   GetCalendarRequest,
   GetCalendarResponse,
   GetUserRequest,
+  HealthCheckRequest,
+  HealthCheckResponse,
   ListCalendarStatsRequest,
   ListCalendarStatsResponse,
   ListCalendarsRequest,
@@ -119,6 +121,13 @@ export class AdventarClient {
                response: User) => void
   ): grpcWeb.ClientReadableStream<User>;
 
+  healthCheck(
+    request: HealthCheckRequest,
+    metadata: grpcWeb.Metadata,
+    callback: (err: grpcWeb.Error,
+               response: HealthCheckResponse) => void
+  ): grpcWeb.ClientReadableStream<HealthCheckResponse>;
+
 }
 
 export class AdventarPromiseClient {
@@ -190,6 +199,11 @@ export class AdventarPromiseClient {
     request: UpdateUserRequest,
     metadata: grpcWeb.Metadata
   ): Promise<User>;
+
+  healthCheck(
+    request: HealthCheckRequest,
+    metadata: grpcWeb.Metadata
+  ): Promise<HealthCheckResponse>;
 
 }
 
