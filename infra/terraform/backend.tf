@@ -11,3 +11,10 @@ provider "aws" {
   region              = "ap-northeast-1"
   allowed_account_ids = ["287379415997"]
 }
+
+provider "aws" {
+  alias               = "us-east-1"
+  version             = "= 2.29.0"
+  region              = "us-east-1"
+  allowed_account_ids = ["287379415997"]
+}
