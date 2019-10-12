@@ -22,7 +22,7 @@ static_resources:
                       domains: ["*"]
                       routes:
                         - match: { prefix: "/" }
-                          route: { cluster: grpc, timeout: { seconds: 60 } }
+                          route: { cluster: app, timeout: { seconds: 60 } }
                       cors:
                         allow_origin:
                           - "*"
@@ -46,18 +46,18 @@ static_resources:
                   - name: envoy.router
 
   clusters:
-    - name: grpc
+    - name: app
       connect_timeout: 1.25s
       type: logical_dns
       lb_policy: round_robin
       dns_lookup_family: V4_ONLY
       http2_protocol_options: {}
       load_assignment:
-        cluster_name: grpc
+        cluster_name: app
         endpoints:
           - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: host.docker.internal
-                      port_value: 8080
+            - endpoint:
+                address:
+                  socket_address:
+                    address: localhost
+                    port_value: 8080
