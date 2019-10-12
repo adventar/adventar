@@ -4,8 +4,11 @@ services:
     build:
       context: ./grpc-server
       dockerfile: Dockerfile
+    ports:
+      - 8080:8080
     environment:
       DATABASE_SOURCE: root@tcp(db:3306)/adventar_dev
+      FIREBASE_CREDENTIAL_JSON: ${FIREBASE_CREDENTIAL_JSON}
     depends_on:
       - db
   proxy:

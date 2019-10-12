@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	firebase "firebase.google.com/go"
 	"golang.org/x/xerrors"
@@ -20,7 +21,8 @@ type AuthResult struct {
 type firebaseVerifier struct{}
 
 func (v *firebaseVerifier) VerifyIDToken(idToken string) (*AuthResult, error) {
-	opt := option.WithCredentialsFile("./service_account.json")
+	json := os.Getenv("FIREBASE_CREDENTIAL_JSON")
+	opt := option.WithCredentialsJSON([]byte(json))
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed to initialize firebase app: %w", err)
