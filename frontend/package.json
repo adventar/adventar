@@ -25,6 +25,7 @@
     "google-protobuf": "^3.9.0-rc.1",
     "grpc-web": "^1.0.4",
     "ical-generator": "^1.7.2",
+    "node-fetch": "^2.6.0",
     "nuxt": "^2.8.1",
     "nuxt-fontawesome": "^0.4.0",
     "nuxt-property-decorator": "^2.3.0",

@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import { Calendar, Entry } from "~/types/adventar";
 
 export async function getCalendar(id: number): Promise<Calendar> {
