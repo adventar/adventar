@@ -1,7 +1,7 @@
 import NuxtConfiguration from "@nuxt/config";
 
 const config: NuxtConfiguration = {
-  mode: process.env.BUILD_MODE === "universal" ? "universal" : "spa",
+  buildDir: process.env.BUILD_DIR || ".nuxt",
 
   server: {
     port: 3333

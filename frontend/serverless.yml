@@ -1,8 +1,12 @@
 service:
   name: adventar-frontend
 
+package:
+  exclude:
+    - .nuxt/**
+    - dist/**
+
 plugins:
-  - serverless-webpack
   - serverless-offline
 
 provider:
@@ -16,11 +20,7 @@ provider:
   apiGateway:
     logs: true
   environment:
-    API_BASE_URL: ${env:API_BASE_URL, 'http://localhost:8000'}
-
-custom:
-  webpack:
-    packager: 'yarn'
+    API_BASE_URL: https://api.adventar.org
 
 functions:
   main:

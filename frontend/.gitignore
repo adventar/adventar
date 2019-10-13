@@ -85,4 +85,7 @@ sw.*
 
 *.zip
 
-.webpack
+# server
+server.js
+server.js.map
+.nuxt-server

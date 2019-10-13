@@ -10,7 +10,7 @@ const nuxt = new Nuxt({
   ...config,
   dev: false,
   mode: "universal",
-  buildDir: "../../.nuxt"
+  buildDir: ".nuxt-server"
 });
 
 app.get("/calendars/:id.rss", async (req, res) => {
@@ -33,3 +33,10 @@ app.get("/calendars/:id", async (req, res, next) => {
 });
 
 export const handler = serverless(app);
+
+if (process.env.RUN_LOCAL) {
+  const port = process.env.PORT || 3030;
+  app.listen(port, () => {
+    console.log(`Listen: http://localhost:${port}`);
+  });
+}
