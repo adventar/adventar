@@ -21,6 +21,7 @@ provider:
     logs: true
   environment:
     API_BASE_URL: https://api.adventar.org
+    NODE_ENV: production
 
 functions:
   main:

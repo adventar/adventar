@@ -10,7 +10,7 @@ const nuxt = new Nuxt({
   ...config,
   dev: false,
   mode: "universal",
-  buildDir: ".nuxt-server"
+  buildDir: ".nuxt-prod"
 });
 
 app.get("/calendars/:id.rss", async (req, res) => {

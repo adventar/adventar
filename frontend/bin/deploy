@@ -3,14 +3,12 @@
 set -ex
 
 export NODE_ENV=production
+export BUILD_DIR=.nuxt-prod
 
 cd "$(dirname "$0")/.."
 
-# Upload static assets to s3
-yarn run build
 yarn run generate
 aws s3 sync ./dist/ s3://adventar-assets/nuxt
-
-# Deploy serverless
 yarn run build:server
 serverless deploy -v
+aws cloudfront create-invalidation --distribution-id EDY18AN1Q3CP --paths '/*'
