@@ -19,7 +19,7 @@
       </header>
       <main>
         <div class="mainInner">
-          <VueMarkdown class="description">{{ calendar.description }}</VueMarkdown>
+          <div class="description" v-html="descriptionHtml"></div>
           <CalendarTable
             :calendar="calendar"
             :currentUser="$store.state.user"
@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
-import VueMarkdown from "vue-markdown";
+import MarkdownIt from "markdown-it";
 import { getCalendar, createEntry, updateEntry, deleteEntry } from "~/lib/GrpcClient";
 import * as RestClient from "~/lib/RestClient";
 import { calendarColor } from "~/lib/utils/Colors";
@@ -48,7 +48,7 @@ import EntryList from "~/components/EntryList.vue";
 import { Entry } from "~/types/adventar";
 
 @Component({
-  components: { UserIcon, VueMarkdown, CalendarTable, EntryList }
+  components: { UserIcon, CalendarTable, EntryList }
 })
 export default class extends Vue {
   calendar: Calendar | null = null;
@@ -98,6 +98,11 @@ export default class extends Vue {
     if (!this.$store.state.user) return false;
     if (!calendar.owner) return false;
     return calendar.owner.id === this.$store.state.user.id;
+  }
+
+  get descriptionHtml(): string {
+    if (!this.calendar || !this.calendar.description) return "";
+    return MarkdownIt({ linkify: true, breaks: true }).render(this.calendar.description);
   }
 }
 </script>
