@@ -17,7 +17,7 @@
                 {{ $store.state.user.name }}
               </li>
               <li>
-                <nuxt-link @click.native="hideDropdown()" to="/calendars/new">
+                <nuxt-link @click.native="hideDropdown()" to="/new">
                   <font-awesome-icon :icon="['fas', 'calendar-plus']" />
                   カレンダーを作る
                 </nuxt-link>
