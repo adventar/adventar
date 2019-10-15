@@ -6,9 +6,8 @@
   "private": true,
   "scripts": {
     "dev": "nuxt --spa",
-    "build": "nuxt build",
-    "build:server": "webpack --config webpack.config.server.js",
-    "generate": "nuxt generate",
+    "build:spa": "nuxt build --spa",
+    "build:server": "nuxt build --universal && webpack --config webpack.config.server.js",
     "lint": "eslint --ext .js,.ts,.vue .",
     "fix": "eslint --ext .js,.ts,.vue . --fix",
     "test": "jest"

@@ -7,8 +7,10 @@ export BUILD_DIR=.nuxt-prod
 
 cd "$(dirname "$0")/.."
 
-yarn run generate
-aws s3 sync ./dist/ s3://adventar-assets/nuxt
+yarn run build:spa
 yarn run build:server
+cp -R .nuxt-prod/dist/client/* dist/_nuxt
+
+aws s3 sync ./dist/ s3://adventar-assets/nuxt
 serverless deploy -v
 aws cloudfront create-invalidation --distribution-id EDY18AN1Q3CP --paths '/*'
