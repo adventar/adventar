@@ -8,7 +8,7 @@
         <no-ssr>
           <span role="button" @click.stop="showDropdown()" class="menuBtn">
             <UserIcon v-if="$store.state.user" class="userIcon" :user="$store.state.user" size="28" />
-            <font-awesome-icon v-else :icon="['fas', 'bars']"></font-awesome-icon>
+            <font-awesome-icon v-else icon="bars"></font-awesome-icon>
           </span>
           <div class="dropdown" v-if="isShownDropdown" @click.stop>
             <ul v-if="$store.state.user" class="loginMenu">
@@ -18,23 +18,23 @@
               </li>
               <li>
                 <nuxt-link @click.native="hideDropdown()" to="/new">
-                  <font-awesome-icon :icon="['fas', 'calendar-plus']" />
+                  <font-awesome-icon icon="calendar-plus" />
                   カレンダーを作る
                 </nuxt-link>
               </li>
               <li>
                 <nuxt-link @click.native="hideDropdown()" :to="`/users/${$store.state.user.id}`">
-                  <font-awesome-icon :icon="['fas', 'user']" /> マイページ
+                  <font-awesome-icon icon="user" /> マイページ
                 </nuxt-link>
               </li>
               <li>
                 <nuxt-link @click.native="hideDropdown()" to="/setting">
-                  <font-awesome-icon :icon="['fas', 'cog']" /> 設定
+                  <font-awesome-icon icon="cog" /> 設定
                 </nuxt-link>
               </li>
               <li>
                 <span @click.native="hideDropdown()" role="button" @click="logout()">
-                  <font-awesome-icon :icon="['fas', 'sign-out-alt']" /> ログアウト
+                  <font-awesome-icon icon="sign-out-alt" /> ログアウト
                 </span>
               </li>
             </ul>
@@ -63,12 +63,12 @@
             <ul class="generalMenu">
               <li>
                 <nuxt-link @click.native="hideDropdown()" to="/archive">
-                  <font-awesome-icon :icon="['fas', 'calendar-minus']" /> 過去のカレンダー
+                  <font-awesome-icon icon="calendar-minus" /> 過去のカレンダー
                 </nuxt-link>
               </li>
               <li>
                 <nuxt-link @click.native="hideDropdown()" to="/help">
-                  <font-awesome-icon :icon="['fas', 'question-circle']" /> ヘルプ
+                  <font-awesome-icon icon="question-circle" /> ヘルプ
                 </nuxt-link>
               </li>
             </ul>

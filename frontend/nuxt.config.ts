@@ -66,15 +66,28 @@ const config: NuxtConfiguration = {
     imports: [
       {
         set: "@fortawesome/free-solid-svg-icons",
-        icons: ["fas"]
+        icons: [
+          "faSearch",
+          "faBars",
+          "faCalendarPlus",
+          "faUser",
+          "faCog",
+          "faSignOutAlt",
+          "faCalendarMinus",
+          "faQuestionCircle",
+          "faEdit",
+          "faTimes",
+          "faComment",
+          "faLink"
+        ]
       },
       {
         set: "@fortawesome/free-brands-svg-icons",
-        icons: ["fab"]
+        icons: ["faGoogle", "faGithub", "faTwitter", "faFacebook"]
       },
       {
         set: "@fortawesome/free-regular-svg-icons",
-        icons: ["far"]
+        icons: ["faCalendar"]
       }
     ]
   },
