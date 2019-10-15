@@ -53,14 +53,21 @@ import { Entry } from "~/types/adventar";
 export default class extends Vue {
   calendar: Calendar | null = null;
 
-  async asyncData({ params }) {
+  async asyncData({ params, error }) {
     if (process.server) {
-      const calendar = await RestClient.getCalendar(params.id);
+      let calendar: Calendar;
+      try {
+        calendar = await RestClient.getCalendar(params.id);
+      } catch (err) {
+        error({ statusCode: Number(err.message) });
+        return;
+      }
       return { calendar };
     }
   }
 
   async mounted() {
+    this.calendar = null;
     // TODO: 404 if not found
     this.calendar = await getCalendar(Number(this.$route.params.id));
   }

@@ -1,6 +1,7 @@
 import NuxtConfiguration from "@nuxt/config";
 
 const config: NuxtConfiguration = {
+  dev: process.env.NODE_ENV !== "production",
   buildDir: process.env.BUILD_DIR || ".nuxt",
 
   server: {
@@ -30,7 +31,15 @@ const config: NuxtConfiguration = {
   },
 
   router: {
-    middleware: "signin"
+    middleware: "signin",
+    extendRoutes(routes, resolve) {
+      routes.push({
+        name: "404",
+        path: "*",
+        // @ts-ignore: Remove this line after update nuxt. https://github.com/nuxt/nuxt.js/pull/5841
+        component: resolve(__dirname, "pages/404.vue")
+      });
+    }
   },
 
   /*
