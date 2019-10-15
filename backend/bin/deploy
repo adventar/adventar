@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -ex
+
+ROOT_DIR=$(dirname "$0")
+TAG=$(git rev-parse HEAD)
+
+export TAG
+
+cd $ROOT_DIR/grpc-server
+docker build -t hokaccha/adventar-grpc-server:${TAG}
+docker push -t hokaccha/adventar-grpc-server:${TAG}
+
+cd $ROOT_DIR/envoy
+docker build -t hokaccha/envoy:${TAG}
+docker push -t hokaccha/envoy:${TAG}
+
+ecs-cli compose --project-name adventar-api --cluster adventar service up

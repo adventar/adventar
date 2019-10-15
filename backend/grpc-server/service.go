@@ -22,7 +22,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/adventar/adventar/grpc-server/adventar/v1"
+	pb "github.com/adventar/adventar/backend/grpc-server/adventar/v1"
 )
 
 type verifier interface {
@@ -419,7 +419,6 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid day: %d", day)
 	}
 
-	// TODO: Specify default value by schema definition.
 	stmt, err := s.db.Prepare("insert into entries(user_id, calendar_id, day, comment, url, title, image_url) values(?, ?, ?, '', '', '', '')")
 	if err != nil {
 		return nil, xerrors.Errorf("Failed to prepare query: %w", err)

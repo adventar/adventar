@@ -1,7 +1,7 @@
 version: '3'
 services:
-  app:
-    image: hokaccha/adventar-app:beta-1
+  grpc-server:
+    image: hokaccha/adventar-grpc-server:${TAG}
     logging:
       driver: awslogs
       options:
@@ -9,7 +9,7 @@ services:
         awslogs-region: ap-northeast-1
         awslogs-stream-prefix: ecs
   envoy:
-    image: hokaccha/adventar-envoy:beta-2
+    image: hokaccha/adventar-envoy:${TAG}
     ports:
       - "80:80"
     command: /usr/local/bin/envoy -c /etc/envoy/envoy-prod.yaml

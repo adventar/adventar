@@ -2,16 +2,16 @@
 
 cd $(dirname $0)
 
-# proxy
+# envoy
 protoc \
   --include_imports \
   --include_source_info \
-  --descriptor_set_out=../proxy/proto.pb \
+  --descriptor_set_out=../backend/envoy/proto.pb \
   adventar/v1/*.proto
 
 # grpc-server
 protoc \
-  --go_out plugins=grpc:../grpc-server \
+  --go_out plugins=grpc:../backend/grpc-server \
   adventar/v1/*.proto
 
 # frontend

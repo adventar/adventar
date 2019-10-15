@@ -11,9 +11,9 @@ services:
       FIREBASE_CREDENTIAL_JSON: ${FIREBASE_CREDENTIAL_JSON}
     depends_on:
       - db
-  proxy:
+  envoy:
     build:
-      context: ./proxy
+      context: ./envoy
       dockerfile: Dockerfile
     depends_on:
       - grpc-server
@@ -27,7 +27,7 @@ services:
       MYSQL_DATABASE: adventar_dev
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     ports:
-      - 23306:3306
+      - 13306:3306
     volumes:
       - db-data:/var/lib/mysql
 

@@ -6,7 +6,7 @@ task_definition:
     mem_limit: 0.5GB
     cpu_limit: 256
   services:
-    app:
+    grpc-server:
       secrets:
         - name: DATABASE_SOURCE
           value_from: /adventar/DATABASE_SOURCE
