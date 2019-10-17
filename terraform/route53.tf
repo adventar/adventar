@@ -14,8 +14,8 @@ resource "aws_route53_record" "adventar_org" {
 resource "aws_route53_record" "www_adventar_org" {
   zone_id = aws_route53_zone.adventar_org.id
   name    = "www.adventar.org"
-  type    = "A"
-  records = ["139.59.194.254"]
+  type    = "CNAME"
+  records = [aws_cloudfront_distribution.www_adventar_org.domain_name]
   ttl     = 300
 }
 

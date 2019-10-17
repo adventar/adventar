@@ -43,3 +43,12 @@ resource "aws_s3_bucket_policy" "adventar_assets" {
   bucket = aws_s3_bucket.adventar_assets.id
   policy = data.aws_iam_policy_document.s3_adventar_assets_policy.json
 }
+
+resource "aws_s3_bucket" "www_adventar_org" {
+  bucket = "www.adventar.org"
+  acl    = "public-read"
+
+  website {
+    redirect_all_requests_to = "https://adventar.org"
+  }
+}

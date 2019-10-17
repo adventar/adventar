@@ -115,3 +115,51 @@ resource "aws_cloudfront_distribution" "main" {
     minimum_protocol_version = "TLSv1"
   }
 }
+
+locals {
+  www_adventar_org_origin_id = "www-adventar-org"
+}
+
+resource "aws_cloudfront_distribution" "www_adventar_org" {
+  enabled = true
+  aliases = ["www.adventar.org"]
+
+  origin {
+    origin_id   = local.www_adventar_org_origin_id
+    domain_name = aws_s3_bucket.www_adventar_org.website_endpoint
+
+    custom_origin_config {
+      origin_protocol_policy = "http-only"
+      http_port              = "80"
+      https_port             = "443"
+      origin_ssl_protocols   = ["TLSv1"]
+    }
+  }
+
+  default_cache_behavior {
+    target_origin_id       = local.www_adventar_org_origin_id
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    viewer_protocol_policy = "allow-all"
+
+    forwarded_values {
+      query_string = true
+
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    acm_certificate_arn      = aws_acm_certificate.www_adventar_org.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1"
+  }
+}
