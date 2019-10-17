@@ -16,14 +16,14 @@ const nuxt = new Nuxt({
 app.get("/calendars/:id.rss", async (req, res) => {
   const calendarId = Number(req.params.id);
   const feed = await generateCalendarFeed(calendarId);
-  res.header["Content-Type"] = "application/rss+xml; charset=utf-8";
+  res.header("Content-Type", "application/rss+xml; charset=utf-8");
   res.send(feed);
 });
 
 app.get("/users/:id.ics", async (req, res) => {
   const userId = req.params.id;
   const ical = await generateIcal(userId);
-  res.header["Content-Type"] = "text/calendar; charset=utf-8";
+  res.header("Content-Type", "text/calendar; charset=utf-8");
   res.send(ical);
 });
 
