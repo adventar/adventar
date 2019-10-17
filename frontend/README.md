@@ -1,6 +1,4 @@
-# adventar
-
-> Adventar frontend
+# Adventar frontend
 
 ## Build Setup
 

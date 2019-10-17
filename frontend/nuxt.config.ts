@@ -1,5 +1,9 @@
 import NuxtConfiguration from "@nuxt/config";
 
+const defaultTitle = "Adventar";
+const defaultDescription =
+  "12月1日から25日まで1日に1つ、みんなで記事を投稿するAdvent Calendarの作成や管理をおこなうことができます。";
+
 const config: NuxtConfiguration = {
   dev: process.env.NODE_ENV !== "production",
   buildDir: process.env.BUILD_DIR || ".nuxt",
@@ -19,8 +23,16 @@ const config: NuxtConfiguration = {
    ** Headers of the page
    */
   head: {
-    title: "Adventar",
-    meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1" }],
+    title: defaultTitle,
+    meta: [
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { hid: "description", name: "description", content: defaultDescription },
+      { hid: "og:title", property: "og:title", content: defaultTitle },
+      { hid: "og:description", property: "og:description", content: defaultDescription },
+      { property: "og:image", content: "https://adventar.org/og_image.png" },
+      { property: "og:site_name", content: "Adventar" }
+    ],
     link: [
       {
         rel: "icon",
@@ -28,6 +40,10 @@ const config: NuxtConfiguration = {
         href: process.env.NODE_ENV === "development" ? "/favicon-dev.ico" : "/favicon.ico"
       }
     ]
+  },
+
+  htmlAttrs: {
+    lang: "ja"
   },
 
   router: {

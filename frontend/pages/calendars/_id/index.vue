@@ -1,9 +1,9 @@
 <template>
   <div>
     <template v-if="calendar">
-      <header class="header" :style="{ backgroundColor: calendarColor() }">
+      <header class="header" :style="{ backgroundColor: calendarColor }">
         <div class="inner">
-          <h2 class="title">{{ calendar.title }} Advent Calendar {{ calendar.year }}</h2>
+          <h2 class="title">{{ title }}</h2>
           <div>登録数 {{ calendar.entries.length }}/25人</div>
           <div>
             作成者
@@ -53,6 +53,20 @@ import { Entry } from "~/types/adventar";
 export default class extends Vue {
   calendar: Calendar | null = null;
 
+  head() {
+    if (this.calendar === null) return {};
+
+    return {
+      title: `${this.title} - Adventar`,
+      meta: [
+        { hid: "description", name: "description", content: this.calendar.description },
+        { hid: "og:description", property: "og:description", content: this.calendar.description },
+        { hid: "og:title", property: "og:title", content: `${this.title} - Adventar` }
+      ],
+      link: [{ rel: "alternate", type: "application/rss+xml", href: `/calendars/${this.calendar.id}.rss` }]
+    };
+  }
+
   async asyncData({ params, error }) {
     if (process.server) {
       let calendar: Calendar;
@@ -97,14 +111,21 @@ export default class extends Vue {
     await this.refetchCalendar();
   }
 
-  calendarColor(): string {
-    return calendarColor(this.calendar!.id);
-  }
-
   isOwnCalendar(calendar: Calendar): boolean {
     if (!this.$store.state.user) return false;
     if (!calendar.owner) return false;
     return calendar.owner.id === this.$store.state.user.id;
+  }
+
+  get calendarColor(): string {
+    return calendarColor(this.calendar!.id);
+  }
+
+  get title(): string {
+    if (this.calendar === null) {
+      return "Adventar";
+    }
+    return `${this.calendar.title} Advent Calendar ${this.calendar.year}`;
   }
 
   get descriptionHtml(): string {

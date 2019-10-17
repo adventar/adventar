@@ -1,8 +1,4 @@
 {
-  "name": "adventar",
-  "version": "1.0.0",
-  "description": "Adventar frontend",
-  "author": "Kazuhito Hokamura",
   "private": true,
   "scripts": {
     "dev": "nuxt --spa",
