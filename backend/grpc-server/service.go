@@ -206,6 +206,15 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 
 // CreateCalendar creates a calendar.
 func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarRequest) (*pb.Calendar, error) {
+	now, err := currentDate()
+	if err != nil {
+		return nil, err
+	}
+
+	if now.Month < 11 {
+		return nil, status.Errorf(codes.FailedPrecondition, "Calendars can not create now.")
+	}
+
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
@@ -220,8 +229,7 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 	}
 	defer stmt.Close()
 
-	// Todo: Set year with env var
-	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), 2018)
+	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), now.Year)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to insert into calendar: %w", err)
 	}
@@ -715,4 +723,25 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 // HealthCheck returns current status.
 func (s *Service) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
 	return &pb.HealthCheckResponse{State: "healthy"}, nil
+}
+
+type date struct {
+	Year  int
+	Month int
+	Day   int
+}
+
+func currentDate() (*date, error) {
+	currentDate := os.Getenv("CURRENT_DATE")
+	var t time.Time
+	var err error
+	if currentDate != "" {
+		t, err = time.Parse("2006-01-02", currentDate)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		t = time.Now()
+	}
+	return &date{Year: t.Year(), Month: int(t.Month()), Day: t.Day()}, nil
 }

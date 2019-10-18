@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"strings"
 	"testing"
 
-	main "github.com/adventar/adventar/grpc-server"
-	pb "github.com/adventar/adventar/grpc-server/adventar/v1"
+	main "github.com/adventar/adventar/backend/grpc-server"
+	pb "github.com/adventar/adventar/backend/grpc-server/adventar/v1"
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc/metadata"
 )
@@ -170,6 +171,7 @@ func TestGetCalendar(t *testing.T) {
 }
 
 func TestCreateCalendar(t *testing.T) {
+	os.Setenv("CURRENT_DATE", "2019-11-01")
 	cleanupDatabase()
 
 	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
@@ -201,6 +203,23 @@ func TestCreateCalendar(t *testing.T) {
 	}
 	if title != "foo" {
 		t.Errorf("actual: %s, expected: foo", title)
+	}
+}
+
+func TestCalendarCreatable(t *testing.T) {
+	in := &pb.CreateCalendarRequest{Title: "foo", Description: "bar"}
+	ctx := context.Background()
+
+	os.Setenv("CURRENT_DATE", "2019-10-31")
+	_, err := service.CreateCalendar(ctx, in)
+	if err == nil || !strings.Contains(err.Error(), "Calendars can not create now") {
+		t.Errorf("Unexpected error: %s", err)
+	}
+
+	os.Setenv("CURRENT_DATE", "2019-01-01")
+	_, err = service.CreateCalendar(ctx, in)
+	if err == nil || !strings.Contains(err.Error(), "Calendars can not create now") {
+		t.Errorf("Unexpected error: %s", err)
 	}
 }
 
