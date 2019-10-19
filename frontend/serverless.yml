@@ -22,6 +22,7 @@ provider:
   environment:
     API_BASE_URL: https://api.adventar.org
     NODE_ENV: production
+    TZ: Asia/Tokyo
 
 functions:
   main:

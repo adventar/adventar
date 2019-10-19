@@ -8,5 +8,6 @@ FROM alpine:3.10
 RUN apk update && apk upgrade && apk add ca-certificates
 WORKDIR /go
 COPY --from=builder /app/grpc-server ./
+ENV TZ=Asia/Tokyo
 
 CMD ["/go/grpc-server"]
