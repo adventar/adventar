@@ -1,3 +1,4 @@
+// source: google/api/annotations.proto
 /**
  * @fileoverview
  * @enhanceable

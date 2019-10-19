@@ -1,3 +1,4 @@
+// source: adventar/v1/resources.proto
 /**
  * @fileoverview
  * @enhanceable
@@ -104,13 +105,15 @@ if (goog.DEBUG && !COMPILED) {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.adventar.v1.User.prototype.toObject = function(opt_includeInstance) {
@@ -120,8 +123,8 @@ proto.adventar.v1.User.prototype.toObject = function(opt_includeInstance) {
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.adventar.v1.User} msg The msg instance to transform.
  * @return {!Object}
@@ -242,9 +245,12 @@ proto.adventar.v1.User.prototype.getId = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.User} returns this
+ */
 proto.adventar.v1.User.prototype.setId = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -257,9 +263,12 @@ proto.adventar.v1.User.prototype.getName = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.User} returns this
+ */
 proto.adventar.v1.User.prototype.setName = function(value) {
-  jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -272,9 +281,12 @@ proto.adventar.v1.User.prototype.getIconUrl = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.User} returns this
+ */
 proto.adventar.v1.User.prototype.setIconUrl = function(value) {
-  jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -283,13 +295,15 @@ proto.adventar.v1.User.prototype.setIconUrl = function(value) {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.adventar.v1.Calendar.prototype.toObject = function(opt_includeInstance) {
@@ -299,8 +313,8 @@ proto.adventar.v1.Calendar.prototype.toObject = function(opt_includeInstance) {
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.adventar.v1.Calendar} msg The msg instance to transform.
  * @return {!Object}
@@ -459,9 +473,12 @@ proto.adventar.v1.Calendar.prototype.getId = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.Calendar} returns this
+ */
 proto.adventar.v1.Calendar.prototype.setId = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -475,17 +492,21 @@ proto.adventar.v1.Calendar.prototype.getOwner = function() {
 };
 
 
-/** @param {?proto.adventar.v1.User|undefined} value */
+/**
+ * @param {?proto.adventar.v1.User|undefined} value
+ * @return {!proto.adventar.v1.Calendar} returns this
+*/
 proto.adventar.v1.Calendar.prototype.setOwner = function(value) {
-  jspb.Message.setWrapperField(this, 2, value);
+  return jspb.Message.setWrapperField(this, 2, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.adventar.v1.Calendar} returns this
  */
 proto.adventar.v1.Calendar.prototype.clearOwner = function() {
-  this.setOwner(undefined);
+  return this.setOwner(undefined);
 };
 
 
@@ -507,9 +528,12 @@ proto.adventar.v1.Calendar.prototype.getTitle = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.Calendar} returns this
+ */
 proto.adventar.v1.Calendar.prototype.setTitle = function(value) {
-  jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -522,9 +546,12 @@ proto.adventar.v1.Calendar.prototype.getDescription = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.Calendar} returns this
+ */
 proto.adventar.v1.Calendar.prototype.setDescription = function(value) {
-  jspb.Message.setProto3StringField(this, 4, value);
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -537,9 +564,12 @@ proto.adventar.v1.Calendar.prototype.getYear = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.Calendar} returns this
+ */
 proto.adventar.v1.Calendar.prototype.setYear = function(value) {
-  jspb.Message.setProto3IntField(this, 5, value);
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
@@ -552,9 +582,12 @@ proto.adventar.v1.Calendar.prototype.getEntryCount = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.Calendar} returns this
+ */
 proto.adventar.v1.Calendar.prototype.setEntryCount = function(value) {
-  jspb.Message.setProto3IntField(this, 6, value);
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
@@ -563,13 +596,15 @@ proto.adventar.v1.Calendar.prototype.setEntryCount = function(value) {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.adventar.v1.Entry.prototype.toObject = function(opt_includeInstance) {
@@ -579,8 +614,8 @@ proto.adventar.v1.Entry.prototype.toObject = function(opt_includeInstance) {
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.adventar.v1.Entry} msg The msg instance to transform.
  * @return {!Object}
@@ -765,9 +800,12 @@ proto.adventar.v1.Entry.prototype.getId = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.Entry} returns this
+ */
 proto.adventar.v1.Entry.prototype.setId = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -781,17 +819,21 @@ proto.adventar.v1.Entry.prototype.getOwner = function() {
 };
 
 
-/** @param {?proto.adventar.v1.User|undefined} value */
+/**
+ * @param {?proto.adventar.v1.User|undefined} value
+ * @return {!proto.adventar.v1.Entry} returns this
+*/
 proto.adventar.v1.Entry.prototype.setOwner = function(value) {
-  jspb.Message.setWrapperField(this, 2, value);
+  return jspb.Message.setWrapperField(this, 2, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.adventar.v1.Entry} returns this
  */
 proto.adventar.v1.Entry.prototype.clearOwner = function() {
-  this.setOwner(undefined);
+  return this.setOwner(undefined);
 };
 
 
@@ -814,17 +856,21 @@ proto.adventar.v1.Entry.prototype.getCalendar = function() {
 };
 
 
-/** @param {?proto.adventar.v1.Calendar|undefined} value */
+/**
+ * @param {?proto.adventar.v1.Calendar|undefined} value
+ * @return {!proto.adventar.v1.Entry} returns this
+*/
 proto.adventar.v1.Entry.prototype.setCalendar = function(value) {
-  jspb.Message.setWrapperField(this, 3, value);
+  return jspb.Message.setWrapperField(this, 3, value);
 };
 
 
 /**
  * Clears the message field making it undefined.
+ * @return {!proto.adventar.v1.Entry} returns this
  */
 proto.adventar.v1.Entry.prototype.clearCalendar = function() {
-  this.setCalendar(undefined);
+  return this.setCalendar(undefined);
 };
 
 
@@ -846,9 +892,12 @@ proto.adventar.v1.Entry.prototype.getDay = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.Entry} returns this
+ */
 proto.adventar.v1.Entry.prototype.setDay = function(value) {
-  jspb.Message.setProto3IntField(this, 4, value);
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -861,9 +910,12 @@ proto.adventar.v1.Entry.prototype.getComment = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.Entry} returns this
+ */
 proto.adventar.v1.Entry.prototype.setComment = function(value) {
-  jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
@@ -876,9 +928,12 @@ proto.adventar.v1.Entry.prototype.getUrl = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.Entry} returns this
+ */
 proto.adventar.v1.Entry.prototype.setUrl = function(value) {
-  jspb.Message.setProto3StringField(this, 6, value);
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
@@ -891,9 +946,12 @@ proto.adventar.v1.Entry.prototype.getTitle = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.Entry} returns this
+ */
 proto.adventar.v1.Entry.prototype.setTitle = function(value) {
-  jspb.Message.setProto3StringField(this, 7, value);
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
@@ -906,9 +964,12 @@ proto.adventar.v1.Entry.prototype.getImageUrl = function() {
 };
 
 
-/** @param {string} value */
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.Entry} returns this
+ */
 proto.adventar.v1.Entry.prototype.setImageUrl = function(value) {
-  jspb.Message.setProto3StringField(this, 8, value);
+  return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
@@ -917,13 +978,15 @@ proto.adventar.v1.Entry.prototype.setImageUrl = function(value) {
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
 /**
- * Creates an object representation of this proto suitable for use in Soy templates.
+ * Creates an object representation of this proto.
  * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * Optional fields that are not set will be set to undefined.
  * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
  * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
+ *     net/proto2/compiler/js/internal/generator.cc#kKeyword.
+ * @param {boolean=} opt_includeInstance Deprecated. whether to include the
+ *     JSPB instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
  * @return {!Object}
  */
 proto.adventar.v1.CalendarStat.prototype.toObject = function(opt_includeInstance) {
@@ -933,8 +996,8 @@ proto.adventar.v1.CalendarStat.prototype.toObject = function(opt_includeInstance
 
 /**
  * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
+ * @param {boolean|undefined} includeInstance Deprecated. Whether to include
+ *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
  * @param {!proto.adventar.v1.CalendarStat} msg The msg instance to transform.
  * @return {!Object}
@@ -1055,9 +1118,12 @@ proto.adventar.v1.CalendarStat.prototype.getYear = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.CalendarStat} returns this
+ */
 proto.adventar.v1.CalendarStat.prototype.setYear = function(value) {
-  jspb.Message.setProto3IntField(this, 1, value);
+  return jspb.Message.setProto3IntField(this, 1, value);
 };
 
 
@@ -1070,9 +1136,12 @@ proto.adventar.v1.CalendarStat.prototype.getCalendarsCount = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.CalendarStat} returns this
+ */
 proto.adventar.v1.CalendarStat.prototype.setCalendarsCount = function(value) {
-  jspb.Message.setProto3IntField(this, 2, value);
+  return jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
@@ -1085,9 +1154,12 @@ proto.adventar.v1.CalendarStat.prototype.getEntriesCount = function() {
 };
 
 
-/** @param {number} value */
+/**
+ * @param {number} value
+ * @return {!proto.adventar.v1.CalendarStat} returns this
+ */
 proto.adventar.v1.CalendarStat.prototype.setEntriesCount = function(value) {
-  jspb.Message.setProto3IntField(this, 3, value);
+  return jspb.Message.setProto3IntField(this, 3, value);
 };
 
 

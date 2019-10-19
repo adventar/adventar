@@ -1,3 +1,4 @@
+// source: adventar/v1/adventar.proto
 /**
  * @fileoverview
  * @enhanceable
