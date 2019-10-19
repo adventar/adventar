@@ -10,14 +10,10 @@ services:
       DATABASE_SOURCE: root@tcp(db:3306)/adventar_dev
       FIREBASE_CREDENTIAL_JSON: ${FIREBASE_CREDENTIAL_JSON}
       CURRENT_DATE: '2019-12-03'
-    depends_on:
-      - db
   envoy:
     build:
       context: ./envoy
       dockerfile: Dockerfile
-    depends_on:
-      - grpc-server
     ports:
       - 8000:8000
     command: /usr/local/bin/envoy -c /etc/envoy/envoy-local.yaml
