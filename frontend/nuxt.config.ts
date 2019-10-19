@@ -47,15 +47,7 @@ const config: NuxtConfiguration = {
   },
 
   router: {
-    middleware: "signin",
-    extendRoutes(routes, resolve) {
-      routes.push({
-        name: "404",
-        path: "*",
-        // @ts-ignore: Remove this line after update nuxt. https://github.com/nuxt/nuxt.js/pull/5841
-        component: resolve(__dirname, "pages/404.vue")
-      });
-    }
+    middleware: "signin"
   },
 
   /*
