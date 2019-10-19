@@ -24,6 +24,7 @@
 import { Component, Vue, Prop } from "nuxt-property-decorator";
 import UserIcon from "~/components/UserIcon.vue";
 import { Calendar } from "~/types/adventar";
+import { getToday } from "~/lib/Configuration";
 
 @Component({
   components: { UserIcon }
@@ -33,7 +34,7 @@ export default class extends Vue {
 
   isFutureEntry(entry): boolean {
     // TODO: Fix to JST
-    return new Date(this.calendar.year, 11, entry.day) > new Date();
+    return new Date(this.calendar.year, 11, entry.day) > getToday();
   }
 }
 </script>

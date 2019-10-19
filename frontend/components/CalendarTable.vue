@@ -18,7 +18,7 @@
             class="cell"
             :class="{
               'is-editing': displayedDialogEntry && cell.day === displayedDialogEntry.day,
-              'is-posted': cell.entry && cell.entry.url
+              'is-posted': cell.entry && cell.entry.url && !isFutureEntry(cell.entry)
             }"
             v-for="(cell, idx) in cells"
             :data-idx="idx"
@@ -87,6 +87,7 @@
 import { Component, Vue, Prop } from "nuxt-property-decorator";
 import UserIcon from "~/components/UserIcon.vue";
 import { Calendar, Entry, User } from "~/types/adventar";
+import { getToday } from "~/lib/Configuration";
 import dayjs from "dayjs";
 
 @Component({
@@ -215,6 +216,11 @@ export default class extends Vue {
     this.dialogStyle = {};
     this.dialogArrowStyle = {};
     this.displayedDialogEntry = null;
+  }
+
+  isFutureEntry(entry): boolean {
+    // TODO: Fix to JST
+    return new Date(this.calendar.year, 11, entry.day) > getToday();
   }
 
   async handleClickCreateEntry(day: number): Promise<void> {
