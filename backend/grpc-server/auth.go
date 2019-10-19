@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -22,6 +23,9 @@ type firebaseVerifier struct{}
 
 func (v *firebaseVerifier) VerifyIDToken(idToken string) (*AuthResult, error) {
 	json := os.Getenv("FIREBASE_CREDENTIAL_JSON")
+	if json == "" {
+		return nil, fmt.Errorf("FIREBASE_CREDENTIAL_JSON is empty")
+	}
 	opt := option.WithCredentialsJSON([]byte(json))
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
