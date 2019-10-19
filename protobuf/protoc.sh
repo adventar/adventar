@@ -11,7 +11,7 @@ protoc \
 
 # grpc-server
 protoc \
-  --go_out plugins=grpc:../backend/grpc-server \
+  --go_out plugins=grpc:../backend/grpc-server/grpc \
   adventar/v1/*.proto
 
 # frontend

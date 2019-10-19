@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type siteMetaFetcher struct{}
+type SiteMetaFetcher struct{}
 
 // SiteMeta represents site meta infomation.
 type SiteMeta struct {
@@ -16,7 +16,7 @@ type SiteMeta struct {
 }
 
 // TODO: Support charset other than utf8
-func (smf *siteMetaFetcher) Fetch(url string) (*SiteMeta, error) {
+func (smf *SiteMetaFetcher) Fetch(url string) (*SiteMeta, error) {
 	res, err := http.Get(url)
 	if err != nil {
 		return nil, err

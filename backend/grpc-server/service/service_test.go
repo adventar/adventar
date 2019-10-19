@@ -1,4 +1,4 @@
-package main_test
+package service_test
 
 import (
 	"context"
@@ -8,21 +8,22 @@ import (
 	"strings"
 	"testing"
 
-	main "github.com/adventar/adventar/backend/grpc-server"
-	pb "github.com/adventar/adventar/backend/grpc-server/adventar/v1"
+	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
+	s "github.com/adventar/adventar/backend/grpc-server/service"
+	"github.com/adventar/adventar/backend/grpc-server/util"
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc/metadata"
 )
 
 var (
 	db      *sql.DB
-	service *main.Service
+	service *s.Service
 )
 
 type testVerifier struct{}
 
-func (v *testVerifier) VerifyIDToken(s string) (*main.AuthResult, error) {
-	return &main.AuthResult{
+func (v *testVerifier) VerifyIDToken(s string) (*util.AuthResult, error) {
+	return &util.AuthResult{
 		Name:         "foo",
 		IconURL:      "http://example.com/icon",
 		AuthProvider: "google",
@@ -32,8 +33,8 @@ func (v *testVerifier) VerifyIDToken(s string) (*main.AuthResult, error) {
 
 type testMetaFetcher struct{}
 
-func (tmf *testMetaFetcher) Fetch(url string) (*main.SiteMeta, error) {
-	return &main.SiteMeta{Title: "site title", ImageURL: "http://example.com/image"}, nil
+func (tmf *testMetaFetcher) Fetch(url string) (*util.SiteMeta, error) {
+	return &util.SiteMeta{Title: "site title", ImageURL: "http://example.com/image"}, nil
 }
 
 func TestMain(m *testing.M) {
@@ -46,7 +47,7 @@ func TestMain(m *testing.M) {
 
 	v := &testVerifier{}
 	f := &testMetaFetcher{}
-	service = main.NewService(db, v, f)
+	service = s.NewService(db, v, f)
 	code := m.Run()
 	os.Exit(code)
 }

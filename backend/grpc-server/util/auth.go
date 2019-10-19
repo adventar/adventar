@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"context"
@@ -19,9 +19,9 @@ type AuthResult struct {
 	AuthUID      string
 }
 
-type firebaseVerifier struct{}
+type FirebaseVerifier struct{}
 
-func (v *firebaseVerifier) VerifyIDToken(idToken string) (*AuthResult, error) {
+func (v *FirebaseVerifier) VerifyIDToken(idToken string) (*AuthResult, error) {
 	json := os.Getenv("FIREBASE_CREDENTIAL_JSON")
 	if json == "" {
 		return nil, fmt.Errorf("FIREBASE_CREDENTIAL_JSON is empty")

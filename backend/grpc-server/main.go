@@ -6,6 +6,9 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+
+	"github.com/adventar/adventar/backend/grpc-server/service"
+	"github.com/adventar/adventar/backend/grpc-server/util"
 )
 
 func main() {
@@ -20,8 +23,8 @@ func main() {
 	}
 	defer db.Close()
 
-	v := &firebaseVerifier{}
-	f := &siteMetaFetcher{}
-	s := NewService(db, v, f)
-	s.serve(":8080")
+	v := &util.FirebaseVerifier{}
+	f := &util.SiteMetaFetcher{}
+	s := service.NewService(db, v, f)
+	s.Serve(":8080")
 }
