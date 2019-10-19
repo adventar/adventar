@@ -12,7 +12,7 @@ func main() {
 	var err error
 	source := os.Getenv("DATABASE_SOURCE")
 	if source == "" {
-		source = "root@tcp(127.0.0.1:3306)/adventar_dev"
+		source = "root@tcp(127.0.0.1:13306)/adventar_dev"
 	}
 	db, err := sql.Open("mysql", source)
 	if err != nil {
