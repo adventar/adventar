@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div class="hero"></div>
+    <div class="hero">
+      <div class="inner">
+        <button @click="handleClickCreateBtn">{{ currentYear }}年のAdvent Calendarを作る</button>
+      </div>
+    </div>
 
     <main>
       <div class="mainInner">
@@ -16,7 +20,7 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import { listCalendars } from "~/lib/GrpcClient";
-import { getCurrentYear } from "~/lib/Configuration";
+import { getCurrentYear, getCalendarCreatable } from "~/lib/Configuration";
 import { Calendar } from "~/types/adventar";
 import PageHeader from "~/components/PageHeader.vue";
 import CalendarSearchForm from "~/components/CalendarSearchForm.vue";
@@ -27,6 +31,7 @@ import CalendarList from "~/components/CalendarList.vue";
 })
 export default class extends Vue {
   currentYear = getCurrentYear();
+  calendarCreatable = getCalendarCreatable();
   calendars: Calendar[] | null = null;
 
   pageSize = 30;
@@ -43,42 +48,49 @@ export default class extends Vue {
   get hasMore() {
     return this.calendars && this.calendars.length === this.pageSize;
   }
+
+  handleClickCreateBtn() {
+    if (this.$store.state.user) {
+      this.$router.push("/new");
+    } else {
+      alert("ログインしてください。");
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .hero {
   background-image: url("~assets/hero.png");
-  background-position: center top;
+  background-position: right -120px top;
   background-size: auto 160px;
   height: 160px;
   position: relative;
+  padding: 0 12px;
 }
 
-.hero h1 {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 0;
-  padding: 20px 0;
+.hero .inner {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  position: relative;
 }
 
-.hero a {
-  display: inline-block;
+.hero button {
   padding: 10px;
-  background-color: #efefef;
-  color: #000;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #333;
   border-radius: 5px;
-  text-decoration: none;
   position: absolute;
-  left: 10px;
-}
+  top: 60px;
+  left: 0;
+  border: none;
+  outline: none;
+  cursor: pointer;
 
-.hero a:first-child {
-  bottom: 80px;
-}
-
-.hero a:last-child {
-  bottom: 20px;
+  &:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
 }
 
 .mainInner {
@@ -92,11 +104,14 @@ export default class extends Vue {
 @media (min-width: $mq-break-small) {
   .hero {
     background-size: auto 280px;
+    background-position: right -210px top;
     height: 280px;
   }
-  .hero h1 {
-    margin: 0;
-    padding: 40px 0 15px 0;
+
+  .hero button {
+    top: 120px;
+    font-size: 18px;
+    padding: 12px 20px;
   }
 
   .mainInner {
@@ -105,6 +120,16 @@ export default class extends Vue {
 
   .CalendarSearchForm {
     margin-bottom: 30px;
+  }
+}
+
+@media (min-width: $mq-break-medium) {
+  .hero {
+    background-position: center top;
+  }
+
+  .hero button {
+    left: 0;
   }
 }
 </style>
