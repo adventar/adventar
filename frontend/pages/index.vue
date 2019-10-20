@@ -2,7 +2,9 @@
   <div>
     <div class="hero">
       <div class="inner">
-        <button @click="handleClickCreateBtn">{{ currentYear }}年のAdvent Calendarを作る</button>
+        <button v-if="calendarCreatable" @click="handleClickCreateBtn">
+          {{ currentYear }}年のAdvent Calendarを作る
+        </button>
       </div>
     </div>
 
