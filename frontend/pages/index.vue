@@ -27,7 +27,7 @@ import CalendarList from "~/components/CalendarList.vue";
 })
 export default class extends Vue {
   currentYear = getCurrentYear();
-  calendars: Calendar[] = [];
+  calendars: Calendar[] | null = null;
 
   pageSize = 30;
 
@@ -41,7 +41,7 @@ export default class extends Vue {
   }
 
   get hasMore() {
-    return this.calendars.length === this.pageSize;
+    return this.calendars && this.calendars.length === this.pageSize;
   }
 }
 </script>

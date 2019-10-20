@@ -87,7 +87,8 @@ const config: NuxtConfiguration = {
           "faEdit",
           "faTimes",
           "faComment",
-          "faLink"
+          "faLink",
+          "faCircleNotch"
         ]
       },
       {

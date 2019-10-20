@@ -25,7 +25,7 @@ import CalendarList from "~/components/CalendarList.vue";
 export default class extends Vue {
   year: number;
   query: string;
-  calendars: Calendar[] = [];
+  calendars: Calendar[] | null = null;
 
   async created() {
     this.year = Number(this.$route.query.year);
@@ -35,7 +35,7 @@ export default class extends Vue {
 
   async handleSubmit(query) {
     this.query = query;
-    this.calendars = [];
+    this.calendars = null;
     this.calendars = await listCalendars({ year: this.year, query: this.query });
     this.$router.push(`/calendars?year=${this.year}&query=${query}`);
   }

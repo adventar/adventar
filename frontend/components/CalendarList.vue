@@ -1,6 +1,9 @@
 <template>
   <div class="CalendarList">
-    <ul class="list">
+    <div class="loading" v-if="calendars === null">
+      <font-awesome-icon icon="circle-notch" spin />
+    </div>
+    <ul v-else class="list">
       <li class="item" v-for="calendar in calendars" :key="calendar.id">
         <nuxt-link
           :to="`/calendars/${calendar.id}`"
@@ -24,7 +27,7 @@ import { calendarColor } from "~/lib/utils/Colors";
 
 @Component
 export default class extends Vue {
-  @Prop() readonly calendars!: Calendar[];
+  @Prop() readonly calendars: Calendar[] | null;
 
   getCalendarColor(id) {
     return calendarColor(id);
@@ -33,6 +36,13 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
+.loading {
+  text-align: center;
+  font-size: 42px;
+  padding: 30px 0;
+  color: #e35541;
+}
+
 .list {
   margin: 0;
   padding: 0;

@@ -37,6 +37,9 @@
             <input class="icalInput" type="text" @click="handleClickIcalInput" :value="icalUrl" />
           </template>
         </div>
+        <div v-else class="loading">
+          <font-awesome-icon icon="circle-notch" spin />
+        </div>
       </div>
     </main>
   </div>
@@ -161,5 +164,12 @@ export default class extends Vue {
   padding: 5px;
   font-size: 16px;
   width: 100%;
+}
+
+.loading {
+  text-align: center;
+  font-size: 42px;
+  padding: 30px 0;
+  color: #e35541;
 }
 </style>
