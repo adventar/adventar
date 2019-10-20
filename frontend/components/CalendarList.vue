@@ -173,5 +173,10 @@ export default class extends Vue {
   .item {
     width: 31%;
   }
+
+  .list::after {
+    content: "";
+    width: 31%;
+  }
 }
 </style>
