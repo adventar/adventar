@@ -59,6 +59,11 @@
           </div>
         </details>
 
+        <details class="section" id="help-privacy">
+          <summary class="summary">プライバシーポリシー</summary>
+          <div class="sectionBody"><nuxt-link to="/privacy">プライバシーポリシー</nuxt-link>を参照してください。</div>
+        </details>
+
         <details class="section" id="help-inquiry">
           <summary class="summary">その他のお問い合わせ</summary>
           <div class="sectionBody">
@@ -74,10 +79,9 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import PageHeader from "~/components/PageHeader.vue";
-import SectionHeader from "~/components/SectionHeader.vue";
 
 @Component({
-  components: { PageHeader, SectionHeader }
+  components: { PageHeader }
 })
 export default class extends Vue {
   mounted() {
