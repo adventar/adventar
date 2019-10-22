@@ -7,3 +7,6 @@ build:
 
 run: build
 	./$(NAME)
+
+test:
+	go test ./...
