@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/bugsnag/bugsnag-go"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
@@ -60,15 +61,34 @@ func (s *Service) Serve(addr string) {
 
 	grpc_logrus.ReplaceGrpcLogger(logger)
 
+	bugsnagAPIKey := os.Getenv("BUGSNAG_API_KEY")
+	if bugsnagAPIKey != "" {
+		bugsnag.Configure(bugsnag.Configuration{
+			APIKey: bugsnagAPIKey,
+		})
+	}
+
 	server := grpc.NewServer(
 		grpc_middleware.WithUnaryServerChain(
 			grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
 			grpc_logrus.UnaryServerInterceptor(logger, opts...),
-			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (_ interface{}, err error) {
+				defer func() {
+					if r := recover(); r != nil {
+						err = grpc.Errorf(codes.Internal, "panic")
+						fmt.Printf("%s\n", r)
+						if bugsnagAPIKey != "" {
+							bugsnag.Notify(fmt.Errorf("%s", r), ctx)
+						}
+					}
+				}()
 				resp, err := handler(ctx, req)
 				s, _ := status.FromError(err)
 				if s.Code() == codes.Unknown {
 					fmt.Printf("%+v\n", err)
+					if bugsnagAPIKey != "" {
+						bugsnag.Notify(err, ctx)
+					}
 				}
 				return resp, err
 			},

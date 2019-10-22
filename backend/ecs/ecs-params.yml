@@ -12,6 +12,8 @@ task_definition:
           value_from: /adventar/DATABASE_SOURCE
         - name: FIREBASE_CREDENTIAL_JSON
           value_from: /adventar/FIREBASE_CREDENTIAL_JSON
+        - name: BUGSNAG_API_KEY
+          value_from: /adventar/BUGSNAG_API_KEY
 run_params:
   network_configuration:
     awsvpc_configuration:

@@ -100,6 +100,7 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 		inner join users as u on u.id = c.user_id
 		where c.id = ?
 	`
+
 	row := s.db.QueryRow(selectSQL, in.GetCalendarId())
 	err := row.Scan(
 		&calendar.ID,
