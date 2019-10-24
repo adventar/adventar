@@ -1,9 +1,13 @@
 import { Nuxt } from "nuxt";
 import serverless from "serverless-http";
 import express from "express";
+import asyncHandler from "express-async-handler";
+import bugsnag from "@bugsnag/js";
 import config from "~/nuxt.config";
 import { generateCalendarFeed } from "~/server/Feed";
 import { generateIcal } from "~/server/Ical";
+
+const bugsnagClient = bugsnag(process.env.BUGSNAG_API_KEY || "");
 
 const app = express();
 const nuxt = new Nuxt({
@@ -13,23 +17,46 @@ const nuxt = new Nuxt({
   buildDir: ".nuxt-prod"
 });
 
-app.get("/calendars/:id.rss", async (req, res) => {
-  const calendarId = Number(req.params.id);
-  const feed = await generateCalendarFeed(calendarId);
-  res.header("Content-Type", "application/rss+xml; charset=utf-8");
-  res.send(feed);
-});
+app.get(
+  "/calendars/:id.rss",
+  asyncHandler(async (req, res) => {
+    const calendarId = Number(req.params.id);
+    if (calendarId) throw new Error("hoge");
+    const feed = await generateCalendarFeed(calendarId);
+    res.header("Content-Type", "application/rss+xml; charset=utf-8");
+    res.send(feed);
+  })
+);
 
-app.get("/users/:id.ics", async (req, res) => {
-  const userId = req.params.id;
-  const ical = await generateIcal(userId);
-  res.header("Content-Type", "text/calendar; charset=utf-8");
-  res.send(ical);
-});
+app.get(
+  "/users/:id.ics",
+  asyncHandler(async (req, res) => {
+    const userId = req.params.id;
+    const ical = await generateIcal(userId);
+    res.header("Content-Type", "text/calendar; charset=utf-8");
+    res.send(ical);
+  })
+);
 
-app.get("/calendars/:id", async (req, res, next) => {
-  await nuxt.ready();
-  nuxt.render(req, res, next);
+app.get(
+  "/calendars/:id",
+  asyncHandler(async (req, res, next) => {
+    await nuxt.ready();
+    nuxt.render(req, res, next);
+  })
+);
+
+app.use((err, req, _, next) => {
+  const opt = {
+    request: {
+      headers: req.headers,
+      httpMethod: req.method,
+      url: req.url
+    }
+  };
+  bugsnagClient.notify(err, opt, () => {
+    next(err);
+  });
 });
 
 export const handler = serverless(app);

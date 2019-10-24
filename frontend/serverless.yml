@@ -23,6 +23,7 @@ provider:
     API_BASE_URL: https://api.adventar.org
     NODE_ENV: production
     TZ: Asia/Tokyo
+    BUGSNAG_API_KEY: ${env:BUGSNAG_API_KEY}
 
 functions:
   main:

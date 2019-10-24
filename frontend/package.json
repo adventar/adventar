@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@bugsnag/js": "^6.4.3",
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
     "@fortawesome/free-regular-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
@@ -16,6 +17,7 @@
     "@nuxtjs/style-resources": "^1.0.0",
     "dayjs": "^1.8.16",
     "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
     "feed": "^4.0.0",
     "firebase": "^6.2.4",
     "google-protobuf": "^3.10.0",
