@@ -38,7 +38,7 @@
 import { Component, Vue } from "nuxt-property-decorator";
 import MarkdownIt from "markdown-it";
 import { getCalendar, createEntry, updateEntry, deleteEntry } from "~/lib/GrpcClient";
-import * as RestClient from "~/lib/RestClient";
+import * as JsonApiClient from "~/lib/JsonApiClient";
 import { calendarColor } from "~/lib/utils/Colors";
 import { Calendar } from "~/types/adventar";
 import { getToken } from "~/lib/Auth";
@@ -71,7 +71,7 @@ export default class extends Vue {
     if (process.server) {
       let calendar: Calendar;
       try {
-        calendar = await RestClient.getCalendar(params.id);
+        calendar = await JsonApiClient.getCalendar(params.id);
       } catch (err) {
         error({ statusCode: Number(err.message) });
         return;

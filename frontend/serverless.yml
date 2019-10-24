@@ -20,7 +20,7 @@ provider:
   apiGateway:
     logs: true
   environment:
-    API_BASE_URL: https://api.adventar.org
+    API_BASE_URL: http://api.adventar.org
     NODE_ENV: production
     TZ: Asia/Tokyo
     BUGSNAG_API_KEY: ${env:BUGSNAG_API_KEY}

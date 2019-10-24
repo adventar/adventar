@@ -21,7 +21,6 @@ app.get(
   "/calendars/:id.rss",
   asyncHandler(async (req, res) => {
     const calendarId = Number(req.params.id);
-    if (calendarId) throw new Error("hoge");
     const feed = await generateCalendarFeed(calendarId);
     res.header("Content-Type", "application/rss+xml; charset=utf-8");
     res.send(feed);

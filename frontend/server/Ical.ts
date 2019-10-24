@@ -1,5 +1,5 @@
 import ical from "ical-generator";
-import { listEntries } from "~/lib/RestClient";
+import { listEntries } from "~/lib/JsonApiClient";
 
 async function generateIcal(userId: number): Promise<string> {
   const entries = await listEntries(userId);

@@ -1,5 +1,5 @@
 import { Feed } from "feed";
-import { getCalendar } from "~/lib/RestClient";
+import { getCalendar } from "~/lib/JsonApiClient";
 
 async function generateCalendarFeed(calendarId: number): Promise<string> {
   const calendar = await getCalendar(calendarId);

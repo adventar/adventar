@@ -30,7 +30,10 @@ static_resources:
                         allow_headers: keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,custom-header-1,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,authorization
                         max_age: "1728000"
                         expose_headers: custom-header-1,grpc-status,grpc-message
-                        enabled: true
+                        default_value:
+                          numerator: 100
+                          denominator: HUNDRED
+                        runtime_key: cors.local_service.enabled
                 http_filters:
                   - name: envoy.grpc_web
                   - name: envoy.cors
@@ -38,11 +41,7 @@ static_resources:
                     config:
                       proto_descriptor: "/etc/envoy/proto.pb"
                       services: ["adventar.v1.Adventar"]
-                      print_options:
-                        add_whitespace: true
-                        always_print_primitive_fields: true
-                        always_print_enums_as_ints: false
-                        preserve_proto_field_names: false
+                      auto_mapping: true
                   - name: envoy.router
 
   clusters:

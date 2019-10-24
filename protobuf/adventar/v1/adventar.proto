@@ -9,22 +9,14 @@ import "adventar/v1/rpc_messages.proto";
 
 service Adventar {
   rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse) {}
-  rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse) {
-    option (google.api.http) = {
-      get : "/v1/calendars"
-    };
-  }
+  rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse) {}
   rpc CreateCalendar(CreateCalendarRequest) returns (Calendar) {}
   rpc UpdateCalendar(UpdateCalendarRequest) returns (Calendar) {}
   rpc DeleteCalendar(DeleteCalendarRequest) returns (google.protobuf.Empty) {}
 
   rpc ListCalendarStats(ListCalendarStatsRequest) returns (ListCalendarStatsResponse) {}
 
-  rpc ListEntries(ListEntriesRequest) returns (ListEntriesResponse) {
-    option (google.api.http) = {
-      get : "/v1/entries"
-    };
-  }
+  rpc ListEntries(ListEntriesRequest) returns (ListEntriesResponse) {}
   rpc CreateEntry(CreateEntryRequest) returns (Entry) {}
   rpc UpdateEntry(UpdateEntryRequest) returns (Entry) {}
   rpc DeleteEntry(DeleteEntryRequest) returns (google.protobuf.Empty) {}
