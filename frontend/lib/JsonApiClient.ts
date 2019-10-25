@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch, { Response } from "node-fetch";
 import { Calendar, Entry } from "~/types/adventar";
 
 export async function getCalendar(calendarId: number): Promise<Calendar> {
@@ -10,9 +10,9 @@ export async function getCalendar(calendarId: number): Promise<Calendar> {
 }
 
 export async function listEntries(userId: number): Promise<Entry[]> {
-  const bodyBody = await request("ListEntries", { user_Id: userId });
+  const resBody = await request("ListEntries", { user_id: userId });
 
-  return bodyBody.entries;
+  return resBody.entries;
 }
 
 async function request(rpcName: string, body: Record<string, any>) {
@@ -21,8 +21,16 @@ async function request(rpcName: string, body: Record<string, any>) {
     body: JSON.stringify(body)
   });
   if (!response.ok) {
-    throw new Error(response.status);
+    throw new ApiError(response);
   }
 
   return response.json();
+}
+
+export class ApiError extends Error {
+  public name = "ApiError";
+
+  constructor(public response: Response) {
+    super(`API request failed: ${response.status}`);
+  }
 }

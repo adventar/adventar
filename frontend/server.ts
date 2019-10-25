@@ -45,7 +45,12 @@ app.get(
   })
 );
 
-app.use((err, req, _, next) => {
+app.use((err, req, res, next) => {
+  if (err.response && err.response.status === 404) {
+    res.status(404);
+    return next(err);
+  }
+
   const opt = {
     request: {
       headers: req.headers,

@@ -73,7 +73,13 @@ export default class extends Vue {
       try {
         calendar = await JsonApiClient.getCalendar(params.id);
       } catch (err) {
-        error({ statusCode: Number(err.message) });
+        if (err.response) {
+          error({ statusCode: err.response.status });
+        } else {
+          console.error(err);
+          error({ statusCode: 500 });
+        }
+
         return;
       }
       return { calendar };

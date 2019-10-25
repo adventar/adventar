@@ -18,7 +18,7 @@ async function generateCalendarFeed(calendarId: number): Promise<string> {
       const description = `${calendar.title} Advent Calendar ${calendar.year} ${entry.day}日目`;
       feed.addItem({
         title: (entry.title || entry.comment || description).trim(),
-        description: description,
+        description,
         link: entry.url,
         date: new Date(calendar.year, 11, entry.day)
       });
