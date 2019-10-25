@@ -88,4 +88,4 @@ sw.*
 # server
 server.js
 server.js.map
-.nuxt-prod
+.nuxt-server

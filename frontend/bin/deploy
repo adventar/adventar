@@ -3,13 +3,12 @@
 set -ex
 
 export NODE_ENV=production
-export BUILD_DIR=.nuxt-prod
 
 cd "$(dirname "$0")/.."
 
 yarn run build:spa
 yarn run build:server
-cp -R .nuxt-prod/dist/client/* dist/_nuxt
+cp -R .nuxt-server/dist/client/* dist/_nuxt
 
 aws s3 sync ./dist/ s3://adventar-assets/nuxt
 serverless deploy -v

@@ -14,7 +14,7 @@ const nuxt = new Nuxt({
   ...config,
   dev: false,
   mode: "universal",
-  buildDir: ".nuxt-prod"
+  buildDir: ".nuxt-server"
 });
 
 app.get(
