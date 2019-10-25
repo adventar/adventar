@@ -9,6 +9,7 @@ async function generateCalendarFeed(calendarId: number): Promise<string> {
     link: `https://adventar.org/calendars/${calendar.id}`,
     description: calendar.description,
     generator: "Adventar",
+    updated: new Date(calendar.year, 11, calendar.entries && calendar.entries[0] ? calendar.entries[0].day : 1),
     copyright: ""
   });
 
@@ -17,6 +18,7 @@ async function generateCalendarFeed(calendarId: number): Promise<string> {
       if (!entry.url) return;
       const description = `${calendar.title} Advent Calendar ${calendar.year} ${entry.day}日目`;
       feed.addItem({
+        guid: entry.id.toString(),
         title: (entry.title || entry.comment || description).trim(),
         description,
         link: entry.url,
