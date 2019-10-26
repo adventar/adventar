@@ -6,7 +6,7 @@ locals {
 resource "aws_cloudfront_origin_access_identity" "s3_adventar_assets" {}
 
 resource "aws_cloudfront_distribution" "main" {
-  aliases = ["dev.adventar.org"]
+  aliases = ["adventar.org"]
 
   enabled             = true
   is_ipv6_enabled     = true
@@ -110,7 +110,7 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate.dev_adventar_org.arn
+    acm_certificate_arn      = aws_acm_certificate.adventar_org.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1"
   }
