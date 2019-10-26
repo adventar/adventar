@@ -13,6 +13,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
     "@fortawesome/free-regular-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@nuxtjs/google-analytics": "^2.2.1",
     "@nuxtjs/pwa": "^3.0.0-beta.19",
     "@nuxtjs/style-resources": "^1.0.0",
     "dayjs": "^1.8.16",

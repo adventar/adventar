@@ -69,7 +69,12 @@ const config: NuxtConfiguration = {
   /*
    ** Nuxt.js modules
    */
-  modules: ["@nuxtjs/pwa", "nuxt-fontawesome", "@nuxtjs/style-resources"],
+  modules: [
+    "@nuxtjs/pwa",
+    "nuxt-fontawesome",
+    "@nuxtjs/style-resources",
+    ["@nuxtjs/google-analytics", { id: "UA-1474271-8" }]
+  ],
 
   fontawesome: {
     imports: [
