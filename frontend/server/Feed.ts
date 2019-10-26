@@ -8,7 +8,8 @@ export class ExpiredCalendarError extends Error {
 
 async function generateCalendarFeed(calendarId: number): Promise<string> {
   const calendar = await getCalendar(calendarId);
-  if (calendar.year < getToday().getFullYear()) {
+  const today = getToday();
+  if (calendar.year < today.getFullYear()) {
     throw new ExpiredCalendarError();
   }
   const feed = new Feed({
@@ -24,6 +25,7 @@ async function generateCalendarFeed(calendarId: number): Promise<string> {
   if (calendar && calendar.entries) {
     calendar.entries.reverse().forEach(entry => {
       if (!entry.url) return;
+      if (entry.day > today.getDate()) return;
       const description = `${calendar.title} Advent Calendar ${calendar.year} ${entry.day}日目`;
       feed.addItem({
         guid: entry.id.toString(),
