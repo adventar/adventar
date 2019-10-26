@@ -6,6 +6,7 @@ import bugsnag from "@bugsnag/js";
 import config from "~/nuxt.config";
 import { generateCalendarFeed, ExpiredCalendarError } from "~/server/Feed";
 import { generateIcal } from "~/server/Ical";
+import { ApiError } from "~/lib/JsonApiClient";
 
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API_KEY || "");
 
@@ -51,7 +52,7 @@ app.use((err, req, res, next) => {
     return next(err);
   }
 
-  if (err.response && err.response.status === 404) {
+  if (err instanceof ApiError && err.response.status === 404) {
     res.status(404);
     return next(err);
   }

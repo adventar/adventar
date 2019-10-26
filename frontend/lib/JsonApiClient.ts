@@ -28,8 +28,6 @@ async function request(rpcName: string, body: Record<string, any>) {
 }
 
 export class ApiError extends Error {
-  public name = "ApiError";
-
   constructor(public response: Response) {
     super(`API request failed: ${response.status}`);
   }
