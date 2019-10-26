@@ -21,6 +21,14 @@ module.exports = {
   target: "node",
   externals: [nodeExternals()],
   module: {
-    rules: [{ test: /\.tsx?$/, loader: "ts-loader" }]
+    rules: [
+      {
+        test: /\.tsx?$/,
+        loader: "ts-loader",
+        options: {
+          compilerOptions: { target: "ES2018" }
+        }
+      }
+    ]
   }
 };
