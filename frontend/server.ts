@@ -4,7 +4,7 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 import bugsnag from "@bugsnag/js";
 import config from "~/nuxt.config";
-import { generateCalendarFeed } from "~/server/Feed";
+import { generateCalendarFeed, ExpiredCalendarError } from "~/server/Feed";
 import { generateIcal } from "~/server/Ical";
 
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API_KEY || "");
@@ -46,6 +46,11 @@ app.get(
 );
 
 app.use((err, req, res, next) => {
+  if (err instanceof ExpiredCalendarError) {
+    res.status(400);
+    return next(err);
+  }
+
   if (err.response && err.response.status === 404) {
     res.status(404);
     return next(err);

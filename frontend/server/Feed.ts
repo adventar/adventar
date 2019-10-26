@@ -1,8 +1,16 @@
 import { Feed } from "feed";
 import { getCalendar } from "~/lib/JsonApiClient";
+import { getToday } from "~/lib/Configuration";
+
+export class ExpiredCalendarError extends Error {
+  public name = "ExpiredCalendarError";
+}
 
 async function generateCalendarFeed(calendarId: number): Promise<string> {
   const calendar = await getCalendar(calendarId);
+  if (calendar.year < getToday().getFullYear()) {
+    throw new ExpiredCalendarError();
+  }
   const feed = new Feed({
     id: "Adventar",
     title: `${calendar.title} Advent Calendar ${calendar.year}`,
