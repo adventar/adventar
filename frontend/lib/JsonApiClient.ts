@@ -4,7 +4,7 @@ import { Calendar, Entry } from "~/types/adventar";
 export async function getCalendar(calendarId: number): Promise<Calendar> {
   const resBody = await request("GetCalendar", { calendar_id: calendarId });
   const calendar = resBody.calendar;
-  calendar.entries = resBody.entries;
+  calendar.entries = resBody.entries || [];
 
   return calendar;
 }
@@ -12,7 +12,7 @@ export async function getCalendar(calendarId: number): Promise<Calendar> {
 export async function listEntries(userId: number): Promise<Entry[]> {
   const resBody = await request("ListEntries", { user_id: userId });
 
-  return resBody.entries;
+  return resBody.entries || [];
 }
 
 async function request(rpcName: string, body: Record<string, any>) {
