@@ -87,9 +87,12 @@ export default class extends Vue {
   }
 
   async mounted() {
-    this.calendar = null;
+    const clanedarId = Number(this.$route.params.id);
+    if (this.calendar && Number(this.calendar.id) !== clanedarId) {
+      this.calendar = null;
+    }
     // TODO: 404 if not found
-    this.calendar = await getCalendar(Number(this.$route.params.id));
+    this.calendar = await getCalendar(clanedarId);
   }
 
   async refetchCalendar() {
