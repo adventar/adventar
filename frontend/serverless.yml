@@ -13,6 +13,7 @@ provider:
   name: aws
   stage: prod
   runtime: nodejs10.x
+  memorySize: 512
   region: ap-northeast-1
   deploymentBucket:
     name: adventar
