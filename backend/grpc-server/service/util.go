@@ -133,7 +133,7 @@ func currentDate() (*date, error) {
 	var t time.Time
 	var err error
 	if currentDate != "" {
-		t, err = time.Parse("2006-01-02", currentDate)
+		t, err = time.Parse("2006-01-02 15:04:05", currentDate)
 		if err != nil {
 			return nil, err
 		}

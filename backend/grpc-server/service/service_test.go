@@ -12,7 +12,9 @@ import (
 	s "github.com/adventar/adventar/backend/grpc-server/service"
 	"github.com/adventar/adventar/backend/grpc-server/util"
 	_ "github.com/go-sql-driver/mysql"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -27,7 +29,7 @@ func (v *testVerifier) VerifyIDToken(s string) (*util.AuthResult, error) {
 		Name:         "foo",
 		IconURL:      "http://example.com/icon",
 		AuthProvider: "google",
-		AuthUID:      "xxx",
+		AuthUID:      s,
 	}, nil
 }
 
@@ -172,7 +174,7 @@ func TestGetCalendar(t *testing.T) {
 }
 
 func TestCreateCalendar(t *testing.T) {
-	os.Setenv("CURRENT_DATE", "2019-11-01")
+	os.Setenv("CURRENT_DATE", "2019-11-01 00:00:00")
 	cleanupDatabase()
 
 	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
@@ -180,7 +182,7 @@ func TestCreateCalendar(t *testing.T) {
 
 	in := &pb.CreateCalendarRequest{Title: "foo", Description: "bar"}
 	md := make(map[string][]string)
-	md["authorization"] = append(md["authorization"], "x")
+	md["authorization"] = append(md["authorization"], u.authUID)
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 
 	calendar, err := service.CreateCalendar(ctx, in)
@@ -211,13 +213,13 @@ func TestCalendarCreatable(t *testing.T) {
 	in := &pb.CreateCalendarRequest{Title: "foo", Description: "bar"}
 	ctx := context.Background()
 
-	os.Setenv("CURRENT_DATE", "2019-10-31")
+	os.Setenv("CURRENT_DATE", "2019-10-31 23:59:59")
 	_, err := service.CreateCalendar(ctx, in)
 	if err == nil || !strings.Contains(err.Error(), "Calendars can not create now") {
 		t.Errorf("Unexpected error: %s", err)
 	}
 
-	os.Setenv("CURRENT_DATE", "2019-01-01")
+	os.Setenv("CURRENT_DATE", "2019-01-01 00:00:00")
 	_, err = service.CreateCalendar(ctx, in)
 	if err == nil || !strings.Contains(err.Error(), "Calendars can not create now") {
 		t.Errorf("Unexpected error: %s", err)
@@ -235,7 +237,7 @@ func TestUpdateCalendar(t *testing.T) {
 
 	in := &pb.UpdateCalendarRequest{CalendarId: c.id, Title: "foo", Description: "bar"}
 	md := make(map[string][]string)
-	md["authorization"] = append(md["authorization"], "x")
+	md["authorization"] = append(md["authorization"], u.authUID)
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 
 	_, err := service.UpdateCalendar(ctx, in)
@@ -268,7 +270,7 @@ func TestDeleteCalendar(t *testing.T) {
 
 	in := &pb.DeleteCalendarRequest{CalendarId: c.id}
 	md := make(map[string][]string)
-	md["authorization"] = append(md["authorization"], "x")
+	md["authorization"] = append(md["authorization"], u.authUID)
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 
 	_, err := service.DeleteCalendar(ctx, in)
@@ -352,7 +354,7 @@ func TestListEntries(t *testing.T) {
 
 	in := &pb.ListEntriesRequest{UserId: u1.id, Year: 2019}
 	md := make(map[string][]string)
-	md["authorization"] = append(md["authorization"], "x")
+	md["authorization"] = append(md["authorization"], u1.authUID)
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 
 	res, err := service.ListEntries(ctx, in)
@@ -380,7 +382,7 @@ func TestCreateEntry(t *testing.T) {
 
 	in := &pb.CreateEntryRequest{CalendarId: c.id, Day: 1}
 	md := make(map[string][]string)
-	md["authorization"] = append(md["authorization"], "x")
+	md["authorization"] = append(md["authorization"], u.authUID)
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 
 	entry, err := service.CreateEntry(ctx, in)
@@ -420,7 +422,7 @@ func TestUpdateEntry(t *testing.T) {
 
 	in := &pb.UpdateEntryRequest{EntryId: e.id, Comment: "comment", Url: "http://example.com"}
 	md := make(map[string][]string)
-	md["authorization"] = append(md["authorization"], "x")
+	md["authorization"] = append(md["authorization"], u.authUID)
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 
 	entry, err := service.UpdateEntry(ctx, in)
@@ -448,21 +450,46 @@ func TestUpdateEntry(t *testing.T) {
 func TestDeleteEntry(t *testing.T) {
 	cleanupDatabase()
 
-	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
-	createUser(t, u)
+	calendarOwner := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, calendarOwner)
 
-	c := &calendar{title: "a", description: "b", userID: u.id, year: 2019}
+	entryOwner := &user{name: "bar", authUID: "yyy", authProvider: "google"}
+	createUser(t, entryOwner)
+
+	c := &calendar{title: "a", description: "b", userID: calendarOwner.id, year: 2019}
 	createCalendar(t, c)
 
-	e := &entry{userID: u.id, calendarID: c.id, day: 1}
-	createEntry(t, e)
+	e1 := &entry{userID: entryOwner.id, calendarID: c.id, day: 1}
+	createEntry(t, e1)
 
-	in := &pb.DeleteEntryRequest{EntryId: e.id}
+	e2 := &entry{userID: entryOwner.id, calendarID: c.id, day: 2}
+	createEntry(t, e2)
+
+	e3 := &entry{userID: entryOwner.id, calendarID: c.id, day: 3}
+	createEntry(t, e3)
+
 	md := make(map[string][]string)
-	md["authorization"] = append(md["authorization"], "x")
+	md["authorization"] = append(md["authorization"], calendarOwner.authUID)
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 
-	_, err := service.DeleteEntry(ctx, in)
+	os.Setenv("CURRENT_DATE", "2019-12-02 23:59:59")
+	_, err := service.DeleteEntry(ctx, &pb.DeleteEntryRequest{EntryId: e1.id})
+	s, _ := status.FromError(err)
+	if s.Code() != codes.PermissionDenied {
+		t.Fatal(err)
+	}
+
+	os.Setenv("CURRENT_DATE", "2019-12-03 00:00:00")
+	_, err = service.DeleteEntry(ctx, &pb.DeleteEntryRequest{EntryId: e1.id})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	md = make(map[string][]string)
+	md["authorization"] = append(md["authorization"], entryOwner.authUID)
+	os.Setenv("CURRENT_DATE", "2019-12-01 00:00:00")
+	ctx = metadata.NewIncomingContext(context.Background(), md)
+	_, err = service.DeleteEntry(ctx, &pb.DeleteEntryRequest{EntryId: e2.id})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -472,8 +499,8 @@ func TestDeleteEntry(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if count != 0 {
-		t.Errorf("actual: %d, expected: 0", count)
+	if count != 1 {
+		t.Errorf("actual: %d, expected: 1", count)
 	}
 }
 
@@ -483,7 +510,7 @@ func TestSignInIfUserExists(t *testing.T) {
 	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
 	createUser(t, u)
 
-	in := &pb.SignInRequest{Jwt: ""}
+	in := &pb.SignInRequest{Jwt: u.authUID}
 	ctx := context.Background()
 	_, err := service.SignIn(ctx, in)
 	if err != nil {
@@ -545,7 +572,7 @@ func TestUpdateUser(t *testing.T) {
 
 	in := &pb.UpdateUserRequest{Name: "changed"}
 	md := make(map[string][]string)
-	md["authorization"] = append(md["authorization"], "x")
+	md["authorization"] = append(md["authorization"], u.authUID)
 	ctx := metadata.NewIncomingContext(context.Background(), md)
 
 	_, err := service.UpdateUser(ctx, in)

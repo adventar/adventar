@@ -44,7 +44,7 @@
                   class="forceCancelBtn"
                   role="button"
                   v-if="forceCancelable(cell.entry)"
-                  @click="handleClickDeleteEntry(cell.entry)"
+                  @click="handleClickForceCancel(cell.entry)"
                 >
                   <font-awesome-icon icon="times" />
                 </span>
@@ -167,8 +167,9 @@ export default class extends Vue {
       !this.isOwnEntry(entry) &&
       this.isOwnCalendar(this.calendar) &&
       !entry.url &&
-      // TODO: Fix to JST
-      dayjs(new Date(this.calendar.year, 11, entry.day)).add(1, "day") < dayjs()
+      dayjs(new Date(this.calendar.year, 11, entry.day))
+        .add(1, "day")
+        .endOf("day") < dayjs(getToday())
     );
   }
 
@@ -249,6 +250,14 @@ export default class extends Vue {
     const url = this.inputUrl;
     await this.onUpdateEntry(this.displayedDialogEntry.id, { comment, url });
     this.hideDialog();
+  }
+
+  handleClickForceCancel(entry: Entry) {
+    const message =
+      "カレンダーのオーナーに限り、登録日を1日以上過ぎても投稿のないエントリーを強制的にキャンセルできます。キャンセルしますか？";
+    if (window.confirm(message)) {
+      this.onDeleteEntry(entry.id);
+    }
   }
 }
 </script>
