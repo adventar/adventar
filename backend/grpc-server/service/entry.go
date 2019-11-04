@@ -149,9 +149,15 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 
 	if in.GetUrl() != "" {
 		m, err := s.metaFetcher.Fetch(in.GetUrl())
-		// TODO: Ignore error
+		var title string
+		var imageURL string
 		if err != nil {
-			return nil, xerrors.Errorf("Failed to fetch url: %w", err)
+			fmt.Printf("Failed to fetch url: %s", err)
+			title = ""
+			imageURL = ""
+		} else {
+			title = m.Title
+			imageURL = m.ImageURL
 		}
 		stmt, err = s.db.Prepare("update entries set title = ?, image_url = ? where id = ? and user_id = ?")
 		if err != nil {
@@ -159,7 +165,7 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(m.Title, m.ImageURL, in.GetEntryId(), currentUser.ID)
+		_, err = stmt.Exec(title, imageURL, in.GetEntryId(), currentUser.ID)
 		if err != nil {
 			return nil, xerrors.Errorf("Failed query to update entry: %w", err)
 		}
