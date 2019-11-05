@@ -225,6 +225,10 @@ export default class extends Vue {
   }
 
   async handleClickCreateEntry(day: number): Promise<void> {
+    if (!this.currentUser) {
+      window.alert("登録にはログインが必要です。");
+      return;
+    }
     const entry = await this.onCreateEntry(day);
     this.showDialog(entry);
   }
