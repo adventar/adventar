@@ -9,7 +9,7 @@ services:
     environment:
       DATABASE_SOURCE: root@tcp(db:3306)/adventar_dev
       FIREBASE_CREDENTIAL_JSON: ${FIREBASE_CREDENTIAL_JSON}
-      CURRENT_DATE: '2019-12-03 00:00:00'
+      CURRENT_DATE: '2019-12-05 00:00:00'
   envoy:
     build:
       context: ./envoy

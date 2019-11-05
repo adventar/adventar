@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/backend/grpc-server/util"
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
@@ -244,7 +245,7 @@ func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {
 		return true, nil
 	}
 
-	now, err := currentDate()
+	now, err := util.CurrentDate()
 	if err != nil {
 		return false, err
 	}

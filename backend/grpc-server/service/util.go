@@ -4,9 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"os"
 	"strings"
-	"time"
 
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc/metadata"
@@ -120,25 +118,4 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 	}
 
 	return entries, nil
-}
-
-type date struct {
-	Year  int
-	Month int
-	Day   int
-}
-
-func currentDate() (*date, error) {
-	currentDate := os.Getenv("CURRENT_DATE")
-	var t time.Time
-	var err error
-	if currentDate != "" {
-		t, err = time.Parse("2006-01-02 15:04:05", currentDate)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		t = time.Now()
-	}
-	return &date{Year: t.Year(), Month: int(t.Month()), Day: t.Day()}, nil
 }

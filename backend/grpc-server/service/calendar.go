@@ -12,6 +12,7 @@ import (
 
 	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
 	"github.com/adventar/adventar/backend/grpc-server/model"
+	"github.com/adventar/adventar/backend/grpc-server/util"
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
@@ -140,7 +141,7 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 
 // CreateCalendar creates a calendar.
 func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarRequest) (*pb.Calendar, error) {
-	now, err := currentDate()
+	now, err := util.CurrentDate()
 	if err != nil {
 		return nil, err
 	}
