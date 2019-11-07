@@ -152,10 +152,7 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
-	}
-	if currentUser == nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Unauthorized user")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	stmt, err := s.db.Prepare("insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)")
@@ -190,7 +187,7 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarRequest) (*pb.Calendar, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 	stmt, err := s.db.Prepare("update calendars set title = ?, description = ? where id = ? and user_id = ?")
 	if err != nil {
@@ -219,7 +216,7 @@ func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarReque
 func (s *Service) DeleteCalendar(ctx context.Context, in *pb.DeleteCalendarRequest) (*empty.Empty, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	stmt, err := s.db.Prepare("delete from calendars where id = ? and user_id = ?")

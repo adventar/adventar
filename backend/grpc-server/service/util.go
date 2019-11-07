@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"strings"
 
@@ -31,9 +30,6 @@ func (s *Service) getCurrentUser(ctx context.Context) (*model.User, error) {
 
 	var user model.User
 	err = s.db.QueryRow("select id, name, icon_url from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID).Scan(&user.ID, &user.Name, &user.IconURL)
-	if err == sql.ErrNoRows {
-		return nil, nil
-	}
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
 	}

@@ -81,7 +81,7 @@ func (s *Service) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.User,
 func (s *Service) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest) (*pb.User, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 	name := in.GetName()
 	if name == "" {

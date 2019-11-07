@@ -88,7 +88,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*pb.Entry, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	var year int
@@ -134,7 +134,7 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*pb.Entry, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	stmt, err := s.db.Prepare("update entries set comment = ?, url = ? where id = ? and user_id = ?")
@@ -191,7 +191,7 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*empty.Empty, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	deletable, err := s.entryDeletable(int(in.GetEntryId()), int(currentUser.ID))
