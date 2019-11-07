@@ -75,7 +75,7 @@ func (s *Service) Serve(addr string) {
 			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (_ interface{}, err error) {
 				defer func() {
 					if r := recover(); r != nil {
-						err = grpc.Errorf(codes.Internal, "panic")
+						err = grpc.Errorf(codes.Internal, "Internal Server Error")
 						fmt.Printf("%s\n", r)
 						if bugsnagAPIKey != "" {
 							bugsnag.Notify(fmt.Errorf("%s", r), ctx)
@@ -85,10 +85,12 @@ func (s *Service) Serve(addr string) {
 				resp, err := handler(ctx, req)
 				s, _ := status.FromError(err)
 				if s.Code() == codes.Unknown {
-					fmt.Printf("%+v\n", err)
+					stacktrace := fmt.Sprintf("%+v\n", err)
+					fmt.Print(stacktrace)
 					if bugsnagAPIKey != "" {
-						bugsnag.Notify(err, ctx)
+						bugsnag.Notify(err, ctx, bugsnag.MetaData{"info": {"stacktrace": stacktrace}})
 					}
+					err = grpc.Errorf(codes.Internal, "Internal Server Error")
 				}
 				return resp, err
 			},
