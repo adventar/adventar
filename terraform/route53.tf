@@ -36,3 +36,11 @@ resource "aws_route53_record" "api_adventar_org" {
     evaluate_target_health = true
   }
 }
+
+resource "aws_route53_record" "img_adventar_org" {
+  zone_id = aws_route53_zone.adventar_org.id
+  name    = "img.adventar.org"
+  type    = "CNAME"
+  records = [aws_cloudfront_distribution.img_adventar_org.domain_name]
+  ttl     = 300
+}

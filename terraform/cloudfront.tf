@@ -163,3 +163,58 @@ resource "aws_cloudfront_distribution" "www_adventar_org" {
     minimum_protocol_version = "TLSv1"
   }
 }
+
+locals {
+  img_adventar_org_origin_id = "img-adventar-org"
+}
+
+resource "aws_cloudfront_distribution" "img_adventar_org" {
+  enabled = true
+  aliases = ["img.adventar.org"]
+
+  is_ipv6_enabled = true
+
+  origin {
+    origin_id   = local.img_adventar_org_origin_id
+    domain_name = "si2m4wevyj.execute-api.ap-northeast-1.amazonaws.com"
+    origin_path = "/prod"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  default_cache_behavior {
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = local.img_adventar_org_origin_id
+
+    forwarded_values {
+      query_string = true
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 31536000
+    max_ttl                = 31536000
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    acm_certificate_arn      = aws_acm_certificate.img_adventar_org.arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1"
+  }
+}

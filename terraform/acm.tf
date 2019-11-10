@@ -23,3 +23,12 @@ resource "aws_acm_certificate" "api_adventar_org" {
     create_before_destroy = true
   }
 }
+
+resource "aws_acm_certificate" "img_adventar_org" {
+  provider    = "aws.us-east-1"
+  domain_name = "img.adventar.org"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
