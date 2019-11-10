@@ -26,7 +26,7 @@ package:
     - ./bin/**
 
 functions:
-  update_entry_site_info:
+  updateEntrySiteInfo:
     handler: bin/update_entry_site_info
     events:
       - schedule: cron(0 15-23 30 11 ? *)
