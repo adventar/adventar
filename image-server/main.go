@@ -78,7 +78,7 @@ func fetchAndResize(url string) (*bytes.Buffer, string, error) {
 		return nil, "", err
 	}
 
-	dst := imaging.Resize(src, 128, 128, imaging.Lanczos)
+	dst := imaging.Resize(src, 120, 0, imaging.Lanczos)
 	buf := new(bytes.Buffer)
 
 	switch contentType {
