@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
+	"crypto/sha1"
 	"fmt"
+	"net/url"
+	"os"
 	"strings"
 
 	"golang.org/x/xerrors"
@@ -69,49 +72,14 @@ func (s *Service) bindEntryCount(calendars []*pb.Calendar) error {
 	return nil
 }
 
-func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
-	rows, err := s.db.Query(`
-		select
-			e.id,
-			e.day,
-			e.title,
-			e.comment,
-			e.url,
-			e.image_url,
-			u.id,
-			u.name,
-			u.icon_url
-		from entries as e
-		inner join users as u on u.id = e.user_id
-		where e.calendar_id = ?
-		order by e.day
-	`, cid)
-
-	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch entries: %w", err)
+func convertImageURL(imageURL string) string {
+	endpoint := os.Getenv("IMAGE_SERVER_ENDPOINT")
+	if endpoint == "" {
+		return imageURL
 	}
+	salt := os.Getenv("DIGEST_SALT")
+	h := sha1.New()
+	h.Write([]byte(imageURL + salt))
 
-	entries := []*pb.Entry{}
-	for rows.Next() {
-		var e pb.Entry
-		var u pb.User
-		err := rows.Scan(
-			&e.Id,
-			&e.Day,
-			&e.Title,
-			&e.Comment,
-			&e.Url,
-			&e.ImageUrl,
-			&u.Id,
-			&u.Name,
-			&u.IconUrl,
-		)
-		if err != nil {
-			return nil, xerrors.Errorf("Failed to scan row: %w", err)
-		}
-		e.Owner = &u
-		entries = append(entries, &e)
-	}
-
-	return entries, nil
+	return fmt.Sprintf("%s/%x?url=%s", endpoint, h.Sum(nil), url.QueryEscape(imageURL))
 }

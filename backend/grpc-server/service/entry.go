@@ -78,6 +78,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 		}
 		e.Calendar = &c
 		e.Owner = &u
+		e.ImageUrl = convertImageURL(e.ImageUrl)
 		entries = append(entries, &e)
 	}
 
@@ -184,7 +185,7 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 		return nil, xerrors.Errorf("Failed query to fetch entry: %w", err)
 	}
 
-	return &pb.Entry{Id: in.GetEntryId(), Comment: comment, Url: url, Title: title, ImageUrl: imageURL}, nil
+	return &pb.Entry{Id: in.GetEntryId(), Comment: comment, Url: url, Title: title, ImageUrl: convertImageURL(imageURL)}, nil
 }
 
 // DeleteEntry deletes the entry.
