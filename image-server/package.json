@@ -1,0 +1,8 @@
+{
+  "name": "adventar-image-server",
+  "private": true,
+  "devDependencies": {
+    "serverless": "^1.56.1",
+    "serverless-apigw-binary": "^0.4.4"
+  }
+}
