@@ -77,7 +77,7 @@ func convertImageURL(imageURL string) string {
 	if endpoint == "" {
 		return imageURL
 	}
-	salt := os.Getenv("DIGEST_SALT")
+	salt := os.Getenv("IMAGE_DIGEST_SALT")
 	h := sha1.New()
 	h.Write([]byte(imageURL + salt))
 

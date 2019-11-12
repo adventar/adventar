@@ -101,7 +101,7 @@ func fetchAndResize(url string) (*bytes.Buffer, string, error) {
 
 func verify(digest string, url string) bool {
 	h := sha1.New()
-	h.Write([]byte(url + os.Getenv("DIGEST_SALT")))
+	h.Write([]byte(url + os.Getenv("IMAGE_DIGEST_SALT")))
 
 	return digest == fmt.Sprintf("%x", h.Sum(nil))
 }

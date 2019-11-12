@@ -12,7 +12,7 @@ provider:
     name: adventar
   deploymentPrefix: serverless-deploy
   environment:
-    DIGEST_SALT: ${env:DIGEST_SALT}
+    IMAGE_DIGEST_SALT: ${env:IMAGE_DIGEST_SALT}
 
 custom:
   apigwBinary:
