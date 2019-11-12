@@ -10,6 +10,7 @@ import (
 	"image/gif"
 	"image/jpeg"
 	"image/png"
+	"log"
 	"net/http"
 	"os"
 
@@ -28,17 +29,18 @@ type Response events.APIGatewayProxyResponse
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
 	url := request.QueryStringParameters["url"]
 	if url == "" {
-		return Response{StatusCode: 400, Body: `{"message":"url is required"}`}, nil
+		return errorResp(400, "url is required"), nil
 	}
 	digest := request.PathParameters["digest"]
 	ok := verify(digest, url)
 	if ok == false {
-		return Response{StatusCode: 400, Body: `{"message":"Invalid digest"}`}, nil
+		return errorResp(400, "Invalid digest"), nil
 	}
 
 	buf, contentType, err := fetchAndResize(url)
 	if err != nil {
-		return Response{StatusCode: 500}, err
+		log.Printf("%v", err)
+		return errorResp(500, "Internal Server Error"), nil
 	}
 
 	resp := Response{
@@ -102,4 +104,15 @@ func verify(digest string, url string) bool {
 	h.Write([]byte(url + os.Getenv("DIGEST_SALT")))
 
 	return digest == fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func errorResp(code int, message string) Response {
+	return Response{
+		StatusCode: code,
+		Body:       fmt.Sprintf(`{"message":"%s"}`, message),
+		Headers: map[string]string{
+			"Content-Type":  "application/json",
+			"Cache-Control": "max-age=31536000",
+		},
+	}
 }
