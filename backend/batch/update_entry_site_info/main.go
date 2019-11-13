@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"log"
 	"os"
 
 	util "github.com/adventar/adventar/backend/grpc-server/util"
@@ -25,7 +25,7 @@ func handler(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("now: %v", now)
+	log.Printf("now: %v", now)
 
 	rows, err := db.Query(`
 		select
@@ -45,6 +45,8 @@ func handler(ctx context.Context) error {
 		return err
 	}
 	defer rows.Close()
+
+	count := 0
 	for rows.Next() {
 		var id int
 		var url string
@@ -53,24 +55,30 @@ func handler(ctx context.Context) error {
 			return err
 		}
 
-		fmt.Printf("[Process] id: %d, url: %s", id, url)
+		log.Printf("[Process] id: %d, url: %s", id, url)
 		meta, err := fetcher.Fetch(url)
 		if err != nil {
-			fmt.Printf("Fetch error: %s", err)
+			log.Printf("Fetch error: %s", err)
+			continue
 		}
 
 		stmt, err := db.Prepare("update entries set title = ?, image_url = ? where id = ?")
 		if err != nil {
-			return err
+			log.Printf("Update error: %s", err)
+			continue
 		}
 		defer stmt.Close()
 		_, err = stmt.Exec(meta.Title, meta.ImageURL, id)
 		if err != nil {
-			fmt.Printf("Query execution: %s", err)
+			log.Printf("Query execution error: %s", err)
+			continue
 		}
 
-		fmt.Printf("[Updated] id: %d, title: %s, image_url: %s", id, meta.Title, meta.ImageURL)
+		count++
+		log.Printf("[Updated] id: %d, title: %s, image_url: %s", id, meta.Title, meta.ImageURL)
 	}
+
+	log.Printf("Finish, processed count: %d", count)
 
 	return nil
 }
