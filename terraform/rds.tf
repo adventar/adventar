@@ -1,6 +1,6 @@
-resource "aws_db_instance" "adventar" {
-  identifier        = "adventar-db-001"
-  allocated_storage = 100
+resource "aws_db_instance" "adventar-002" {
+  identifier        = "adventar-db-002"
+  allocated_storage = 20
   storage_type      = "gp2"
   engine            = "mysql"
   engine_version    = "8.0.16"
