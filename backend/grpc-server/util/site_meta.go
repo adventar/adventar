@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -17,7 +18,8 @@ type SiteMeta struct {
 
 // TODO: Support charset other than utf8
 func (smf *SiteMetaFetcher) Fetch(url string) (*SiteMeta, error) {
-	res, err := http.Get(url)
+	client := http.Client{Timeout: 2 * time.Second}
+	res, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}
