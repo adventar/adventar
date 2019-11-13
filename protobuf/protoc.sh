@@ -6,12 +6,12 @@ cd $(dirname $0)
 protoc \
   --include_imports \
   --include_source_info \
-  --descriptor_set_out=../backend/envoy/proto.pb \
+  --descriptor_set_out=../api-server/envoy/proto.pb \
   adventar/v1/*.proto
 
 # grpc-server
 protoc \
-  --go_out plugins=grpc:../backend/grpc-server/grpc \
+  --go_out plugins=grpc:../api-server/grpc-server/grpc \
   adventar/v1/*.proto
 
 # frontend

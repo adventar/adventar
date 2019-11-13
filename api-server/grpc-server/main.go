@@ -7,8 +7,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/adventar/adventar/backend/grpc-server/service"
-	"github.com/adventar/adventar/backend/grpc-server/util"
+	"github.com/adventar/adventar/api-server/grpc-server/service"
+	"github.com/adventar/adventar/api-server/grpc-server/util"
 )
 
 func main() {

@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
-	"github.com/adventar/adventar/backend/grpc-server/util"
+	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/api-server/grpc-server/util"
 	"github.com/golang/protobuf/ptypes/empty"
 )
 

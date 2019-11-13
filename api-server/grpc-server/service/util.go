@@ -11,8 +11,8 @@ import (
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc/metadata"
 
-	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
-	"github.com/adventar/adventar/backend/grpc-server/model"
+	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/api-server/grpc-server/model"
 )
 
 func (s *Service) getCurrentUser(ctx context.Context) (*model.User, error) {

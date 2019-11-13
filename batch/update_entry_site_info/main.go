@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	util "github.com/adventar/adventar/backend/grpc-server/util"
+	util "github.com/adventar/adventar/api-server/grpc-server/util"
 	"github.com/aws/aws-lambda-go/lambda"
 	_ "github.com/go-sql-driver/mysql"
 )

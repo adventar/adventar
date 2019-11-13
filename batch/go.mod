@@ -1,4 +1,4 @@
-module github.com/adventar/adventar/backend/batch/update_entry_site_info
+module github.com/adventar/adventar/batch
 
 go 1.13
 
@@ -7,7 +7,7 @@ require (
 	cloud.google.com/go/firestore v1.0.0 // indirect
 	cloud.google.com/go/storage v1.1.2 // indirect
 	firebase.google.com/go v3.10.0+incompatible // indirect
-	github.com/adventar/adventar/backend/grpc-server v0.0.0-20191113150322-861cd75ef6f4
+	github.com/adventar/adventar/api-server/grpc-server v0.0.0-20191113150322-861cd75ef6f4
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/aws/aws-lambda-go v1.13.2
 	github.com/fnproject/fdk-go v0.0.1

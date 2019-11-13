@@ -1,4 +1,4 @@
-module github.com/adventar/adventar/backend/image-resizer
+module github.com/adventar/adventar/image-resizer
 
 go 1.13
 

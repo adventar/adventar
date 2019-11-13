@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
-	s "github.com/adventar/adventar/backend/grpc-server/service"
-	"github.com/adventar/adventar/backend/grpc-server/util"
+	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	s "github.com/adventar/adventar/api-server/grpc-server/service"
+	"github.com/adventar/adventar/api-server/grpc-server/util"
 	_ "github.com/go-sql-driver/mysql"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
