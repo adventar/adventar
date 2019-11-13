@@ -7,7 +7,7 @@ clean:
 	rm -rf ./bin
 
 deploy: clean build
-	sls deploy --verbose
+	sls deploy --stage prod --verbose
 
 run: build
 	sls invoke local -f ${f}

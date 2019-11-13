@@ -7,14 +7,14 @@ require (
 	cloud.google.com/go/firestore v1.0.0 // indirect
 	cloud.google.com/go/storage v1.1.2 // indirect
 	firebase.google.com/go v3.10.0+incompatible // indirect
-	github.com/adventar/adventar/backend/grpc-server v0.0.0-20191105131712-9cdc0ffca4ad
+	github.com/adventar/adventar/backend/grpc-server v0.0.0-20191113150322-861cd75ef6f4
 	github.com/andybalholm/cascadia v1.1.0 // indirect
 	github.com/aws/aws-lambda-go v1.13.2
+	github.com/fnproject/fdk-go v0.0.1
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/groupcache v0.0.0-20191027212112-611e8accdfc9 // indirect
-	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0 // indirect
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
-	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
+	github.com/tencentyun/scf-go-lib v0.0.0-20190817080819-4a2819cda320
 	go.opencensus.io v0.22.1 // indirect
 	golang.org/x/exp v0.0.0-20191030013958-a1ab85dbe136 // indirect
 	golang.org/x/net v0.0.0-20191105084925-a882066a44e0 // indirect

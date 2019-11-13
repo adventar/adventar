@@ -2,9 +2,10 @@ service: adventar-batch
 
 provider:
   name: aws
-  stage: prod
+  stage: ${opt:stage, 'dev'}
   runtime: go1.x
   memorySize: 256
+  timeout: 300
   region: ap-northeast-1
   deploymentBucket:
     name: adventar
@@ -14,10 +15,7 @@ provider:
     securityGroupIds:
       - sg-073b60f32ebeb3cef # default
   deploymentPrefix: serverless-deploy
-  environment:
-    TZ: Asia/Tokyo
-    DATABASE_SOURCE: ${env:DATABASE_SOURCE, 'root@tcp(host.docker.internal:13306)/adventar_dev'}
-    CURRENT_DATE: ${env:CURRENT_DATE, ''}
+  environment: ${file(./env.${self:provider.stage}.yml)}
 
 package:
   exclude:
