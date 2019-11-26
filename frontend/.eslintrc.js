@@ -8,7 +8,8 @@ module.exports = {
     parser: "@typescript-eslint/parser",
     sourceType: "module",
     project: "./tsconfig.json",
-    ecmaFeatures: { legacyDecorators: true }
+    ecmaFeatures: { legacyDecorators: true },
+    extraFileExtensions: [".vue"]
   },
   extends: [
     "@nuxtjs",
