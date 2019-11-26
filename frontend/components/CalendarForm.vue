@@ -68,7 +68,6 @@ export default class extends Vue {
 
   async update() {
     const token = await getToken();
-    console.log(this.calendar.id, this.title, this.description);
     await updateCalendar({
       id: this.calendar.id,
       title: this.title,
