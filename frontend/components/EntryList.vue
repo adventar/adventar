@@ -1,6 +1,6 @@
 <template>
   <ul class="EntryList">
-    <li class="item" v-for="entry in calendar.entries" :key="entry.day">
+    <li v-for="entry in calendar.entries" :key="entry.day" class="item">
       <div class="head">
         <div class="date">12/{{ entry.day }}</div>
         <div class="user">
@@ -8,9 +8,9 @@
           <nuxt-link :to="`/users/${entry.owner.id}`">{{ entry.owner.name }}</nuxt-link>
         </div>
       </div>
-      <div class="comment" v-if="entry.comment"><font-awesome-icon icon="comment" /> {{ entry.comment }}</div>
-      <div class="article" v-if="entry.url && !isFutureEntry(entry)">
-        <img class="image" :src="entry.imageUrl" v-if="entry.imageUrl && !isFutureEntry(entry)" />
+      <div v-if="entry.comment" class="comment"><font-awesome-icon icon="comment" /> {{ entry.comment }}</div>
+      <div v-if="entry.url && !isFutureEntry(entry)" class="article">
+        <img v-if="entry.imageUrl && !isFutureEntry(entry)" class="image" :src="entry.imageUrl" />
         <div class="link">
           <a :href="entry.url">{{ entry.url }}</a>
         </div>

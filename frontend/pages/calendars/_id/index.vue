@@ -12,7 +12,7 @@
               {{ calendar.owner.name }}
             </nuxt-link>
           </div>
-          <nuxt-link class="editBtn" :to="`/calendars/${calendar.id}/edit`" v-if="isOwnCalendar(calendar)">
+          <nuxt-link v-if="isOwnCalendar(calendar)" class="editBtn" :to="`/calendars/${calendar.id}/edit`">
             <font-awesome-icon icon="edit"></font-awesome-icon> 編集
           </nuxt-link>
         </div>
@@ -22,10 +22,10 @@
           <div class="description" v-html="descriptionHtml"></div>
           <CalendarTable
             :calendar="calendar"
-            :currentUser="$store.state.user"
-            :onCreateEntry="handleCreateEntry"
-            :onUpdateEntry="handleUpdateEntry"
-            :onDeleteEntry="handleDeleteEntry"
+            :current-user="$store.state.user"
+            :on-create-entry="handleCreateEntry"
+            :on-update-entry="handleUpdateEntry"
+            :on-delete-entry="handleDeleteEntry"
           ></CalendarTable>
           <EntryList :calendar="calendar"></EntryList>
         </div>
@@ -40,12 +40,11 @@ import MarkdownIt from "markdown-it";
 import { getCalendar, createEntry, updateEntry, deleteEntry } from "~/lib/GrpcClient";
 import * as JsonApiClient from "~/lib/JsonApiClient";
 import { calendarColor } from "~/lib/utils/Colors";
-import { Calendar } from "~/types/adventar";
+import { Calendar, Entry } from "~/types/adventar";
 import { getToken } from "~/lib/Auth";
 import UserIcon from "~/components/UserIcon.vue";
 import CalendarTable from "~/components/CalendarTable.vue";
 import EntryList from "~/components/EntryList.vue";
-import { Entry } from "~/types/adventar";
 
 @Component({
   components: { UserIcon, CalendarTable, EntryList }

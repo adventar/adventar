@@ -4,7 +4,7 @@
 
     <main>
       <div class="mainInner">
-        <CalendarSearchForm :defaultQuery="query" @submit="handleSubmit" />
+        <CalendarSearchForm :default-query="query" @submit="handleSubmit" />
         <CalendarList :calendars="calendars" />
       </div>
     </main>

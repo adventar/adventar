@@ -4,7 +4,7 @@
     <main>
       <div class="mainInner">
         <ul class="calendars">
-          <li class="item" v-for="stat in stats" :key="stat.year">
+          <li v-for="stat in stats" :key="stat.year" class="item">
             <nuxt-link class="title" :to="`/calendars?year=${stat.year}`">
               <font-awesome-icon :icon="['far', 'calendar']" />
               {{ stat.year }}年

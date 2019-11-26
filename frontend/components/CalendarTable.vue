@@ -15,15 +15,15 @@
       <tbody>
         <tr v-for="(cells, i) in rows" :key="i">
           <td
+            v-for="(cell, idx) in cells"
+            :key="cell.day"
+            :ref="`cell-${cell.day}`"
             class="cell"
             :class="{
               'is-editing': displayedDialogEntry && cell.day === displayedDialogEntry.day,
               'is-posted': cell.entry && cell.entry.url && !isFutureEntry(cell.entry)
             }"
-            v-for="(cell, idx) in cells"
             :data-idx="idx"
-            :key="cell.day"
-            :ref="`cell-${cell.day}`"
           >
             <div v-if="cell.entryable" class="inner">
               <span class="day">{{ cell.day }}</span>
@@ -33,17 +33,17 @@
                   <div class="userName">{{ cell.entry.owner.name }}</div>
                 </span>
                 <span
+                  v-if="isOwnEntry(cell.entry)"
                   class="editBtn"
                   role="button"
-                  v-if="isOwnEntry(cell.entry)"
                   @click.stop="handleClickEditEntry(cell.entry)"
                 >
                   <font-awesome-icon icon="edit" />
                 </span>
                 <span
+                  v-if="forceCancelable(cell.entry)"
                   class="forceCancelBtn"
                   role="button"
-                  v-if="forceCancelable(cell.entry)"
                   @click="handleClickForceCancel(cell.entry)"
                 >
                   <font-awesome-icon icon="times" />
@@ -57,7 +57,7 @@
         </tr>
       </tbody>
     </table>
-    <div class="dialog" :style="dialogStyle" v-if="displayedDialogEntry" @click.stop>
+    <div v-if="displayedDialogEntry" class="dialog" :style="dialogStyle" @click.stop>
       <div class="day">12/{{ displayedDialogEntry.day }}</div>
       <span role="button" class="closeBtn" @click="hideDialog()">
         <font-awesome-icon icon="times" />
@@ -65,11 +65,11 @@
       <form @submit.prevent="handleSubmitEntryForm()">
         <div class="formRow">
           <font-awesome-icon icon="comment" />
-          <input type="text" placeholder="記事の内容の予定などを入力してください" v-model="inputComment" />
+          <input v-model="inputComment" type="text" placeholder="記事の内容の予定などを入力してください" />
         </div>
         <div class="formRow">
           <font-awesome-icon icon="link" />
-          <input type="text" placeholder="登録した日になったらURLを入力してください" v-model="inputUrl" />
+          <input v-model="inputUrl" type="text" placeholder="登録した日になったらURLを入力してください" />
         </div>
         <div class="buttons">
           <button class="submit" type="submit">保存</button>
@@ -85,10 +85,10 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from "nuxt-property-decorator";
+import dayjs from "dayjs";
 import UserIcon from "~/components/UserIcon.vue";
 import { Calendar, Entry, User } from "~/types/adventar";
 import { getToday } from "~/lib/Configuration";
-import dayjs from "dayjs";
 
 @Component({
   components: { UserIcon }

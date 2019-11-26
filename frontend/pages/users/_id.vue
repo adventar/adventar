@@ -34,7 +34,7 @@
           <template v-if="mypage">
             <SectionHeader>iCal</SectionHeader>
             <p>投稿の予定をGoogle Calendarなどに読み込むことができます。</p>
-            <input class="icalInput" type="text" @click="handleClickIcalInput" :value="icalUrl" />
+            <input class="icalInput" type="text" :value="icalUrl" @click="handleClickIcalInput" />
           </template>
         </div>
         <div v-else class="loading">

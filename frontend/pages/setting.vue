@@ -13,7 +13,7 @@
             </span>
           </div>
           <div v-if="editmode">
-            <form @submit.prevent class="inputForm">
+            <form class="inputForm" @submit.prevent>
               <input type="text" :value="$store.state.user.name" @change="onChangeName" />
               <button>Submit</button>
               <span role="button" class="cancel" @click="editmode = false">Cancel</span>

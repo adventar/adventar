@@ -61,7 +61,7 @@ export default class extends Vue {
     const calendarId = await createCalendar({
       title: this.title,
       description: this.description,
-      token: token
+      token
     });
     this.$router.push(`/calendars/${calendarId}`);
   }
@@ -73,7 +73,7 @@ export default class extends Vue {
       id: this.calendar.id,
       title: this.title,
       description: this.description,
-      token: token
+      token
     });
     this.$router.push(`/calendars/${this.calendar.id}`);
   }

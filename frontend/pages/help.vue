@@ -3,7 +3,7 @@
     <PageHeader>ヘルプ</PageHeader>
     <main>
       <div class="mainInner">
-        <details class="section" id="help-whats-adventar">
+        <details id="help-whats-adventar" class="section">
           <summary class="summary">Adventarとは？</summary>
           <div class="sectionBody">
             <p>
@@ -15,14 +15,14 @@
           </div>
         </details>
 
-        <details class="section" id="help-calendar-creation">
+        <details id="help-calendar-creation" class="section">
           <summary class="summary">カレンダーを作成できる期間</summary>
           <div class="sectionBody">
             <p>カレンダーはその年の11月1日から12月25日までの期間に作成できます。</p>
           </div>
         </details>
 
-        <details class="section" id="help-entry-reservation">
+        <details id="help-entry-reservation" class="section">
           <summary class="summary">予約投稿</summary>
           <div class="sectionBody">
             <p>
@@ -31,7 +31,7 @@
           </div>
         </details>
 
-        <details class="section" id="help-force-cancel">
+        <details id="help-force-cancel" class="section">
           <summary class="summary">登録の強制解除</summary>
           <div class="sectionBody">
             <p>
@@ -43,7 +43,7 @@
           </div>
         </details>
 
-        <details class="section" id="help-creators">
+        <details id="help-creators" class="section">
           <summary class="summary">製作者について</summary>
           <div class="sectionBody">
             <p>
@@ -59,12 +59,12 @@
           </div>
         </details>
 
-        <details class="section" id="help-privacy">
+        <details id="help-privacy" class="section">
           <summary class="summary">プライバシーポリシー</summary>
           <div class="sectionBody"><nuxt-link to="/privacy">プライバシーポリシー</nuxt-link>を参照してください。</div>
         </details>
 
-        <details class="section" id="help-inquiry">
+        <details id="help-inquiry" class="section">
           <summary class="summary">その他のお問い合わせ</summary>
           <div class="sectionBody">
             使い方で不明な点や機能要望などがありましたら
