@@ -48,8 +48,11 @@ export function loginWithFirebase(provider: string): void {
   }
 }
 
-export function logoutWithFirebase(): Promise<void> {
-  return firebase.auth().signOut();
+export function logoutWithFirebase() {
+  const user = firebase.auth().currentUser;
+  if (user) {
+    return Promise.all([user.delete(), firebase.auth().signOut()]);
+  }
 }
 
 export function getToken(): Promise<string> {
