@@ -50,9 +50,7 @@ const config: NuxtConfiguration = {
     lang
   },
 
-  router: {
-    middleware: "signin"
-  },
+  router: {},
 
   /*
    ** Customize the progress-bar color

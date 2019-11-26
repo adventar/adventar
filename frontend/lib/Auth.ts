@@ -48,11 +48,17 @@ export function loginWithFirebase(provider: string): void {
   }
 }
 
-export function logoutWithFirebase() {
+export async function logoutWithFirebase() {
   const user = firebase.auth().currentUser;
-  if (user) {
-    return Promise.all([user.delete(), firebase.auth().signOut()]);
+  if (!user) return;
+
+  try {
+    await user.delete();
+  } catch (err) {
+    console.error(err);
   }
+
+  await firebase.auth().signOut();
 }
 
 export function getToken(): Promise<string> {
@@ -64,13 +70,18 @@ export function getToken(): Promise<string> {
   }
 }
 
-export function getRedirectResult(store) {
-  if (sessionStorage.getItem(SIGNIN_STORAGE_KEY) !== SIGNIN_STORAGE_VALUE) {
-    return;
-  }
+export function initAuth(store) {
+  return Promise.all([getRedirectResult(), handleAuthStateChanged(store)]);
+}
 
-  const p1 = handleAuthStateChanged(store);
-  const p2 = firebase
+function isProcessingSignin() {
+  return sessionStorage.getItem(SIGNIN_STORAGE_KEY) === SIGNIN_STORAGE_VALUE;
+}
+
+function getRedirectResult() {
+  if (!isProcessingSignin()) return;
+
+  return firebase
     .auth()
     .getRedirectResult()
     .catch(err => {
@@ -80,14 +91,16 @@ export function getRedirectResult(store) {
       alert(`ログインに失敗しました。\n${msg}`);
       console.error(err);
     });
-
-  return Promise.all([p1, p2]);
 }
 
 let listenedAuthStateChanged = false;
-export function handleAuthStateChanged(store): Promise<void> {
+function handleAuthStateChanged(store): Promise<void> {
   if (listenedAuthStateChanged === true) return Promise.resolve();
   listenedAuthStateChanged = true;
+
+  if (isProcessingSignin()) {
+    store.commit("setProcessingSignin");
+  }
 
   return new Promise((resolve, reject) => {
     firebase.auth().onAuthStateChanged(user => {

@@ -8,6 +8,7 @@
         <no-ssr>
           <span role="button" @click.stop="showDropdown()" class="menuBtn">
             <UserIcon v-if="$store.state.user" class="userIcon" :user="$store.state.user" size="28" />
+            <font-awesome-icon v-else-if="$store.state.isProcessingSignin" icon="circle-notch" spin />
             <font-awesome-icon v-else icon="bars"></font-awesome-icon>
           </span>
           <div class="dropdown" v-if="isShownDropdown" @click.stop>
