@@ -114,9 +114,11 @@ export default class extends Vue {
     loginWithFirebase(provider);
   }
 
-  logout() {
+  async logout() {
     this.$router.push("/");
-    logoutWithFirebase();
+    this.isShownDropdown = false;
+    await logoutWithFirebase();
+    window.alert("ログアウトしました。");
   }
 }
 </script>
