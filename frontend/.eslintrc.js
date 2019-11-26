@@ -21,8 +21,7 @@ module.exports = {
   plugins: ["prettier", "@typescript-eslint"],
   // add your custom rules here
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
+    "no-console": ["error", { allow: ["error", "warn"] }],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
     // https://github.com/eslint/eslint/issues/11464
