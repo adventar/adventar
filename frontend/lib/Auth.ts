@@ -74,7 +74,10 @@ export function getRedirectResult(store) {
     .auth()
     .getRedirectResult()
     .catch(err => {
-      alert("Login Failed 😫");
+      const COOKIE_ERROR_MSG =
+        "third-party cookie の設定が無効になってる可能性があります。ブラウザの設定をご確認ください。";
+      const msg = err.code === "auth/web-storage-unsupported" ? COOKIE_ERROR_MSG : err.message;
+      alert(`ログインに失敗しました。\n${msg}`);
       console.error(err);
     });
 
