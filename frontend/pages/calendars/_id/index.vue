@@ -19,7 +19,9 @@
       </header>
       <main>
         <div class="mainInner">
+          <!-- eslint-disable vue/no-v-html -->
           <div class="description" v-html="descriptionHtml"></div>
+          <!-- eslint-enable -->
           <CalendarTable
             :calendar="calendar"
             :current-user="$store.state.user"

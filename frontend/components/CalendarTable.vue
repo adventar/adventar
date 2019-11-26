@@ -233,11 +233,11 @@ export default class extends Vue {
     this.showDialog(entry);
   }
 
-  async handleClickEditEntry(entry: Entry): Promise<void> {
+  handleClickEditEntry(entry: Entry) {
     this.showDialog(entry);
   }
 
-  async handleClickDeleteEntry(): Promise<void> {
+  handleClickDeleteEntry() {
     if (this.displayedDialogEntry === null) {
       throw new Error("Entry is not selected");
     }

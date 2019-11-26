@@ -43,7 +43,7 @@ export default class extends Vue {
     this.calendars = calendars;
   }
 
-  async handleSubmit(query) {
+  handleSubmit(query) {
     this.$router.push(`/calendars?year=${this.currentYear}&query=${query}`);
   }
 
