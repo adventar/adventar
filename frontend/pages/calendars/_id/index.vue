@@ -193,6 +193,10 @@ export default class extends Vue {
   word-wrap: break-word;
 }
 
+.description /deep/ img {
+  max-width: 100%;
+}
+
 @media (min-width: $mq-break-small) {
   .title {
     font-size: 24px;
