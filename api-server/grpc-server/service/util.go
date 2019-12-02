@@ -74,7 +74,7 @@ func (s *Service) bindEntryCount(calendars []*pb.Calendar) error {
 
 func convertImageURL(imageURL string) string {
 	endpoint := os.Getenv("IMAGE_SERVER_ENDPOINT")
-	if endpoint == "" {
+	if endpoint == "" || imageURL == "" {
 		return imageURL
 	}
 	salt := os.Getenv("IMAGE_DIGEST_SALT")
