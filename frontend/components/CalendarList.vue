@@ -70,6 +70,7 @@ export default class extends Vue {
   box-sizing: border-box;
   font-weight: bold;
   text-decoration: none;
+  word-wrap: break-word;
 }
 
 .info {
