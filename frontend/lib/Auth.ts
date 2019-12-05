@@ -9,7 +9,14 @@ const SIGNIN_STORAGE_VALUE = "1";
 
 export function restoreUser(): User | null {
   const user = localStorage.getItem(USER_STORAGE_KEY);
-  return user ? JSON.parse(user) : null;
+  if (user === null) return null;
+
+  try {
+    return JSON.parse(user);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
 
 export function saveUser(user: User | null): void {
