@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PageHeader>{{ year }}年のAdvent Calnedar</PageHeader>
+    <PageHeader>{{ year }}年のAdvent Calendar</PageHeader>
 
     <main>
       <div class="mainInner">
