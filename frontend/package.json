@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "dev": "nuxt --spa",
-    "build:spa": "nuxt build --spa",
+    "dev": "BUILD_DIR=.nuxt-dev nuxt --spa",
+    "build:spa": "BUILD_DIR=.nuxt nuxt build --spa",
     "build:server": "BUILD_DIR=.nuxt-server nuxt build --universal && webpack --config webpack.config.server.js",
     "lint": "eslint --ext .js,.ts,.vue .",
     "fix": "eslint --ext .js,.ts,.vue . --fix",
