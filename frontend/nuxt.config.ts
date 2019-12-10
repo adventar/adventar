@@ -43,11 +43,10 @@ const config: NuxtConfiguration = {
         type: "image/x-icon",
         href: process.env.NODE_ENV === "development" ? "/favicon-dev.ico" : "/favicon.ico"
       }
-    ]
-  },
-
-  htmlAttrs: {
-    lang
+    ],
+    htmlAttrs: {
+      lang
+    }
   },
 
   router: {},
