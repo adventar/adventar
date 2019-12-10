@@ -6,68 +6,69 @@
       </h1>
       <div class="right">
         <no-ssr>
-          <span role="button" @click.stop="showDropdown()" class="menuBtn">
+          <span role="button" class="menuBtn" @click.stop="showDropdown()">
             <UserIcon v-if="$store.state.user" class="userIcon" :user="$store.state.user" size="28" />
+            <font-awesome-icon v-else-if="$store.state.isProcessingSignin" icon="circle-notch" spin />
             <font-awesome-icon v-else icon="bars"></font-awesome-icon>
           </span>
-          <div class="dropdown" v-if="isShownDropdown" @click.stop>
+          <div v-if="isShownDropdown" class="dropdown" @click.stop>
             <ul v-if="$store.state.user" class="loginMenu">
               <li class="user">
                 <UserIcon class="userIcon" :user="$store.state.user" size="28" />
                 {{ $store.state.user.name }}
               </li>
               <li>
-                <nuxt-link @click.native="hideDropdown()" to="/new">
+                <nuxt-link to="/new" @click.native="hideDropdown()">
                   <font-awesome-icon icon="calendar-plus" />
                   カレンダーを作る
                 </nuxt-link>
               </li>
               <li>
-                <nuxt-link @click.native="hideDropdown()" :to="`/users/${$store.state.user.id}`">
+                <nuxt-link :to="`/users/${$store.state.user.id}`" @click.native="hideDropdown()">
                   <font-awesome-icon icon="user" /> マイページ
                 </nuxt-link>
               </li>
               <li>
-                <nuxt-link @click.native="hideDropdown()" to="/setting">
+                <nuxt-link to="/setting" @click.native="hideDropdown()">
                   <font-awesome-icon icon="cog" /> 設定
                 </nuxt-link>
               </li>
               <li>
-                <span @click.native="hideDropdown()" role="button" @click="logout()">
+                <span role="button" @click.native="hideDropdown()" @click="logout()">
                   <font-awesome-icon icon="sign-out-alt" /> ログアウト
                 </span>
               </li>
             </ul>
             <ul v-if="!$store.state.user" class="loginMenu">
               <li>
-                <span @click.native="hideDropdown()" role="button" @click="login('google')">
+                <span role="button" @click.native="hideDropdown()" @click="login('google')">
                   <font-awesome-icon :icon="['fab', 'google']" /> Google でログイン
                 </span>
               </li>
               <li>
-                <span @click.native="hideDropdown()" role="button" @click="login('github')">
+                <span role="button" @click.native="hideDropdown()" @click="login('github')">
                   <font-awesome-icon :icon="['fab', 'github']" /> GitHub でログイン
                 </span>
               </li>
               <li>
-                <span @click.native="hideDropdown()" role="button" @click="login('twitter')">
+                <span role="button" @click.native="hideDropdown()" @click="login('twitter')">
                   <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter でログイン
                 </span>
               </li>
               <li>
-                <span @click.native="hideDropdown()" role="button" @click="login('facebook')">
+                <span role="button" @click.native="hideDropdown()" @click="login('facebook')">
                   <font-awesome-icon :icon="['fab', 'facebook']" /> Facebook でログイン
                 </span>
               </li>
             </ul>
             <ul class="generalMenu">
               <li>
-                <nuxt-link @click.native="hideDropdown()" to="/archive">
+                <nuxt-link to="/archive" @click.native="hideDropdown()">
                   <font-awesome-icon icon="calendar-minus" /> 過去のカレンダー
                 </nuxt-link>
               </li>
               <li>
-                <nuxt-link @click.native="hideDropdown()" to="/help">
+                <nuxt-link to="/help" @click.native="hideDropdown()">
                   <font-awesome-icon icon="question-circle" /> ヘルプ
                 </nuxt-link>
               </li>
@@ -114,9 +115,11 @@ export default class extends Vue {
     loginWithFirebase(provider);
   }
 
-  logout() {
+  async logout() {
     this.$router.push("/");
-    logoutWithFirebase();
+    this.isShownDropdown = false;
+    await logoutWithFirebase();
+    window.alert("ログアウトしました。");
   }
 }
 </script>

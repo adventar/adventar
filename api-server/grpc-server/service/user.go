@@ -8,8 +8,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
-	"github.com/adventar/adventar/backend/grpc-server/model"
+	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/api-server/grpc-server/model"
 )
 
 // SignIn validates the id token.
@@ -81,7 +81,7 @@ func (s *Service) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.User,
 func (s *Service) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest) (*pb.User, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 	name := in.GetName()
 	if name == "" {

@@ -1,10 +1,10 @@
 <template>
   <div class="CalendarList">
-    <div class="loading" v-if="calendars === null">
+    <div v-if="calendars === null" class="loading">
       <font-awesome-icon icon="circle-notch" spin />
     </div>
     <ul v-else class="list">
-      <li class="item" v-for="calendar in calendars" :key="calendar.id">
+      <li v-for="calendar in calendars" :key="calendar.id" class="item">
         <nuxt-link
           :to="`/calendars/${calendar.id}`"
           class="title"
@@ -70,6 +70,7 @@ export default class extends Vue {
   box-sizing: border-box;
   font-weight: bold;
   text-decoration: none;
+  word-wrap: break-word;
 }
 
 .info {

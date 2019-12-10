@@ -2,7 +2,7 @@
   <img
     class="UserIcon"
     :src="src"
-    :alt="`${this.user.name}'s icon`"
+    :alt="`${user.name}'s icon`"
     :width="size"
     :height="size"
     @error="handleErrorImage()"

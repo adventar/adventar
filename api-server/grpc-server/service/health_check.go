@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
+	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
 )
 
 // HealthCheck returns current status.

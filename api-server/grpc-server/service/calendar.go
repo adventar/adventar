@@ -10,8 +10,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
-	"github.com/adventar/adventar/backend/grpc-server/model"
+	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/api-server/grpc-server/model"
+	"github.com/adventar/adventar/api-server/grpc-server/util"
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
@@ -140,7 +141,7 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 
 // CreateCalendar creates a calendar.
 func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarRequest) (*pb.Calendar, error) {
-	now, err := currentDate()
+	now, err := util.CurrentDate()
 	if err != nil {
 		return nil, err
 	}
@@ -151,10 +152,7 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
-	}
-	if currentUser == nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Unauthorized user")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	stmt, err := s.db.Prepare("insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)")
@@ -189,7 +187,7 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarRequest) (*pb.Calendar, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 	stmt, err := s.db.Prepare("update calendars set title = ?, description = ? where id = ? and user_id = ?")
 	if err != nil {
@@ -218,7 +216,7 @@ func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarReque
 func (s *Service) DeleteCalendar(ctx context.Context, in *pb.DeleteCalendarRequest) (*empty.Empty, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	stmt, err := s.db.Prepare("delete from calendars where id = ? and user_id = ?")
@@ -232,4 +230,52 @@ func (s *Service) DeleteCalendar(ctx context.Context, in *pb.DeleteCalendarReque
 		return nil, xerrors.Errorf("Failed query to delete calendar: %w", err)
 	}
 	return &empty.Empty{}, nil
+}
+
+func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
+	rows, err := s.db.Query(`
+		select
+			e.id,
+			e.day,
+			e.title,
+			e.comment,
+			e.url,
+			e.image_url,
+			u.id,
+			u.name,
+			u.icon_url
+		from entries as e
+		inner join users as u on u.id = e.user_id
+		where e.calendar_id = ?
+		order by e.day
+	`, cid)
+
+	if err != nil {
+		return nil, xerrors.Errorf("Failed query to fetch entries: %w", err)
+	}
+
+	entries := []*pb.Entry{}
+	for rows.Next() {
+		var e pb.Entry
+		var u pb.User
+		err := rows.Scan(
+			&e.Id,
+			&e.Day,
+			&e.Title,
+			&e.Comment,
+			&e.Url,
+			&e.ImageUrl,
+			&u.Id,
+			&u.Name,
+			&u.IconUrl,
+		)
+		if err != nil {
+			return nil, xerrors.Errorf("Failed to scan row: %w", err)
+		}
+		e.Owner = &u
+		e.ImageUrl = convertImageURL(e.ImageUrl)
+		entries = append(entries, &e)
+	}
+
+	return entries, nil
 }

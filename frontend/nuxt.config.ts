@@ -1,5 +1,6 @@
 import NuxtConfiguration from "@nuxt/config";
 
+const lang = "ja";
 const defaultTitle = "Adventar";
 const defaultDescription =
   "12月1日から25日まで1日に1つ、みんなで記事を投稿するAdvent Calendarの作成や管理をおこなうことができます。";
@@ -32,7 +33,9 @@ const config: NuxtConfiguration = {
       { hid: "og:title", property: "og:title", content: defaultTitle },
       { hid: "og:description", property: "og:description", content: defaultDescription },
       { property: "og:image", content: "https://adventar.org/og_image.png" },
-      { property: "og:site_name", content: "Adventar" }
+      { property: "og:site_name", content: "Adventar" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "white" },
+      { name: "mobile-web-app-capable", content: "yes" }
     ],
     link: [
       {
@@ -42,13 +45,11 @@ const config: NuxtConfiguration = {
       }
     ],
     htmlAttrs: {
-      lang: "ja"
+      lang
     }
   },
 
-  router: {
-    middleware: "signin"
-  },
+  router: {},
 
   /*
    ** Customize the progress-bar color
@@ -74,6 +75,21 @@ const config: NuxtConfiguration = {
     "@nuxtjs/style-resources",
     ["@nuxtjs/google-analytics", { id: "UA-1474271-8" }]
   ],
+
+  pwa: {
+    manifest: {
+      name: defaultTitle,
+      short_name: defaultTitle,
+      description: defaultDescription,
+      lang,
+      background_color: "#ffffff",
+      theme_color: "#ffffff",
+      icons: [
+        { src: "/icon512.png", sizes: "512x512", type: "image/png" },
+        { src: "/icon192.png", sizes: "192x192", type: "image/png" }
+      ]
+    }
+  },
 
   fontawesome: {
     imports: [
@@ -122,20 +138,6 @@ const config: NuxtConfiguration = {
      */
     extend(config, ctx) {
       if (ctx.isClient) config.devtool = "#source-map";
-
-      // if (config.module) {
-      //   config.module.rules[2] = {};
-      // }
-
-      // Run ESLint on save
-      // if (ctx.isDev && ctx.isClient && config.module) {
-      //   config.module.rules.push({
-      //     enforce: "pre",
-      //     test: /\.(js|vue)$/,
-      //     loader: "eslint-loader",
-      //     exclude: /(node_modules)/
-      //   });
-      // }
     }
   }
 };

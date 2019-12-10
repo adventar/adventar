@@ -19,6 +19,10 @@ import PageHeader from "~/components/PageHeader.vue";
 export default class extends Vue {
   @Prop() readonly error;
 
+  mounted() {
+    console.error(this.error);
+  }
+
   get notFound(): boolean {
     return this.error.statusCode === 404;
   }

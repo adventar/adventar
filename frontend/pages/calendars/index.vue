@@ -1,10 +1,10 @@
 <template>
   <div>
-    <PageHeader>{{ year }}年のAdvent Calnedar</PageHeader>
+    <PageHeader>{{ year }}年のAdvent Calendar</PageHeader>
 
     <main>
       <div class="mainInner">
-        <CalendarSearchForm :defaultQuery="query" @submit="handleSubmit" />
+        <CalendarSearchForm :default-query="query" @submit="handleSubmit" />
         <CalendarList :calendars="calendars" />
       </div>
     </main>

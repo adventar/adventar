@@ -1,8 +1,8 @@
-import { initFirebase, restoreUser, handleAuthStateChanged } from "~/lib/Auth";
+import { initFirebase, restoreUser, initAuth } from "~/lib/Auth";
 
 initFirebase();
 
 export default function({ app }) {
   app.store.commit("setUser", restoreUser());
-  handleAuthStateChanged(app.store);
+  initAuth(app.store);
 }

@@ -74,6 +74,6 @@ export const handler = serverless(app);
 if (process.env.RUN_LOCAL) {
   const port = process.env.PORT || 3030;
   app.listen(port, () => {
-    console.log(`Listen: http://localhost:${port}`);
+    console.log(`Listen: http://localhost:${port}`); // eslint-disable-line no-console
   });
 }

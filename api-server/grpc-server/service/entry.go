@@ -10,7 +10,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/adventar/adventar/backend/grpc-server/grpc/adventar/v1"
+	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/api-server/grpc-server/util"
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
@@ -77,6 +78,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 		}
 		e.Calendar = &c
 		e.Owner = &u
+		e.ImageUrl = convertImageURL(e.ImageUrl)
 		entries = append(entries, &e)
 	}
 
@@ -87,7 +89,7 @@ func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*
 func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*pb.Entry, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	var year int
@@ -133,7 +135,7 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*pb.Entry, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	stmt, err := s.db.Prepare("update entries set comment = ?, url = ? where id = ? and user_id = ?")
@@ -149,9 +151,15 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 
 	if in.GetUrl() != "" {
 		m, err := s.metaFetcher.Fetch(in.GetUrl())
-		// TODO: Ignore error
+		var title string
+		var imageURL string
 		if err != nil {
-			return nil, xerrors.Errorf("Failed to fetch url: %w", err)
+			fmt.Printf("Failed to fetch url: %s", err)
+			title = ""
+			imageURL = ""
+		} else {
+			title = m.Title
+			imageURL = m.ImageURL
 		}
 		stmt, err = s.db.Prepare("update entries set title = ?, image_url = ? where id = ? and user_id = ?")
 		if err != nil {
@@ -159,7 +167,7 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 		}
 		defer stmt.Close()
 
-		_, err = stmt.Exec(m.Title, m.ImageURL, in.GetEntryId(), currentUser.ID)
+		_, err = stmt.Exec(title, imageURL, in.GetEntryId(), currentUser.ID)
 		if err != nil {
 			return nil, xerrors.Errorf("Failed query to update entry: %w", err)
 		}
@@ -177,14 +185,14 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 		return nil, xerrors.Errorf("Failed query to fetch entry: %w", err)
 	}
 
-	return &pb.Entry{Id: in.GetEntryId(), Comment: comment, Url: url, Title: title, ImageUrl: imageURL}, nil
+	return &pb.Entry{Id: in.GetEntryId(), Comment: comment, Url: url, Title: title, ImageUrl: convertImageURL(imageURL)}, nil
 }
 
 // DeleteEntry deletes the entry.
 func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*empty.Empty, error) {
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Invalid token")
+		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
 	deletable, err := s.entryDeletable(int(in.GetEntryId()), int(currentUser.ID))
@@ -238,7 +246,7 @@ func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {
 		return true, nil
 	}
 
-	now, err := currentDate()
+	now, err := util.CurrentDate()
 	if err != nil {
 		return false, err
 	}

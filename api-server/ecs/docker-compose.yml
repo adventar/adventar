@@ -2,6 +2,8 @@ version: '3'
 services:
   grpc-server:
     image: hokaccha/adventar-grpc-server:${TAG}
+    environment:
+      IMAGE_SERVER_ENDPOINT: https://img.adventar.org/img
     logging:
       driver: awslogs
       options:

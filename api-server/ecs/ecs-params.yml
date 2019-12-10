@@ -14,6 +14,8 @@ task_definition:
           value_from: /adventar/FIREBASE_CREDENTIAL_JSON
         - name: BUGSNAG_API_KEY
           value_from: /adventar/BUGSNAG_API_KEY
+        - name: IMAGE_DIGEST_SALT
+          value_from: /adventar/IMAGE_DIGEST_SALT
 run_params:
   network_configuration:
     awsvpc_configuration:

@@ -9,7 +9,14 @@ const SIGNIN_STORAGE_VALUE = "1";
 
 export function restoreUser(): User | null {
   const user = localStorage.getItem(USER_STORAGE_KEY);
-  return user ? JSON.parse(user) : null;
+  if (user === null) return null;
+
+  try {
+    return JSON.parse(user);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
 }
 
 export function saveUser(user: User | null): void {
@@ -48,8 +55,17 @@ export function loginWithFirebase(provider: string): void {
   }
 }
 
-export function logoutWithFirebase(): Promise<void> {
-  return firebase.auth().signOut();
+export async function logoutWithFirebase() {
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  try {
+    await user.delete();
+  } catch (err) {
+    console.error(err);
+  }
+
+  await firebase.auth().signOut();
 }
 
 export function getToken(): Promise<string> {
@@ -61,27 +77,37 @@ export function getToken(): Promise<string> {
   }
 }
 
-export function getRedirectResult(store) {
-  if (sessionStorage.getItem(SIGNIN_STORAGE_KEY) !== SIGNIN_STORAGE_VALUE) {
-    return;
-  }
+export function initAuth(store) {
+  return Promise.all([getRedirectResult(), handleAuthStateChanged(store)]);
+}
 
-  const p1 = handleAuthStateChanged(store);
-  const p2 = firebase
+function isProcessingSignin() {
+  return sessionStorage.getItem(SIGNIN_STORAGE_KEY) === SIGNIN_STORAGE_VALUE;
+}
+
+function getRedirectResult() {
+  if (!isProcessingSignin()) return;
+
+  return firebase
     .auth()
     .getRedirectResult()
     .catch(err => {
-      alert("Login Failed 😫");
+      const COOKIE_ERROR_MSG =
+        "third-party cookie の設定が無効になってる可能性があります。ブラウザの設定をご確認ください。";
+      const msg = err.code === "auth/web-storage-unsupported" ? COOKIE_ERROR_MSG : err.message;
+      alert(`ログインに失敗しました。\n${msg}`);
       console.error(err);
     });
-
-  return Promise.all([p1, p2]);
 }
 
 let listenedAuthStateChanged = false;
-export function handleAuthStateChanged(store): Promise<void> {
+function handleAuthStateChanged(store): Promise<void> {
   if (listenedAuthStateChanged === true) return Promise.resolve();
   listenedAuthStateChanged = true;
+
+  if (isProcessingSignin()) {
+    store.commit("setProcessingSignin");
+  }
 
   return new Promise((resolve, reject) => {
     firebase.auth().onAuthStateChanged(user => {

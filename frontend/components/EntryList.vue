@@ -1,6 +1,6 @@
 <template>
   <ul class="EntryList">
-    <li class="item" v-for="entry in calendar.entries" :key="entry.day">
+    <li v-for="entry in calendar.entries" :key="entry.day" class="item">
       <div class="head">
         <div class="date">12/{{ entry.day }}</div>
         <div class="user">
@@ -8,13 +8,17 @@
           <nuxt-link :to="`/users/${entry.owner.id}`">{{ entry.owner.name }}</nuxt-link>
         </div>
       </div>
-      <div class="comment" v-if="entry.comment"><font-awesome-icon icon="comment" /> {{ entry.comment }}</div>
-      <div class="article" v-if="entry.url && !isFutureEntry(entry)">
-        <img class="image" :src="entry.imageUrl" v-if="entry.imageUrl && !isFutureEntry(entry)" />
-        <div class="link">
-          <a :href="entry.url">{{ entry.url }}</a>
+      <div v-if="entry.comment" class="comment"><font-awesome-icon icon="comment" /> {{ entry.comment }}</div>
+      <div v-if="entry.url && !isFutureEntry(entry)" class="article">
+        <div class="left">
+          <div class="link">
+            <a :href="entry.url">{{ entry.url }}</a>
+          </div>
+          <div v-if="entry.title && !isFutureEntry(entry)">{{ entry.title }}</div>
         </div>
-        <div v-if="entry.title && !isFutureEntry(entry)">{{ entry.title }}</div>
+        <div class="image" v-if="entry.imageUrl && !isFutureEntry(entry)">
+          <img :src="entry.imageUrl" />
+        </div>
       </div>
     </li>
   </ul>
@@ -73,29 +77,33 @@ export default class extends Vue {
 }
 
 .article {
+  display: table;
   border-left: 5px solid #e3e4e3;
   margin-top: 10px;
   padding: 5px 0 5px 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  &::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
+.article .left {
+  display: table-cell;
+  vertical-align: top;
+  word-break: break-all;
 }
 
 .link {
   margin-bottom: 5px;
 }
 
-.link a {
-  word-break: break-all;
-}
-
 .image {
-  float: right;
-  margin-left: 10px;
+  display: table-cell;
+  padding-left: 10px;
+  vertical-align: top;
   width: 80px;
+
+  img {
+    width: 80px;
+  }
 }
 
 @media (min-width: $mq-break-small) {
@@ -120,10 +128,15 @@ export default class extends Vue {
     margin-left: 77px;
     margin-top: 15px;
     border-left-width: 7px;
+    width: calc(100% - 77px);
   }
 
   .image {
     width: 120px;
+
+    img {
+      width: 120px;
+    }
   }
 }
 </style>

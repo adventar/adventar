@@ -61,19 +61,18 @@ export default class extends Vue {
     const calendarId = await createCalendar({
       title: this.title,
       description: this.description,
-      token: token
+      token
     });
     this.$router.push(`/calendars/${calendarId}`);
   }
 
   async update() {
     const token = await getToken();
-    console.log(this.calendar.id, this.title, this.description);
     await updateCalendar({
       id: this.calendar.id,
       title: this.title,
       description: this.description,
-      token: token
+      token
     });
     this.$router.push(`/calendars/${this.calendar.id}`);
   }

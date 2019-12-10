@@ -199,7 +199,7 @@ export async function createEntry({ calendarId, day, token }: createEntryParams)
 
   return {
     id: entry.getId(),
-    day: day,
+    day,
     comment: entry.getComment(),
     url: entry.getUrl(),
     title: entry.getTitle(),

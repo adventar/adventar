@@ -44,19 +44,21 @@ func (v *FirebaseVerifier) VerifyIDToken(idToken string) (*AuthResult, error) {
 
 	claims := token.Claims
 
+	var name string
 	name, ok := claims["name"].(string)
 	if !ok {
-		return nil, xerrors.Errorf("Failed to assert type: %v", claims["name"])
+		name = "No Name"
 	}
 
-	iconURL, ok := claims["picture"].(string)
+	var iconURL string
+	iconURL, ok = claims["picture"].(string)
 	if !ok {
-		return nil, xerrors.Errorf("Failed to assert type: %v", claims["picture"])
+		iconURL = ""
 	}
 
 	firebaseField, ok := claims["firebase"].(map[string]interface{})
 	if !ok {
-		return nil, xerrors.Errorf("Failed to assert type: %v", claims["firebase"])
+		return nil, xerrors.Errorf("Failed to assert type [firebase]: %v", claims)
 	}
 
 	provider, ok := firebaseField["sign_in_provider"].(string)

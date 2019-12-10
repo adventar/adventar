@@ -89,3 +89,4 @@ sw.*
 server.js
 server.js.map
 .nuxt-server
+.nuxt-dev
