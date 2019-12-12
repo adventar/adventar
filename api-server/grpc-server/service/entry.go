@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/url"
 	"strings"
 
 	"golang.org/x/xerrors"
@@ -138,19 +139,24 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
+	inURL := strings.TrimSpace(in.GetUrl())
+	if inURL != "" && !isValidURL(inURL) {
+		return nil, status.Errorf(codes.InvalidArgument, "URL is invalid")
+	}
+
 	stmt, err := s.db.Prepare("update entries set comment = ?, url = ? where id = ? and user_id = ?")
 	if err != nil {
 		return nil, xerrors.Errorf("Failed to prepare query: %w", err)
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(in.GetComment(), in.GetUrl(), in.GetEntryId(), currentUser.ID)
+	_, err = stmt.Exec(in.GetComment(), inURL, in.GetEntryId(), currentUser.ID)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to update entry: %w", err)
 	}
 
-	if in.GetUrl() != "" {
-		m, err := s.metaFetcher.Fetch(in.GetUrl())
+	if inURL != "" {
+		m, err := s.metaFetcher.Fetch(inURL)
 		var title string
 		var imageURL string
 		if err != nil {
@@ -256,4 +262,13 @@ func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func isValidURL(s string) bool {
+	u, err := url.Parse(s)
+	if err != nil {
+		return false
+	}
+
+	return u.Scheme == "http" || u.Scheme == "https"
 }

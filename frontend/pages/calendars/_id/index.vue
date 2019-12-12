@@ -42,7 +42,7 @@ import MarkdownIt from "markdown-it";
 import { getCalendar, createEntry, updateEntry, deleteEntry } from "~/lib/GrpcClient";
 import * as JsonApiClient from "~/lib/JsonApiClient";
 import { calendarColor } from "~/lib/utils/Colors";
-import { Calendar, Entry } from "~/types/adventar";
+import { Calendar } from "~/types/adventar";
 import { getToken } from "~/lib/Auth";
 import UserIcon from "~/components/UserIcon.vue";
 import CalendarTable from "~/components/CalendarTable.vue";
@@ -100,25 +100,40 @@ export default class extends Vue {
     this.calendar = await getCalendar(this.calendar!.id);
   }
 
-  async handleCreateEntry(day: number): Promise<Entry> {
-    const token = await getToken();
-    const calendarId = this.calendar!.id;
-    const entry = await createEntry({ calendarId, day, token });
-    await this.refetchCalendar();
-    return entry;
+  async handleCreateEntry(day: number) {
+    try {
+      const token = await getToken();
+      const calendarId = this.calendar!.id;
+      const entry = await createEntry({ calendarId, day, token });
+      await this.refetchCalendar();
+      return entry;
+    } catch (err) {
+      alert(`Request failed: ${err.message}`);
+      console.error(err);
+    }
   }
 
-  async handleUpdateEntry(entryId: number, { comment, url }: { comment: string; url: string }): Promise<void> {
-    const token = await getToken();
-    await updateEntry({ entryId, comment, url, token });
-    await this.refetchCalendar();
+  async handleUpdateEntry(entryId: number, { comment, url }: { comment: string; url: string }) {
+    try {
+      const token = await getToken();
+      await updateEntry({ entryId, comment, url, token });
+      await this.refetchCalendar();
+    } catch (err) {
+      alert(`Request failed: ${err.message}`);
+      console.error(err);
+    }
   }
 
   async handleDeleteEntry(entryId: number): Promise<void> {
-    const token = await getToken();
-    await deleteEntry({ entryId, token });
-    this.calendar = await getCalendar(this.calendar!.id);
-    await this.refetchCalendar();
+    try {
+      const token = await getToken();
+      await deleteEntry({ entryId, token });
+      this.calendar = await getCalendar(this.calendar!.id);
+      await this.refetchCalendar();
+    } catch (err) {
+      alert(`Request failed: ${err.message}`);
+      console.error(err);
+    }
   }
 
   isOwnCalendar(calendar: Calendar): boolean {

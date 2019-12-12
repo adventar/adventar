@@ -9,14 +9,14 @@
         </div>
       </div>
       <div v-if="entry.comment" class="comment"><font-awesome-icon icon="comment" /> {{ entry.comment }}</div>
-      <div v-if="entry.url && !isFutureEntry(entry)" class="article">
+      <div v-if="isValidUrl(entry.url) && !isFutureEntry(entry)" class="article">
         <div class="left">
           <div class="link">
             <a :href="entry.url">{{ entry.url }}</a>
           </div>
           <div v-if="entry.title && !isFutureEntry(entry)">{{ entry.title }}</div>
         </div>
-        <div class="image" v-if="entry.imageUrl && !isFutureEntry(entry)">
+        <div v-if="entry.imageUrl && !isFutureEntry(entry)" class="image">
           <img :src="entry.imageUrl" />
         </div>
       </div>
@@ -39,6 +39,10 @@ export default class extends Vue {
   isFutureEntry(entry): boolean {
     // TODO: Fix to JST
     return new Date(this.calendar.year, 11, entry.day) > getToday();
+  }
+
+  isValidUrl(url: string | undefined) {
+    return url != null && url != "" && /^https?:\/\//.test(url.trim());
   }
 }
 </script>
