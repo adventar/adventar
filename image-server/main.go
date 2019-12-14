@@ -48,7 +48,8 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 		IsBase64Encoded: true,
 		Body:            base64.StdEncoding.EncodeToString(buf.Bytes()),
 		Headers: map[string]string{
-			"Content-Type": contentType,
+			"Content-Type":  contentType,
+			"Cache-Control": "public,max-age=31536000",
 		},
 	}
 
