@@ -150,6 +150,10 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 		return nil, status.Errorf(codes.FailedPrecondition, "Calendars can not create now.")
 	}
 
+	if in.GetTitle() == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Title is invalid")
+	}
+
 	currentUser, err := s.getCurrentUser(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
@@ -189,6 +193,10 @@ func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarReque
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
+	if in.GetTitle() == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "Title is invalid")
+	}
+
 	stmt, err := s.db.Prepare("update calendars set title = ?, description = ? where id = ? and user_id = ?")
 	if err != nil {
 		return nil, xerrors.Errorf("Failed to prepare query: %w", err)

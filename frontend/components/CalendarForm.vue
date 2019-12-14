@@ -2,7 +2,9 @@
   <form class="CalendarForm" @submit.prevent="handleSubmit()">
     <section>
       <SectionHeader>タイトル</SectionHeader>
-      <div class="title"><input v-model="title" type="text" class="inputTitle" /> Advent Calendar {{ year }}</div>
+      <div class="title">
+        <input v-model="title" required type="text" class="inputTitle" /> Advent Calendar {{ year }}
+      </div>
     </section>
 
     <section>
