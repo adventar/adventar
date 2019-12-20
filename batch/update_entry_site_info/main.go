@@ -1,17 +1,23 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"log"
 	"os"
 
 	util "github.com/adventar/adventar/api-server/grpc-server/util"
-	"github.com/aws/aws-lambda-go/lambda"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func handler(ctx context.Context) error {
+func main() {
+	err := run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run() error {
 	var err error
 	source := os.Getenv("DATABASE_SOURCE")
 	db, err := sql.Open("mysql", source)
@@ -81,8 +87,4 @@ func handler(ctx context.Context) error {
 	log.Printf("Finish, processed count: %d", count)
 
 	return nil
-}
-
-func main() {
-	lambda.Start(handler)
 }

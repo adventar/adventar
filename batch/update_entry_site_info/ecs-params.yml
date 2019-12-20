@@ -1,0 +1,20 @@
+version: 1
+task_definition:
+  task_execution_role: AdventarEcsTaskExecutionRole
+  ecs_network_mode: awsvpc
+  task_size:
+    mem_limit: 0.5GB
+    cpu_limit: 256
+  services:
+    app:
+      secrets:
+        - name: DATABASE_SOURCE
+          value_from: /adventar/DATABASE_SOURCE
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - subnet-059a83efe99ee37ee
+      security_groups:
+        - sg-073b60f32ebeb3cef
+      assign_public_ip: ENABLED

@@ -1,0 +1,10 @@
+version: '3'
+services:
+  app:
+    image: hokaccha/adventar-update_entry_site_info:latest
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: /ecs/adventar/update_entry_site_info
+        awslogs-region: ap-northeast-1
+        awslogs-stream-prefix: ecs

@@ -1,7 +1,0 @@
-{
-  "name": "adventar-batch",
-  "private": true,
-  "devDependencies": {
-    "serverless": "^1.56.1"
-  }
-}
