@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"os"
+	"time"
 
 	util "github.com/adventar/adventar/api-server/grpc-server/util"
 	_ "github.com/go-sql-driver/mysql"
@@ -32,6 +33,7 @@ func run() error {
 		return err
 	}
 	log.Printf("now: %v", now)
+	log.Printf("time: %v", time.Now())
 
 	rows, err := db.Query(`
 		select
