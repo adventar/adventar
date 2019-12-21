@@ -9,5 +9,5 @@ RUN apk update && apk upgrade && apk add ca-certificates
 WORKDIR /go
 COPY --from=builder /app/update_entry_site_info ./
 COPY --from=builder /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
-ENV TZ=Asia/Tokyo
+RUN echo "Asia/Tokyo" > /etc/timezone
 CMD ["/go/update_entry_site_info"]
