@@ -11,7 +11,7 @@ run: build
 test:
 	go test ./...
 
-docker-build: build
+docker-build:
 	docker build -t hokaccha/adventar-update_entry_site_info .
 
 deploy: docker-build
