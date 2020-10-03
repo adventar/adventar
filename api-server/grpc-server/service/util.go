@@ -8,11 +8,10 @@ import (
 	"os"
 	"strings"
 
-	"golang.org/x/xerrors"
-	"google.golang.org/grpc/metadata"
-
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
 	"github.com/adventar/adventar/api-server/grpc-server/model"
+	"golang.org/x/xerrors"
+	"google.golang.org/grpc/metadata"
 )
 
 func (s *Service) getCurrentUser(ctx context.Context) (*model.User, error) {
@@ -82,4 +81,52 @@ func convertImageURL(imageURL string) string {
 	h.Write([]byte(imageURL + salt))
 
 	return fmt.Sprintf("%s/%x?url=%s", endpoint, h.Sum(nil), url.QueryEscape(imageURL))
+}
+
+func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
+	rows, err := s.db.Query(`
+		select
+			e.id,
+			e.day,
+			e.title,
+			e.comment,
+			e.url,
+			e.image_url,
+			u.id,
+			u.name,
+			u.icon_url
+		from entries as e
+		inner join users as u on u.id = e.user_id
+		where e.calendar_id = ?
+		order by e.day
+	`, cid)
+
+	if err != nil {
+		return nil, xerrors.Errorf("Failed query to fetch entries: %w", err)
+	}
+
+	entries := []*pb.Entry{}
+	for rows.Next() {
+		var e pb.Entry
+		var u pb.User
+		err := rows.Scan(
+			&e.Id,
+			&e.Day,
+			&e.Title,
+			&e.Comment,
+			&e.Url,
+			&e.ImageUrl,
+			&u.Id,
+			&u.Name,
+			&u.IconUrl,
+		)
+		if err != nil {
+			return nil, xerrors.Errorf("Failed to scan row: %w", err)
+		}
+		e.Owner = &u
+		e.ImageUrl = convertImageURL(e.ImageUrl)
+		entries = append(entries, &e)
+	}
+
+	return entries, nil
 }

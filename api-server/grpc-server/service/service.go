@@ -8,6 +8,8 @@ import (
 	"os"
 	"time"
 
+	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/api-server/grpc-server/util"
 	"github.com/bugsnag/bugsnag-go"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
@@ -17,9 +19,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
-	"github.com/adventar/adventar/api-server/grpc-server/util"
 )
 
 type verifier interface {

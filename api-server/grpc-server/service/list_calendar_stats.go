@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"golang.org/x/xerrors"
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"golang.org/x/xerrors"
 )
 
 // ListCalendarStats lists calendar stats

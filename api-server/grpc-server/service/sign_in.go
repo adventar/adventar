@@ -4,12 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	"golang.org/x/xerrors"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
-	"github.com/adventar/adventar/api-server/grpc-server/model"
+	"golang.org/x/xerrors"
 )
 
 // SignIn validates the id token.
@@ -58,45 +54,4 @@ func (s *Service) SignIn(ctx context.Context, in *pb.SignInRequest) (*pb.User, e
 	}
 
 	return u, nil
-}
-
-// GetUser returns a user info.
-func (s *Service) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.User, error) {
-	var user model.User
-	row := s.db.QueryRow("select id, name, icon_url from users where id = ?", in.GetUserId())
-	err := row.Scan(&user.ID, &user.Name, &user.IconURL)
-
-	if err == sql.ErrNoRows {
-		return nil, status.Error(codes.NotFound, "User not found")
-	}
-
-	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
-	}
-
-	return &pb.User{Id: user.ID, Name: user.Name, IconUrl: user.IconURL}, nil
-}
-
-// UpdateUser updates user info.
-func (s *Service) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest) (*pb.User, error) {
-	currentUser, err := s.getCurrentUser(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
-	}
-	name := in.GetName()
-	if name == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "Name is blank")
-	}
-
-	stmt, err := s.db.Prepare("update users set name = ? where id = ?")
-	if err != nil {
-		return nil, xerrors.Errorf("Failed to prepare query: %w", err)
-	}
-
-	_, err = stmt.Exec(name, currentUser.ID)
-	if err != nil {
-		return nil, xerrors.Errorf("Failed query to update user: %w", err)
-	}
-
-	return &pb.User{Id: currentUser.ID, Name: name, IconUrl: currentUser.IconURL}, nil
 }
