@@ -11,6 +11,7 @@ require (
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/protobuf v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+	github.com/jmoiron/sqlx v1.2.0
 	github.com/sirupsen/logrus v1.4.2
 	golang.org/x/xerrors v0.0.0-20190528162220-0421b64034aa
 	google.golang.org/api v0.5.0

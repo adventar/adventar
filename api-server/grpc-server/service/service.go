@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"net"
@@ -13,6 +12,7 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -32,13 +32,13 @@ type metaFetcher interface {
 
 // Service holds data used by grpc functions.
 type Service struct {
-	db          *sql.DB
+	db          *sqlx.DB
 	verifier    verifier
 	metaFetcher metaFetcher
 }
 
 // NewService creates a new Service.
-func NewService(db *sql.DB, verifier verifier, metaFetcher metaFetcher) *Service {
+func NewService(db *sqlx.DB, verifier verifier, metaFetcher metaFetcher) *Service {
 	return &Service{db: db, verifier: verifier, metaFetcher: metaFetcher}
 }
 

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 
 	"github.com/adventar/adventar/api-server/grpc-server/service"
 	"github.com/adventar/adventar/api-server/grpc-server/util"
@@ -17,7 +17,7 @@ func main() {
 	if source == "" {
 		source = "root@tcp(127.0.0.1:13306)/adventar_dev"
 	}
-	db, err := sql.Open("mysql", source)
+	db, err := sqlx.Open("mysql", source)
 	if err != nil {
 		log.Fatal(err)
 	}

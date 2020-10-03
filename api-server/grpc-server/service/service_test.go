@@ -2,7 +2,6 @@ package service_test
 
 import (
 	"context"
-	"database/sql"
 	"log"
 	"os"
 	"strings"
@@ -12,13 +11,14 @@ import (
 	s "github.com/adventar/adventar/api-server/grpc-server/service"
 	"github.com/adventar/adventar/api-server/grpc-server/util"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
 var (
-	db      *sql.DB
+	db      *sqlx.DB
 	service *s.Service
 )
 
@@ -41,7 +41,7 @@ func (tmf *testMetaFetcher) Fetch(url string) (*util.SiteMeta, error) {
 
 func TestMain(m *testing.M) {
 	var err error
-	db, err = sql.Open("mysql", "root@tcp(127.0.0.1:3306)/adventar_test")
+	db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:3306)/adventar_test")
 	if err != nil {
 		log.Fatal(err)
 	}
