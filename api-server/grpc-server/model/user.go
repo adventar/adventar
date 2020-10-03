@@ -1,7 +1,8 @@
 package model
 
+// User model
 type User struct {
-	ID      int64
-	Name    string
-	IconURL string
+	ID      int64  `db:"id"`
+	Name    string `db:"name"`
+	IconURL string `db:"icon_url"`
 }
