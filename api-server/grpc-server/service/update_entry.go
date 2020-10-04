@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/api-server/grpc-server/model"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -24,13 +25,10 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 		return nil, status.Errorf(codes.InvalidArgument, "URL is invalid")
 	}
 
-	stmt, err := s.db.Prepare("update entries set comment = ?, url = ? where id = ? and user_id = ?")
-	if err != nil {
-		return nil, xerrors.Errorf("Failed to prepare query: %w", err)
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(in.GetComment(), inURL, in.GetEntryId(), currentUser.ID)
+	_, err = s.db.Exec(
+		"update entries set comment = ?, url = ? where id = ? and user_id = ?",
+		in.GetComment(), inURL, in.GetEntryId(), currentUser.ID,
+	)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to update entry: %w", err)
 	}
@@ -47,23 +45,17 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 			title = m.Title
 			imageURL = m.ImageURL
 		}
-		stmt, err = s.db.Prepare("update entries set title = ?, image_url = ? where id = ? and user_id = ?")
-		if err != nil {
-			return nil, xerrors.Errorf("Failed to prepare query: %w", err)
-		}
-		defer stmt.Close()
-
-		_, err = stmt.Exec(title, imageURL, in.GetEntryId(), currentUser.ID)
+		_, err = s.db.Exec(
+			"update entries set title = ?, image_url = ? where id = ? and user_id = ?",
+			title, imageURL, in.GetEntryId(), currentUser.ID,
+		)
 		if err != nil {
 			return nil, xerrors.Errorf("Failed query to update entry: %w", err)
 		}
 	}
 
-	var comment string
-	var url string
-	var title string
-	var imageURL string
-	err = s.db.QueryRow("select comment, url, title, image_url from entries where id = ?", in.GetEntryId()).Scan(&comment, &url, &title, &imageURL)
+	var entry model.Entry
+	err = s.db.Get(&entry, "select * from entries where id = ?", in.GetEntryId())
 	if err == sql.ErrNoRows {
 		return nil, status.Errorf(codes.NotFound, "Entry not found")
 	}
@@ -71,5 +63,11 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 		return nil, xerrors.Errorf("Failed query to fetch entry: %w", err)
 	}
 
-	return &pb.Entry{Id: in.GetEntryId(), Comment: comment, Url: url, Title: title, ImageUrl: convertImageURL(imageURL)}, nil
+	return &pb.Entry{
+		Id:       in.GetEntryId(),
+		Comment:  entry.Comment,
+		Url:      entry.URL,
+		Title:    entry.Title,
+		ImageUrl: convertImageURL(entry.ImageURL),
+	}, nil
 }

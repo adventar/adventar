@@ -36,7 +36,7 @@ var (
 
 func TestMain(m *testing.M) {
 	var err error
-	db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:3306)/adventar_test")
+	db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:3306)/adventar_test?parseTime=true")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,20 +50,16 @@ func TestMain(m *testing.M) {
 }
 
 func cleanupDatabase() {
-	rows, err := db.Query("show tables")
+	var names []string
+	err := db.Select(&names, "show tables")
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer rows.Close()
 	if _, err := db.Exec("set foreign_key_checks = 0"); err != nil {
 		log.Fatal(err)
 	}
-	for rows.Next() {
-		var name string
-		if err := rows.Scan(&name); err != nil {
-			log.Fatal(err)
-		}
+	for _, name := range names {
 		if _, err := db.Exec("truncate table " + name); err != nil {
 			log.Fatal(err)
 		}
@@ -82,14 +78,10 @@ type user struct {
 }
 
 func createUser(t *testing.T, u *user) {
-	stmt, err := db.Prepare("insert into users (name, auth_uid, auth_provider, icon_url) values (?, ?, ?, ?)")
-	defer stmt.Close()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res, err := stmt.Exec(u.name, u.authUID, u.authProvider, u.iconURL)
+	res, err := db.Exec(
+		"insert into users (name, auth_uid, auth_provider, icon_url) values (?, ?, ?, ?)",
+		u.name, u.authUID, u.authProvider, u.iconURL,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -109,14 +101,10 @@ type calendar struct {
 }
 
 func createCalendar(t *testing.T, c *calendar) {
-	stmt, err := db.Prepare("insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)")
-	defer stmt.Close()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res, err := stmt.Exec(c.userID, c.title, c.description, c.year)
+	res, err := db.Exec(
+		"insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)",
+		c.userID, c.title, c.description, c.year,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -139,14 +127,10 @@ type entry struct {
 }
 
 func createEntry(t *testing.T, e *entry) {
-	stmt, err := db.Prepare("insert into entries(user_id, calendar_id, day, url, comment, title, image_url) values(?, ?, ?, ?, ?, ?, ?)")
-	defer stmt.Close()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	res, err := stmt.Exec(e.userID, e.calendarID, e.day, e.url, e.comment, e.title, e.imageURL)
+	res, err := db.Exec(
+		"insert into entries(user_id, calendar_id, day, url, comment, title, image_url) values(?, ?, ?, ?, ?, ?, ?)",
+		e.userID, e.calendarID, e.day, e.url, e.comment, e.title, e.imageURL,
+	)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -59,7 +59,7 @@ func TestDeleteEntry(t *testing.T) {
 	}
 
 	var count int
-	err = db.QueryRow("select count(*) from entries").Scan(&count)
+	err = db.Get(&count, "select count(*) from entries")
 	if err != nil {
 		t.Fatal(err)
 	}

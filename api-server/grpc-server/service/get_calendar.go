@@ -13,32 +13,25 @@ import (
 
 // GetCalendar returns a calendar.
 func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*pb.GetCalendarResponse, error) {
-	var calendar model.Calendar
-	var user model.User
+	var result struct {
+		Calendar model.Calendar `db:"c"`
+		User     model.User     `db:"u"`
+	}
 	selectSQL := `
 		select
-			c.id,
-			c.title,
-			c.description,
-			c.year,
-			u.id,
-			u.name,
-			u.icon_url
+			c.id as "c.id",
+			c.title as "c.title",
+			c.description as "c.description",
+			c.year as "c.year",
+			u.id as "u.id",
+			u.name as "u.name",
+			u.icon_url as "u.icon_url"
 		from calendars as c
 		inner join users as u on u.id = c.user_id
 		where c.id = ?
 	`
 
-	row := s.db.QueryRow(selectSQL, in.GetCalendarId())
-	err := row.Scan(
-		&calendar.ID,
-		&calendar.Title,
-		&calendar.Description,
-		&calendar.Year,
-		&user.ID,
-		&user.Name,
-		&user.IconURL,
-	)
+	err := s.db.Get(&result, selectSQL, in.GetCalendarId())
 
 	if err == sql.ErrNoRows {
 		return nil, status.Error(codes.NotFound, "Calendar not found")
@@ -48,6 +41,8 @@ func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*
 		return nil, xerrors.Errorf("Failed query to fetch calendar: %w", err)
 	}
 
+	calendar := result.Calendar
+	user := result.User
 	entries, err := s.findEntries(calendar.ID)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed to find entries: %w", err)

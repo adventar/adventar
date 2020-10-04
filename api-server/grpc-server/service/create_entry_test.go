@@ -27,20 +27,22 @@ func TestCreateEntry(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var day int32
-	var cid int64
-	var uid int64
-	err = db.QueryRow("select day, calendar_id, user_id from entries where id = ?", entry.Id).Scan(&day, &cid, &uid)
+	var r struct {
+		Day int32 `db:"day"`
+		Cid int64 `db:"calendar_id"`
+		Uid int64 `db:"user_id"`
+	}
+	err = db.Get(&r, "select day, calendar_id, user_id from entries where id = ?", entry.Id)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if day != 1 {
-		t.Errorf("actual: %d, expected: 2019-12-01", day)
+	if r.Day != 1 {
+		t.Errorf("actual: %d, expected: 2019-12-01", r.Day)
 	}
-	if cid != c.id {
-		t.Errorf("actual: %d, expected: %d", c.id, cid)
+	if r.Cid != c.id {
+		t.Errorf("actual: %d, expected: %d", c.id, r.Cid)
 	}
-	if uid != u.id {
-		t.Errorf("actual: %d, expected: %d", u.id, uid)
+	if r.Uid != u.id {
+		t.Errorf("actual: %d, expected: %d", u.id, r.Uid)
 	}
 }

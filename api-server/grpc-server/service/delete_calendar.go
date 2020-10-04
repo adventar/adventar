@@ -17,15 +17,10 @@ func (s *Service) DeleteCalendar(ctx context.Context, in *pb.DeleteCalendarReque
 		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
-	stmt, err := s.db.Prepare("delete from calendars where id = ? and user_id = ?")
-	if err != nil {
-		return nil, xerrors.Errorf("Failed to prepare query: %w", err)
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(in.GetCalendarId(), currentUser.ID)
+	_, err = s.db.Exec("delete from calendars where id = ? and user_id = ?", in.GetCalendarId(), currentUser.ID)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to delete calendar: %w", err)
 	}
+
 	return &empty.Empty{}, nil
 }

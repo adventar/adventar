@@ -9,11 +9,17 @@ import (
 
 // ListCalendarStats lists calendar stats
 func (s *Service) ListCalendarStats(ctx context.Context, in *pb.ListCalendarStatsRequest) (*pb.ListCalendarStatsResponse, error) {
+	type result struct {
+		Year           int32 `db:"year"`
+		CalendarsCount int32 `db:"calendars_count"`
+		EntriesCount   int32 `db:"entries_count"`
+	}
+
 	sql := `
 		select
-			calendars.year
-			, count(distinct calendars.id) calendars_count
-			, count(entries.id) entries_count
+			calendars.year as year
+			, count(distinct calendars.id) as calendars_count
+			, count(entries.id) as entries_count
 		from
 			calendars
 			left join entries on entries.calendar_id = calendars.id
@@ -22,22 +28,15 @@ func (s *Service) ListCalendarStats(ctx context.Context, in *pb.ListCalendarStat
 		order by
 			year desc
 	`
-	rows, err := s.db.Query(sql)
+
+	rows := []result{}
+	err := s.db.Select(&rows, sql)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to fetch calendar stats: %w", err)
 	}
-	defer rows.Close()
 	var stats []*pb.CalendarStat
-	for rows.Next() {
-		var stat pb.CalendarStat
-		err := rows.Scan(
-			&stat.Year,
-			&stat.CalendarsCount,
-			&stat.EntriesCount,
-		)
-		if err != nil {
-			return nil, xerrors.Errorf("Failed to scan row: %w", err)
-		}
+	for _, row := range rows {
+		stat := pb.CalendarStat{Year: row.Year, CalendarsCount: row.CalendarsCount, EntriesCount: row.EntriesCount}
 		stats = append(stats, &stat)
 	}
 

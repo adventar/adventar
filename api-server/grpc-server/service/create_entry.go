@@ -18,7 +18,7 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 	}
 
 	var year int
-	err = s.db.QueryRow("select year from calendars where id = ?", in.GetCalendarId()).Scan(&year)
+	err = s.db.Get(&year, "select year from calendars where id = ?", in.GetCalendarId())
 	if err == sql.ErrNoRows {
 		return nil, status.Errorf(codes.NotFound, "Calendar not found")
 	}
@@ -31,27 +31,33 @@ func (s *Service) CreateEntry(ctx context.Context, in *pb.CreateEntryRequest) (*
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid day: %d", day)
 	}
 
-	stmt, err := s.db.Prepare("insert into entries(user_id, calendar_id, day, comment, url, title, image_url) values(?, ?, ?, '', '', '', '')")
+	lastID, err := s.insertEntry(currentUser.ID, in.GetCalendarId(), day)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to prepare query: %w", err)
-	}
-	defer stmt.Close()
-
-	res, err := stmt.Exec(currentUser.ID, in.GetCalendarId(), day)
-	if err != nil {
-		return nil, xerrors.Errorf("Failed query to insert into entry: %w", err)
-	}
-
-	lastID, err := res.LastInsertId()
-	if err != nil {
-		return nil, xerrors.Errorf("Failed to get last id: %w", err)
+		return nil, xerrors.Errorf("Failed to insert entry: %w", err)
 	}
 
 	var entryID int64
-	err = s.db.QueryRow("select id from entries where id = ?", lastID).Scan(&entryID)
+	err = s.db.Get(&entryID, "select id from entries where id = ?", lastID)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to fetch entry: %w", err)
 	}
 
 	return &pb.Entry{Id: entryID}, nil
+}
+
+func (s *Service) insertEntry(userID int64, calendarID int64, day int32) (int64, error) {
+	res, err := s.db.Exec(
+		"insert into entries(user_id, calendar_id, day, comment, url, title, image_url) values(?, ?, ?, '', '', '', '')",
+		userID, calendarID, day,
+	)
+	if err != nil {
+		return 0, xerrors.Errorf("Failed query to insert into entry: %w", err)
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, xerrors.Errorf("Failed to get last id: %w", err)
+	}
+
+	return id, nil
 }

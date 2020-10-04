@@ -28,7 +28,7 @@ func TestDeleteCalendar(t *testing.T) {
 	}
 
 	var count int
-	err = db.QueryRow("select count(*) from calendars").Scan(&count)
+	err = db.Get(&count, "select count(*) from calendars")
 	if err != nil {
 		t.Fatal(err)
 	}

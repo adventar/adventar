@@ -15,17 +15,13 @@ func (s *Service) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest) (*pb
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
+
 	name := in.GetName()
 	if name == "" {
 		return nil, status.Errorf(codes.InvalidArgument, "Name is blank")
 	}
 
-	stmt, err := s.db.Prepare("update users set name = ? where id = ?")
-	if err != nil {
-		return nil, xerrors.Errorf("Failed to prepare query: %w", err)
-	}
-
-	_, err = stmt.Exec(name, currentUser.ID)
+	_, err = s.db.Exec("update users set name = ? where id = ?", name, currentUser.ID)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to update user: %w", err)
 	}

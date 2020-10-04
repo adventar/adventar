@@ -25,7 +25,7 @@ func TestUpdateUser(t *testing.T) {
 	}
 
 	var name string
-	err = db.QueryRow("select name from users where id = ?", u.id).Scan(&name)
+	err = db.Get(&name, "select name from users where id = ?", u.id)
 	if err != nil {
 		t.Fatal(err)
 	}

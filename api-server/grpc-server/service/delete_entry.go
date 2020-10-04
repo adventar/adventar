@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"net/url"
 
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
 	"github.com/adventar/adventar/api-server/grpc-server/util"
@@ -27,46 +26,42 @@ func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*
 		return nil, status.Errorf(codes.PermissionDenied, "Invalid request")
 	}
 
-	stmt, err := s.db.Prepare("delete from entries where id = ?")
+	_, err = s.db.Exec("delete from entries where id = ?", in.GetEntryId())
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to prepare entry: %w", err)
-	}
-
-	_, err = stmt.Exec(in.GetEntryId())
-	if err != nil {
-		return nil, xerrors.Errorf("Failed query to delete entry: %w", err)
+		return nil, xerrors.Errorf("Failed to delete entry: %w", err)
 	}
 
 	return &empty.Empty{}, nil
 }
 
 func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {
-	var entryOwnerID int
-	var day int
-	var year int
-	var calendarOwnerID int
-	err := s.db.QueryRow(`
+	var result struct {
+		EntryOwnerID    int `db:"entry_owner_id"`
+		Day             int `db:"day"`
+		Year            int `db:"year"`
+		CalendarOwnerID int `db:"calendar_owner_id"`
+	}
+
+	sql := `
 		select
-			e.user_id,
-			e.day,
-			c.year,
-			c.user_id
+			e.user_id as entry_owner_id,
+			e.day as day,
+			c.year as year,
+			c.user_id as calendar_owner_id
 		from
 			entries as e
 			inner join calendars as c on c.id = e.calendar_id
 		where
 			e.id = ?
-	`, entryID).Scan(
-		&entryOwnerID,
-		&day,
-		&year,
-		&calendarOwnerID,
-	)
+	`
+
+	err := s.db.Get(&result, sql, entryID)
+
 	if err != nil {
 		return false, xerrors.Errorf("Failed query to fetch user: %w", err)
 	}
 
-	if userID == entryOwnerID {
+	if userID == result.EntryOwnerID {
 		return true, nil
 	}
 
@@ -75,18 +70,9 @@ func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {
 		return false, err
 	}
 
-	if userID == calendarOwnerID && (year < now.Year || day+1 < now.Day) {
+	if userID == result.CalendarOwnerID && (result.Year < now.Year || result.Day+1 < now.Day) {
 		return true, nil
 	}
 
 	return false, nil
-}
-
-func isValidURL(s string) bool {
-	u, err := url.Parse(s)
-	if err != nil {
-		return false
-	}
-
-	return u.Scheme == "http" || u.Scheme == "https"
 }

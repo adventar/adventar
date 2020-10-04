@@ -31,7 +31,7 @@ func (s *Service) getCurrentUser(ctx context.Context) (*model.User, error) {
 	}
 
 	var user model.User
-	err = s.db.QueryRow("select id, name, icon_url from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID).Scan(&user.ID, &user.Name, &user.IconURL)
+	err = s.db.Get(&user, "select id, name, icon_url from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
 	}
@@ -40,6 +40,7 @@ func (s *Service) getCurrentUser(ctx context.Context) (*model.User, error) {
 }
 
 func (s *Service) bindEntryCount(calendars []*pb.Calendar) error {
+	// TODO: Refactoring
 	ids := []interface{}{}
 	interpolations := []string{}
 
@@ -84,6 +85,7 @@ func convertImageURL(imageURL string) string {
 }
 
 func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
+	// TODO: Refactoring
 	rows, err := s.db.Query(`
 		select
 			e.id,
@@ -129,4 +131,13 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 	}
 
 	return entries, nil
+}
+
+func isValidURL(s string) bool {
+	u, err := url.Parse(s)
+	if err != nil {
+		return false
+	}
+
+	return u.Scheme == "http" || u.Scheme == "https"
 }

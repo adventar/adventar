@@ -32,24 +32,13 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 		return nil, status.Errorf(codes.PermissionDenied, "Authentication failed")
 	}
 
-	stmt, err := s.db.Prepare("insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)")
+	lastID, err := s.insertCalendar(currentUser.ID, in.GetTitle(), in.GetDescription(), now.Year)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to prepare query: %w", err)
-	}
-	defer stmt.Close()
-
-	res, err := stmt.Exec(currentUser.ID, in.GetTitle(), in.GetDescription(), now.Year)
-	if err != nil {
-		return nil, xerrors.Errorf("Failed query to insert into calendar: %w", err)
-	}
-
-	lastID, err := res.LastInsertId()
-	if err != nil {
-		return nil, xerrors.Errorf("Failed to get last id: %w", err)
+		return nil, xerrors.Errorf("Failed to insert calendar: %w", err)
 	}
 
 	var calendar model.Calendar
-	err = s.db.QueryRow("select id, user_id, title, description, year from calendars where id = ?", lastID).Scan(&calendar.ID, &calendar.UserID, &calendar.Title, &calendar.Description, &calendar.Year)
+	err = s.db.Get(&calendar, "select id, user_id, title, description from calendars where id = ?", lastID)
 	if err == sql.ErrNoRows {
 		return nil, status.Error(codes.NotFound, "Calendar not found")
 	}
@@ -58,4 +47,21 @@ func (s *Service) CreateCalendar(ctx context.Context, in *pb.CreateCalendarReque
 	}
 
 	return &pb.Calendar{Id: calendar.ID, Title: calendar.Title, Description: calendar.Description, Year: calendar.Year}, nil
+}
+
+func (s *Service) insertCalendar(userID int64, title string, description string, year int) (int64, error) {
+	res, err := s.db.Exec(
+		"insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)",
+		userID, title, description, year,
+	)
+	if err != nil {
+		return 0, xerrors.Errorf("Failed query to insert into calendar: %w", err)
+	}
+
+	lastID, err := res.LastInsertId()
+	if err != nil {
+		return 0, xerrors.Errorf("Failed to get last id: %w", err)
+	}
+
+	return lastID, err
 }

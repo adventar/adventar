@@ -20,7 +20,7 @@ func TestSignInIfUserExists(t *testing.T) {
 		t.Fatal(err)
 	}
 	var iconURL string
-	err = db.QueryRow("select icon_url from users").Scan(&iconURL)
+	err = db.Get(&iconURL, "select icon_url from users")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,7 +39,7 @@ func TestSignInIfUserDoesNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	var count int
-	err = db.QueryRow("select count(*) users").Scan(&count)
+	err = db.Get(&count, "select count(*) users")
 	if err != nil {
 		t.Fatal(err)
 	}

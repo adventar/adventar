@@ -15,8 +15,7 @@ import (
 // GetUser returns a user info.
 func (s *Service) GetUser(ctx context.Context, in *pb.GetUserRequest) (*pb.User, error) {
 	var user model.User
-	row := s.db.QueryRow("select id, name, icon_url from users where id = ?", in.GetUserId())
-	err := row.Scan(&user.ID, &user.Name, &user.IconURL)
+	err := s.db.Get(&user, "select id, name, icon_url from users where id = ?", in.GetUserId())
 
 	if err == sql.ErrNoRows {
 		return nil, status.Error(codes.NotFound, "User not found")

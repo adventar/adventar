@@ -11,6 +11,7 @@ import (
 
 // ListEntries lists entries.
 func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*pb.ListEntriesResponse, error) {
+	// TODO: Refactoring
 	conditionQueries := []string{"e.user_id = ?"}
 	conditionValues := []interface{}{in.GetUserId()}
 

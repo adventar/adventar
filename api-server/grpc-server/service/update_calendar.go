@@ -21,19 +21,16 @@ func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarReque
 		return nil, status.Errorf(codes.InvalidArgument, "Title is invalid")
 	}
 
-	stmt, err := s.db.Prepare("update calendars set title = ?, description = ? where id = ? and user_id = ?")
-	if err != nil {
-		return nil, xerrors.Errorf("Failed to prepare query: %w", err)
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec(in.GetTitle(), in.GetDescription(), in.GetCalendarId(), currentUser.ID)
+	_, err = s.db.Exec(
+		"update calendars set title = ?, description = ? where id = ? and user_id = ?",
+		in.GetTitle(), in.GetDescription(), in.GetCalendarId(), currentUser.ID,
+	)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to update calendar: %w", err)
 	}
 
 	var calendar model.Calendar
-	err = s.db.QueryRow("select id, user_id, title, description, year from calendars where id = ? and user_id = ?", in.GetCalendarId(), currentUser.ID).Scan(&calendar.ID, &calendar.UserID, &calendar.Title, &calendar.Description, &calendar.Year)
+	err = s.db.Get(&calendar, "select * from calendars where id = ? and user_id = ?", in.GetCalendarId(), currentUser.ID)
 	if err == sql.ErrNoRows {
 		return nil, status.Error(codes.NotFound, "Calendar not found")
 	}

@@ -11,6 +11,7 @@ import (
 
 // ListCalendars lists calendars.
 func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest) (*pb.ListCalendarsResponse, error) {
+	// TODO: Refactoring
 	conditionQueries := []string{"c.year = ?"}
 	limitQuery := ""
 	conditionValues := []interface{}{in.GetYear()}

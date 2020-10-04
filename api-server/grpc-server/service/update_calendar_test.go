@@ -27,16 +27,18 @@ func TestUpdateCalendar(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var title string
-	var description string
-	err = db.QueryRow("select title, description from calendars where id = ?", c.id).Scan(&title, &description)
+	var r struct {
+		Title       string
+		Description string
+	}
+	err = db.Get(&r, "select title, description from calendars where id = ?", c.id)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if title != "foo" {
-		t.Errorf("actual: %s, expected: foo", title)
+	if r.Title != "foo" {
+		t.Errorf("actual: %s, expected: foo", r.Title)
 	}
-	if description != "bar" {
-		t.Errorf("actual: %s, expected: bar", description)
+	if r.Description != "bar" {
+		t.Errorf("actual: %s, expected: bar", r.Description)
 	}
 }

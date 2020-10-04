@@ -28,7 +28,7 @@ func TestCreateCalendar(t *testing.T) {
 	}
 
 	var count int
-	err = db.QueryRow("select count(*) from calendars").Scan(&count)
+	err = db.Get(&count, "select count(*) from calendars")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +37,7 @@ func TestCreateCalendar(t *testing.T) {
 	}
 
 	var title string
-	err = db.QueryRow("select title from calendars where id = ?", calendar.Id).Scan(&title)
+	err = db.Get(&title, "select title from calendars where id = ?", calendar.Id)
 	if err != nil {
 		t.Fatal(err)
 	}
