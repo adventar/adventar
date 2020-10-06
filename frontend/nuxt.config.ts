@@ -108,7 +108,8 @@ const config: NuxtConfiguration = {
           "faTimes",
           "faComment",
           "faLink",
-          "faCircleNotch"
+          "faCircleNotch",
+          "faExternalLinkAlt"
         ]
       },
       {

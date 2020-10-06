@@ -29,6 +29,23 @@ app.get(
 );
 
 app.get(
+  "/calendars/:id/embed.json",
+  asyncHandler(async (req, res) => {
+    const calendarId = Number(req.params.id);
+    const height = parseInt(req.params.height) || 407;
+    res.json({
+      version: "1.0",
+      width: "100%",
+      height: height,
+      type: "rich",
+      provider_name: "Adventar",
+      provider_url: "https://adventar.org",
+      url: `https://adventar.org/calendars/${calendarId}/embed`
+    });
+  })
+);
+
+app.get(
   "/users/:id.ics",
   asyncHandler(async (req, res) => {
     const userId = req.params.id;

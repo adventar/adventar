@@ -22,7 +22,7 @@ export default class extends Vue {
   loadError: boolean = false;
 
   get src() {
-    if (this.user.iconUrl === "" || this.loadError) {
+    if (!this.user.iconUrl || this.loadError) {
       return defaultImage;
     } else {
       return this.user.iconUrl;
