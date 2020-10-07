@@ -36,3 +36,6 @@ functions:
       - http:
           method: get
           path: users/{id}
+      - http:
+          method: get
+          path: oembed

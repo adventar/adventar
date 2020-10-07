@@ -6,6 +6,7 @@ export NODE_ENV=production
 
 cd "$(dirname "$0")/.."
 
+rm -rf dist .nuxt-server .nuxt
 yarn run build:spa
 yarn run build:server
 cp -R .nuxt-server/dist/client/* dist/_nuxt

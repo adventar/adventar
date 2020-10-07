@@ -69,7 +69,7 @@ export default class extends Vue {
         {
           rel: "alternate",
           type: "application/json+oembed",
-          href: `https://adventar/oembed?url=${this.embedUrl}`
+          href: `https://adventar.org/oembed?url=${this.embedUrl}`
         }
       ]
     };
@@ -167,12 +167,7 @@ export default class extends Vue {
 
   get embedUrl(): string {
     if (this.calendar === null) return "";
-    // 火曜スタートであればその年は4週目まで、そうでなければ5週目まである
-    const rowCount = new Date(this.calendar.year, 12, 1).getDay() <= 2 ? 4 : 5;
-    const cellHeight = 63;
-    const headerHeight = 92;
-    const height = headerHeight + cellHeight * rowCount;
-    return encodeURIComponent(`https://adventar.org/calendars/${this.calendar.id}/embed.json?height=${height}`);
+    return encodeURIComponent(`https://adventar.org/calendars/${this.calendar.id}`);
   }
 }
 </script>

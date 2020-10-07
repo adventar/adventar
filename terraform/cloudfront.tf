@@ -103,6 +103,27 @@ resource "aws_cloudfront_distribution" "main" {
     compress               = true
   }
 
+  ordered_cache_behavior {
+    path_pattern     = "/oembed"
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = local.frontend_server_origin_id
+
+    forwarded_values {
+      query_string = true
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 0
+    max_ttl                = 31536000
+    compress               = true
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "none"

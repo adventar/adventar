@@ -7,6 +7,7 @@ import config from "~/nuxt.config";
 import { generateCalendarFeed, ExpiredCalendarError } from "~/server/Feed";
 import { generateIcal } from "~/server/Ical";
 import { ApiError } from "~/lib/JsonApiClient";
+import url from "url";
 
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API_KEY || "");
 
@@ -29,14 +30,21 @@ app.get(
 );
 
 app.get(
-  "/calendars/:id/embed.json",
+  "/oembed",
   asyncHandler(async (req, res) => {
-    const calendarId = Number(req.params.id);
-    const height = parseInt(req.params.height) || 407;
+    const u = req.query.url;
+    if (!u) return res.status(400).send("url is required");
+    const { pathname } = url.parse(u);
+    const calendarId = pathname && Number(pathname.replace(/\/calendars\/(\d+)$/, "$1"));
+    // 火曜スタートであればその年は4週目まで、そうでなければ5週目まである
+    // const rowCount = new Date(this.calendar.year, 12, 1).getDay() <= 2 ? 4 : 5;
+    // const cellHeight = 63;
+    // const headerHeight = 92;
+    // const height = headerHeight + cellHeight * rowCount;
     res.json({
       version: "1.0",
       width: "100%",
-      height: height,
+      height: 362,
       type: "rich",
       provider_name: "Adventar",
       provider_url: "https://adventar.org",
