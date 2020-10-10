@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	sq "github.com/Masterminds/squirrel"
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
 	"github.com/adventar/adventar/api-server/grpc-server/model"
 	"golang.org/x/xerrors"
@@ -13,25 +14,26 @@ import (
 
 // GetCalendar returns a calendar.
 func (s *Service) GetCalendar(ctx context.Context, in *pb.GetCalendarRequest) (*pb.GetCalendarResponse, error) {
-	var result struct {
-		Calendar model.Calendar `db:"c"`
-		User     model.User     `db:"u"`
-	}
-	selectSQL := `
-		select
-			c.id as "c.id",
-			c.title as "c.title",
-			c.description as "c.description",
-			c.year as "c.year",
-			u.id as "u.id",
-			u.name as "u.name",
-			u.icon_url as "u.icon_url"
-		from calendars as c
-		inner join users as u on u.id = c.user_id
-		where c.id = ?
-	`
+	query, args, err := sq.
+		Select(makeSelectValue(map[string][]string{
+			"calendars": {"id", "title", "description", "year"},
+			"users":     {"id", "name", "icon_url"},
+		})...).
+		From("calendars").
+		Join("users on users.id = calendars.user_id").
+		Where(sq.Eq{"calendars.id": in.GetCalendarId()}).
+		ToSql()
 
-	err := s.db.Get(&result, selectSQL, in.GetCalendarId())
+	if err != nil {
+		return nil, xerrors.Errorf("Failed query to create sql: %w", err)
+	}
+
+	result := struct {
+		Calendar model.Calendar `db:"calendars"`
+		User     model.User     `db:"users"`
+	}{}
+
+	err = s.db.Get(&result, query, args...)
 
 	if err == sql.ErrNoRows {
 		return nil, status.Error(codes.NotFound, "Calendar not found")

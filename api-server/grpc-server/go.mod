@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	firebase.google.com/go v3.7.0+incompatible
+	github.com/Masterminds/squirrel v1.4.0
 	github.com/PuerkitoBio/goquery v1.5.0
 	github.com/adventar/adventar/backend/grpc-server v0.0.0-20191113150322-861cd75ef6f4 // indirect
 	github.com/aws/aws-lambda-go v1.13.3 // indirect

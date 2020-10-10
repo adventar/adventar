@@ -2,79 +2,68 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
+	sq "github.com/Masterminds/squirrel"
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
+	"github.com/adventar/adventar/api-server/grpc-server/model"
 	"golang.org/x/xerrors"
 )
 
 // ListEntries lists entries.
 func (s *Service) ListEntries(ctx context.Context, in *pb.ListEntriesRequest) (*pb.ListEntriesResponse, error) {
-	// TODO: Refactoring
-	conditionQueries := []string{"e.user_id = ?"}
-	conditionValues := []interface{}{in.GetUserId()}
+	relation := sq.
+		Select(makeSelectValue(map[string][]string{
+			"entries":   {"id", "day", "title", "comment", "url", "image_url"},
+			"calendars": {"id", "title", "description", "year"},
+			"users":     {"id", "name", "icon_url"},
+		})...).
+		From("entries").
+		Join("users on users.id = entries.user_id").
+		Join("calendars on calendars.id = entries.calendar_id").
+		Where(sq.Eq{"entries.user_id": in.GetUserId()}).
+		OrderBy("calendars.year, entries.day, entries.id")
 
 	if in.GetYear() != 0 {
-		conditionQueries = append(conditionQueries, "c.year = ?")
-		conditionValues = append(conditionValues, in.GetYear())
+		relation = relation.Where(sq.Eq{"year": in.GetYear()})
 	}
 
-	sql := fmt.Sprintf(`
-		select
-			e.id,
-			e.day,
-			e.title,
-			e.comment,
-			e.url,
-			e.image_url,
-			c.id,
-			c.title,
-			c.description,
-			c.year,
-			u.id,
-			u.name,
-			u.icon_url
-		from entries as e
-		inner join users as u on u.id = e.user_id
-		inner join calendars as c on c.id = e.calendar_id
-		where %s
-		order by c.year, e.day, e.id
-	`, strings.Join(conditionQueries, " and "))
+	query, args, err := relation.ToSql()
+	if err != nil {
+		return nil, xerrors.Errorf("Failed query to create sql: %w", err)
+	}
 
-	rows, err := s.db.Query(sql, conditionValues...)
-	defer rows.Close()
+	rows := []struct {
+		Entry    model.Entry    `db:"entries"`
+		Calendar model.Calendar `db:"calendars"`
+		User     model.User     `db:"users"`
+	}{}
+
+	err = s.db.Select(&rows, query, args...)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to fetch entries: %w", err)
 	}
 
 	entries := []*pb.Entry{}
-	for rows.Next() {
-		var e pb.Entry
-		var c pb.Calendar
-		var u pb.User
-		err := rows.Scan(
-			&e.Id,
-			&e.Day,
-			&e.Title,
-			&e.Comment,
-			&e.Url,
-			&e.ImageUrl,
-			&c.Id,
-			&c.Title,
-			&c.Description,
-			&c.Year,
-			&u.Id,
-			&u.Name,
-			&u.IconUrl,
-		)
-		if err != nil {
-			return nil, xerrors.Errorf("Failed to scan row: %w", err)
-		}
-		e.Calendar = &c
-		e.Owner = &u
-		e.ImageUrl = convertImageURL(e.ImageUrl)
-		entries = append(entries, &e)
+	for _, r := range rows {
+		entries = append(entries, &pb.Entry{
+			Id:       r.Entry.ID,
+			Day:      r.Entry.Day,
+			Title:    r.Entry.Title,
+			Comment:  r.Entry.Comment,
+			Url:      r.Entry.URL,
+			ImageUrl: convertImageURL(r.Entry.ImageURL),
+			Calendar: &pb.Calendar{
+				Id:          r.Calendar.ID,
+				Title:       r.Calendar.Title,
+				Description: r.Calendar.Description,
+				Year:        r.Calendar.Year,
+			},
+			Owner: &pb.User{
+				Id:      r.User.ID,
+				Name:    r.User.Name,
+				IconUrl: r.User.IconURL,
+			},
+		})
 	}
 
 	return &pb.ListEntriesResponse{Entries: entries}, nil

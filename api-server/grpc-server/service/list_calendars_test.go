@@ -90,3 +90,27 @@ func TestListCalendarsWithUserId(t *testing.T) {
 		t.Errorf("actual: %d, expected: %d", len(res.Calendars), 1)
 	}
 }
+
+func TestListCalendarsWithPageSize(t *testing.T) {
+	cleanupDatabase()
+
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
+
+	for _, title := range []string{"c1", "c2", "c3"} {
+		c1 := &calendar{title: title, description: "", userID: u.id, year: 2019}
+		createCalendar(t, c1)
+	}
+
+	in := &pb.ListCalendarsRequest{Year: 2019, PageSize: 1}
+	ctx := context.Background()
+
+	res, err := service.ListCalendars(ctx, in)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(res.Calendars) != 1 {
+		t.Errorf("actual: %d, expected: %d", len(res.Calendars), 1)
+	}
+}

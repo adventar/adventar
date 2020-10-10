@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"strings"
 
+	sq "github.com/Masterminds/squirrel"
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
 	"github.com/adventar/adventar/api-server/grpc-server/model"
 	"golang.org/x/xerrors"
@@ -39,39 +39,6 @@ func (s *Service) getCurrentUser(ctx context.Context) (*model.User, error) {
 	return &user, nil
 }
 
-func (s *Service) bindEntryCount(calendars []*pb.Calendar) error {
-	// TODO: Refactoring
-	ids := []interface{}{}
-	interpolations := []string{}
-
-	for _, c := range calendars {
-		ids = append(ids, c.Id)
-		interpolations = append(interpolations, "?")
-	}
-
-	sql := fmt.Sprintf("select calendar_id, count(*) from entries where calendar_id in (%s) group by calendar_id", strings.Join(interpolations, ","))
-	rows, err := s.db.Query(sql, ids...)
-	if err != nil {
-		return xerrors.Errorf("Failed query to fetch calendar: %w", err)
-	}
-
-	entryCounts := map[int64]int32{}
-	for rows.Next() {
-		var cid int64
-		var count int32
-		if err := rows.Scan(&cid, &count); err != nil {
-			return xerrors.Errorf("Failed to scan row: %w", err)
-		}
-		entryCounts[cid] = count
-	}
-
-	for _, c := range calendars {
-		c.EntryCount = entryCounts[c.Id]
-	}
-
-	return nil
-}
-
 func convertImageURL(imageURL string) string {
 	endpoint := os.Getenv("IMAGE_SERVER_ENDPOINT")
 	if endpoint == "" || imageURL == "" {
@@ -85,49 +52,46 @@ func convertImageURL(imageURL string) string {
 }
 
 func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
-	// TODO: Refactoring
-	rows, err := s.db.Query(`
-		select
-			e.id,
-			e.day,
-			e.title,
-			e.comment,
-			e.url,
-			e.image_url,
-			u.id,
-			u.name,
-			u.icon_url
-		from entries as e
-		inner join users as u on u.id = e.user_id
-		where e.calendar_id = ?
-		order by e.day
-	`, cid)
+	query, args, err := sq.
+		Select(makeSelectValue(map[string][]string{
+			"entries": {"id", "day", "title", "comment", "url", "image_url"},
+			"users":   {"id", "name", "icon_url"},
+		})...).
+		From("entries").
+		Join("users on users.id = entries.user_id").
+		Where(sq.Eq{"entries.calendar_id": cid}).
+		OrderBy("entries.day").
+		ToSql()
 
+	if err != nil {
+		return nil, xerrors.Errorf("Failed query to create sql: %w", err)
+	}
+
+	rows := []struct {
+		Entry model.Entry `db:"entries"`
+		User  model.User  `db:"users"`
+	}{}
+
+	err = s.db.Select(&rows, query, args...)
 	if err != nil {
 		return nil, xerrors.Errorf("Failed query to fetch entries: %w", err)
 	}
 
 	entries := []*pb.Entry{}
-	for rows.Next() {
-		var e pb.Entry
-		var u pb.User
-		err := rows.Scan(
-			&e.Id,
-			&e.Day,
-			&e.Title,
-			&e.Comment,
-			&e.Url,
-			&e.ImageUrl,
-			&u.Id,
-			&u.Name,
-			&u.IconUrl,
-		)
-		if err != nil {
-			return nil, xerrors.Errorf("Failed to scan row: %w", err)
-		}
-		e.Owner = &u
-		e.ImageUrl = convertImageURL(e.ImageUrl)
-		entries = append(entries, &e)
+	for _, r := range rows {
+		entries = append(entries, &pb.Entry{
+			Id:       r.Entry.ID,
+			Day:      r.Entry.Day,
+			Title:    r.Entry.Title,
+			Comment:  r.Entry.Comment,
+			Url:      r.Entry.URL,
+			ImageUrl: convertImageURL(r.Entry.ImageURL),
+			Owner: &pb.User{
+				Id:      r.User.ID,
+				Name:    r.User.Name,
+				IconUrl: r.User.IconURL,
+			},
+		})
 	}
 
 	return entries, nil
@@ -140,4 +104,15 @@ func isValidURL(s string) bool {
 	}
 
 	return u.Scheme == "http" || u.Scheme == "https"
+}
+
+func makeSelectValue(data map[string][]string) []string {
+	var r []string
+	for ns, columns := range data {
+		for _, c := range columns {
+			v := fmt.Sprintf("%s.%s as `%s.%s`", ns, c, ns, c)
+			r = append(r, v)
+		}
+	}
+	return r
 }
