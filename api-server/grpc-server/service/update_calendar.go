@@ -30,7 +30,7 @@ func (s *Service) UpdateCalendar(ctx context.Context, in *pb.UpdateCalendarReque
 	}
 
 	var calendar model.Calendar
-	err = s.db.Get(&calendar, "select * from calendars where id = ? and user_id = ?", in.GetCalendarId(), currentUser.ID)
+	err = s.db.Get(&calendar, "select id, user_id, title, description, year from calendars where id = ? and user_id = ?", in.GetCalendarId(), currentUser.ID)
 	if err == sql.ErrNoRows {
 		return nil, status.Error(codes.NotFound, "Calendar not found")
 	}

@@ -55,7 +55,7 @@ func (s *Service) UpdateEntry(ctx context.Context, in *pb.UpdateEntryRequest) (*
 	}
 
 	var entry model.Entry
-	err = s.db.Get(&entry, "select * from entries where id = ?", in.GetEntryId())
+	err = s.db.Get(&entry, "select id, comment, url, title, image_url from entries where id = ?", in.GetEntryId())
 	if err == sql.ErrNoRows {
 		return nil, status.Errorf(codes.NotFound, "Entry not found")
 	}
