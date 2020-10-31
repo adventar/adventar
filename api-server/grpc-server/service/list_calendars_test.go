@@ -22,6 +22,9 @@ func TestListCalendars(t *testing.T) {
 	e := &entry{userID: u.id, calendarID: c.id, day: 1}
 	createEntry(t, e)
 
+	c2 := &calendar{title: "a", description: "b", userID: u.id, year: 2018}
+	createCalendar(t, c2)
+
 	res, err := service.ListCalendars(ctx, in)
 	if err != nil {
 		t.Fatal(err)

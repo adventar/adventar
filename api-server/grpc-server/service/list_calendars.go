@@ -18,6 +18,7 @@ func (s *Service) ListCalendars(ctx context.Context, in *pb.ListCalendarsRequest
 			"users":     {"id", "name", "icon_url"},
 		})...).
 		From("calendars").
+		Where(sq.Eq{"calendars.year": in.GetYear()}).
 		Join("users on users.id = calendars.user_id").
 		OrderBy("calendars.id desc")
 
