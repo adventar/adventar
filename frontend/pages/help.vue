@@ -110,8 +110,15 @@ export default class extends Vue {
   margin: 20px 0;
   white-space: nowrap;
   overflow: hidden;
-  outline: none;
   cursor: pointer;
+
+  &:focus {
+    outline-width: 0;
+  }
+
+  &:focus-visible {
+    outline-width: initial;
+  }
 }
 
 .summary:after {

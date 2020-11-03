@@ -6,11 +6,11 @@
       </h1>
       <div class="right">
         <no-ssr>
-          <span role="button" class="menuBtn" @click.stop="showDropdown()">
+          <button class="menuBtn" :aria-expanded="isShownDropdown ? 'true' : 'false'" @click.stop="showDropdown()">
             <UserIcon v-if="$store.state.user" class="userIcon" :user="$store.state.user" size="28" />
             <font-awesome-icon v-else-if="$store.state.isProcessingSignin" icon="circle-notch" spin />
             <font-awesome-icon v-else icon="bars"></font-awesome-icon>
-          </span>
+          </button>
           <div v-if="isShownDropdown" class="dropdown" @click.stop>
             <ul v-if="$store.state.user" class="loginMenu">
               <li class="user">
@@ -34,31 +34,31 @@
                 </nuxt-link>
               </li>
               <li>
-                <span role="button" @click.native="hideDropdown()" @click="logout()">
+                <button @click.native="hideDropdown()" @click="logout()">
                   <font-awesome-icon icon="sign-out-alt" /> ログアウト
-                </span>
+                </button>
               </li>
             </ul>
             <ul v-if="!$store.state.user" class="loginMenu">
               <li>
-                <span role="button" @click.native="hideDropdown()" @click="login('google')">
+                <button @click.native="hideDropdown()" @click="login('google')">
                   <font-awesome-icon :icon="['fab', 'google']" /> Google でログイン
-                </span>
+                </button>
               </li>
               <li>
-                <span role="button" @click.native="hideDropdown()" @click="login('github')">
+                <button @click.native="hideDropdown()" @click="login('github')">
                   <font-awesome-icon :icon="['fab', 'github']" /> GitHub でログイン
-                </span>
+                </button>
               </li>
               <li>
-                <span role="button" @click.native="hideDropdown()" @click="login('twitter')">
+                <button @click.native="hideDropdown()" @click="login('twitter')">
                   <font-awesome-icon :icon="['fab', 'twitter']" /> Twitter でログイン
-                </span>
+                </button>
               </li>
               <li>
-                <span role="button" @click.native="hideDropdown()" @click="login('facebook')">
+                <button @click.native="hideDropdown()" @click="login('facebook')">
                   <font-awesome-icon :icon="['fab', 'facebook']" /> Facebook でログイン
-                </span>
+                </button>
               </li>
             </ul>
             <ul class="generalMenu">
@@ -93,14 +93,22 @@ export default class extends Vue {
 
   mounted() {
     document.addEventListener("click", this.handleClickDocument);
+    document.addEventListener("keyup", this.handleKeyupDocument);
   }
 
   destroyed() {
     document.removeEventListener("click", this.handleClickDocument);
+    document.removeEventListener("keyup", this.handleKeyupDocument);
   }
 
   handleClickDocument() {
     this.hideDropdown();
+  }
+
+  handleKeyupDocument(e) {
+    if (e.key === "Escape") {
+      this.hideDropdown();
+    }
   }
 
   showDropdown() {
@@ -138,7 +146,7 @@ export default class extends Vue {
 .right {
   position: absolute;
   right: 15px;
-  top: 18px;
+  top: 8px;
 }
 
 .logo {
@@ -159,10 +167,12 @@ export default class extends Vue {
 }
 
 .menuBtn {
+  background: none;
+  border: none;
   color: #333;
   cursor: pointer;
   display: block;
-  padding-bottom: 10px;
+  padding: 10px;
   font-size: 20px;
 }
 
@@ -220,14 +230,15 @@ export default class extends Vue {
   margin-right: 5px;
 }
 
-.dropdown li [role="button"],
+.dropdown li button,
 .dropdown li a {
   display: block;
   color: #666;
   font-size: 13px;
   padding: 10px 10px;
   text-decoration: none;
-  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
 
   &:hover {
     color: #fff;
@@ -241,7 +252,7 @@ export default class extends Vue {
   }
 
   .right {
-    top: 32px;
+    top: 27px;
     right: 12px;
   }
 

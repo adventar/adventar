@@ -7,16 +7,16 @@
         <section>
           <SectionHeader>表示名</SectionHeader>
           <div v-if="!editmode">
-            <span role="button" class="name" @click="editmode = true">
+            <button class="name" @click="handleClickEdit">
               {{ $store.state.user.name }}
               <font-awesome-icon icon="edit" />
-            </span>
+            </button>
           </div>
           <div v-if="editmode">
-            <form class="inputForm" @submit.prevent>
-              <input type="text" :value="$store.state.user.name" @change="onChangeName" />
-              <button>Submit</button>
-              <span role="button" class="cancel" @click="editmode = false">Cancel</span>
+            <form class="inputForm" @submit="handleSubmit">
+              <input type="text" ref="inputName" :value="$store.state.user.name" />
+              <button type="submit">Submit</button>
+              <button class="cancel" @click="editmode = false">Cancel</button>
             </form>
           </div>
         </section>
@@ -39,11 +39,19 @@ import SectionHeader from "~/components/SectionHeader.vue";
 export default class extends Vue {
   editmode = false;
 
-  async onChangeName(e) {
+  async handleSubmit(e) {
+    e.preventDefault();
     const token = await getToken();
-    const user = await updateUser(e.target.value, token);
+    const user = await updateUser((this.$refs.inputName as any).value, token);
     this.$store.commit("setUser", user);
     this.editmode = false;
+  }
+
+  handleClickEdit() {
+    this.editmode = true;
+    setTimeout(() => {
+      (this.$refs.inputName as any).focus();
+    });
   }
 }
 </script>

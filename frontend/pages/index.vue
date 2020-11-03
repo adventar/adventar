@@ -87,7 +87,6 @@ export default class extends Vue {
   top: 60px;
   left: 0;
   border: none;
-  outline: none;
   cursor: pointer;
 
   &:hover {
