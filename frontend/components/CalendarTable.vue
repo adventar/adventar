@@ -32,22 +32,21 @@
                   <UserIcon :user="cell.entry.owner" size="24" />
                   <div class="userName">{{ cell.entry.owner.name }}</div>
                 </span>
-                <span
+                <button
                   v-if="isOwnEntry(cell.entry)"
                   class="editBtn"
-                  role="button"
+                  :aria-expanded="displayedDialogEntry ? 'true' : 'false'"
                   @click.stop="handleClickEditEntry(cell.entry)"
                 >
                   <font-awesome-icon icon="edit" />
-                </span>
-                <span
+                </button>
+                <button
                   v-if="forceCancelable(cell.entry)"
                   class="forceCancelBtn"
-                  role="button"
                   @click="handleClickForceCancel(cell.entry)"
                 >
                   <font-awesome-icon icon="times" />
-                </span>
+                </button>
               </div>
               <div v-else class="entryAction">
                 <button @click="handleClickCreateEntry(cell.day)">登録</button>
@@ -59,13 +58,18 @@
     </table>
     <div v-if="displayedDialogEntry" class="dialog" :style="dialogStyle" @click.stop>
       <div class="day">12/{{ displayedDialogEntry.day }}</div>
-      <span role="button" class="closeBtn" @click="hideDialog()">
+      <button class="closeBtn" @click="hideDialog()">
         <font-awesome-icon icon="times" />
-      </span>
+      </button>
       <form @submit.prevent="handleSubmitEntryForm()">
         <div class="formRow">
           <font-awesome-icon icon="comment" />
-          <input v-model="inputComment" type="text" placeholder="記事の内容の予定などを入力してください" />
+          <input
+            ref="inputCommentElement"
+            v-model="inputComment"
+            type="text"
+            placeholder="記事の内容の予定などを入力してください"
+          />
         </div>
         <div class="formRow">
           <font-awesome-icon icon="link" />
@@ -73,9 +77,9 @@
         </div>
         <div class="buttons">
           <button class="submit" type="submit">保存</button>
-          <span role="button" class="cancel" @click="handleClickDeleteEntry()">
+          <button class="cancel" @click="handleClickDeleteEntry()">
             登録をキャンセル
-          </span>
+          </button>
         </div>
       </form>
       <span class="arrow" :style="dialogArrowStyle"></span>
@@ -143,14 +147,22 @@ export default class extends Vue {
 
   mounted() {
     document.addEventListener("click", this.handleClickDocument);
+    document.addEventListener("keyup", this.handleKeyupDocument);
   }
 
   destroyed() {
     document.removeEventListener("click", this.handleClickDocument);
+    document.removeEventListener("keyup", this.handleKeyupDocument);
   }
 
   handleClickDocument() {
     this.hideDialog();
+  }
+
+  handleKeyupDocument(e) {
+    if (e.key === "Escape") {
+      this.hideDialog();
+    }
   }
 
   data() {
@@ -209,6 +221,9 @@ export default class extends Vue {
     this.inputComment = entry.comment;
     this.inputUrl = entry.url;
     this.displayedDialogEntry = entry;
+    setTimeout(() => {
+      (this.$refs.inputCommentElement as any).focus();
+    });
   }
 
   hideDialog(): void {
@@ -387,7 +402,6 @@ export default class extends Vue {
   cursor: pointer;
   text-decoration: none;
   border: none;
-  outline: none;
   font-weight: bold;
   background-color: #e0e0e0;
   background-image: linear-gradient(to bottom, #e0e0e0, #e0e0e0 50%, #d3d3d3 50%, #d3d3d3);

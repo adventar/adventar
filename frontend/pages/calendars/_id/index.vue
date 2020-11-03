@@ -207,7 +207,6 @@ export default class extends Vue {
   cursor: pointer;
   text-decoration: none;
   border: none;
-  outline: none;
   background: rgba(255, 255, 255, 0.85);
   color: #333;
   position: absolute;
