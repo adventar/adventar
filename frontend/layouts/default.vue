@@ -35,4 +35,23 @@ a {
 a:hover {
   color: #ef8171;
 }
+
+button {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: inherit;
+  color: inherit;
+  font: inherit;
+  appearance: none;
+
+  &:focus {
+    outline-width: 0;
+  }
+
+  &:focus-visible {
+    outline-width: initial;
+  }
+}
 </style>
