@@ -21,6 +21,7 @@
     "express-async-handler": "^1.1.4",
     "feed": "^4.0.0",
     "firebase": "^6.2.4",
+    "focus-visible": "^5.2.0",
     "google-protobuf": "^3.10.0",
     "grpc-web": "^1.0.6",
     "ical-generator": "^1.8.1",

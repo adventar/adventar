@@ -112,12 +112,8 @@ export default class extends Vue {
   overflow: hidden;
   cursor: pointer;
 
-  &:focus {
-    outline-width: 0;
-  }
-
-  &:focus-visible {
-    outline-width: initial;
+  &:focus:not(.focus-visible) {
+    outline: none;
   }
 }
 

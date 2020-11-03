@@ -8,6 +8,7 @@
 <script lang="ts">
 import { Component, Vue } from "nuxt-property-decorator";
 import GlobalHeader from "~/components/GlobalHeader.vue";
+import "focus-visible";
 @Component({
   components: { GlobalHeader }
 })
@@ -46,12 +47,8 @@ button {
   font: inherit;
   appearance: none;
 
-  &:focus {
-    outline-width: 0;
-  }
-
-  &:focus-visible {
-    outline-width: initial;
+  &:focus:not(.focus-visible) {
+    outline: none;
   }
 }
 </style>
