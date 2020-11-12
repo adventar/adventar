@@ -13,7 +13,7 @@ func TestSignInIfUserExists(t *testing.T) {
 	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
 	createUser(t, u)
 
-	in := &pb.SignInRequest{Jwt: u.authUID}
+	in := &pb.SignInRequest{Jwt: u.authUID, IconUrl: "http://xxx/icon"}
 	ctx := context.Background()
 	_, err := service.SignIn(ctx, in)
 	if err != nil {
@@ -24,7 +24,7 @@ func TestSignInIfUserExists(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := "http://example.com/icon"
+	expected := "http://xxx/icon"
 	if iconURL != expected {
 		t.Errorf("actual: %s, expected: %s", iconURL, expected)
 	}
@@ -32,9 +32,9 @@ func TestSignInIfUserExists(t *testing.T) {
 
 func TestSignInIfUserDoesNotExist(t *testing.T) {
 	cleanupDatabase()
-	in := &pb.SignInRequest{Jwt: ""}
+	in := &pb.SignInRequest{Jwt: "", IconUrl: "http://xxx/icon"}
 	ctx := context.Background()
-	_, err := service.SignIn(ctx, in)
+	out, err := service.SignIn(ctx, in)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,5 +45,9 @@ func TestSignInIfUserDoesNotExist(t *testing.T) {
 	}
 	if count != 1 {
 		t.Errorf("actual: %d, expected: 1", count)
+	}
+	expected := "http://xxx/icon"
+	if out.IconUrl != expected {
+		t.Errorf("actual: %s, expected: %s", out.IconUrl, expected)
 	}
 }

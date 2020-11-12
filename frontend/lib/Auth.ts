@@ -56,15 +56,6 @@ export function loginWithFirebase(provider: string): void {
 }
 
 export async function logoutWithFirebase() {
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-
-  try {
-    await user.delete();
-  } catch (err) {
-    console.error(err);
-  }
-
   await firebase.auth().signOut();
 }
 
@@ -118,9 +109,11 @@ function handleAuthStateChanged(store): Promise<void> {
         return resolve();
       }
 
+      const iconUrl = (user.providerData[0] && user.providerData[0].photoURL) || "";
+
       user
         .getIdToken()
-        .then(token => signIn(token))
+        .then(token => signIn(token, iconUrl))
         .then(user => {
           store.commit("setUser", user);
           resolve();

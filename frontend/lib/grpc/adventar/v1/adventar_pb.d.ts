@@ -329,6 +329,8 @@ export class SignInRequest {
   constructor ();
   getJwt(): string;
   setJwt(a: string): void;
+  getIconUrl(): string;
+  setIconUrl(a: string): void;
   toObject(): SignInRequest.AsObject;
   serializeBinary(): Uint8Array;
   static deserializeBinary: (bytes: {}) => SignInRequest;
@@ -337,6 +339,7 @@ export class SignInRequest {
 export namespace SignInRequest {
   export type AsObject = {
     Jwt: string;
+    IconUrl: string;
   }
 }
 

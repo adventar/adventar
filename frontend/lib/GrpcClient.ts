@@ -18,9 +18,10 @@ import { User, Calendar, Entry, CalendarStat } from "~/types/adventar";
 
 const client = new AdventarPromiseClient(process.env.API_BASE_URL || "", null, null);
 
-export async function signIn(token: string): Promise<User> {
+export async function signIn(token: string, iconUrl: string): Promise<User> {
   const request = new SignInRequest();
   request.setJwt(token);
+  request.setIconUrl(iconUrl);
 
   const user = await client.signIn(request, {});
 

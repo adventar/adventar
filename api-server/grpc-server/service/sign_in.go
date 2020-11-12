@@ -17,40 +17,50 @@ func (s *Service) SignIn(ctx context.Context, in *pb.SignInRequest) (*pb.User, e
 		return nil, xerrors.Errorf("Failed to verify token: %w", err)
 	}
 
-	user, err := s.findOrCreateUser(authResult)
+	user, err := s.findOrCreateUser(authResult, in.GetIconUrl())
 	if err != nil {
 		return nil, xerrors.Errorf("Failed find or create user: %w", err)
 	}
 
-	return &pb.User{Id: user.ID, Name: authResult.Name, IconUrl: authResult.IconURL}, nil
+	return &pb.User{Id: user.ID, Name: user.Name, IconUrl: user.IconURL}, nil
 }
 
-func (s *Service) findOrCreateUser(authResult *util.AuthResult) (*model.User, error) {
-	var user model.User
-	err := s.db.Get(&user, "select id, name from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID)
+func (s *Service) findOrCreateUser(authResult *util.AuthResult, iconURL string) (*model.User, error) {
+	var userID int64
+	err := s.db.Get(&userID, "select id from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID)
 
 	if err != nil && err != sql.ErrNoRows {
 		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
 	}
 
+	if iconURL == "" {
+		iconURL = authResult.IconURL
+	}
+
 	if err == sql.ErrNoRows {
 		res, err := s.db.Exec(
 			"insert into users (name, auth_uid, auth_provider, icon_url) values (?, ?, ?, ?)",
-			authResult.Name, authResult.AuthUID, authResult.AuthProvider, authResult.IconURL,
+			authResult.Name, authResult.AuthUID, authResult.AuthProvider, iconURL,
 		)
 		if err != nil {
 			return nil, xerrors.Errorf("Failed query to insert into user: %w", err)
 		}
 
-		user.ID, err = res.LastInsertId()
+		userID, err = res.LastInsertId()
 		if err != nil {
 			return nil, xerrors.Errorf("Failed to get last id: %w", err)
 		}
 	} else {
-		_, err := s.db.Exec("update users set icon_url = ? where id = ?", authResult.IconURL, user.ID)
+		_, err := s.db.Exec("update users set icon_url = ? where id = ?", iconURL, userID)
 		if err != nil {
 			return nil, xerrors.Errorf("Failed query to update user: %w", err)
 		}
+	}
+
+	var user model.User
+	err = s.db.Get(&user, "select id, name, icon_url from users where id = ?", userID)
+	if err != nil {
+		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
 	}
 
 	return &user, nil

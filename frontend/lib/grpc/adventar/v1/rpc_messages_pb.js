@@ -2726,7 +2726,8 @@ proto.adventar.v1.SignInRequest.prototype.toObject = function(opt_includeInstanc
  */
 proto.adventar.v1.SignInRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    jwt: jspb.Message.getFieldWithDefault(msg, 1, "")
+    jwt: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    iconUrl: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -2767,6 +2768,10 @@ proto.adventar.v1.SignInRequest.deserializeBinaryFromReader = function(msg, read
       var value = /** @type {string} */ (reader.readString());
       msg.setJwt(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setIconUrl(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2803,6 +2808,13 @@ proto.adventar.v1.SignInRequest.serializeBinaryToWriter = function(message, writ
       f
     );
   }
+  f = message.getIconUrl();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -2821,6 +2833,24 @@ proto.adventar.v1.SignInRequest.prototype.getJwt = function() {
  */
 proto.adventar.v1.SignInRequest.prototype.setJwt = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string icon_url = 2;
+ * @return {string}
+ */
+proto.adventar.v1.SignInRequest.prototype.getIconUrl = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.adventar.v1.SignInRequest} returns this
+ */
+proto.adventar.v1.SignInRequest.prototype.setIconUrl = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
