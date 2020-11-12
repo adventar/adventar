@@ -109,7 +109,7 @@ function handleAuthStateChanged(store): Promise<void> {
         return resolve();
       }
 
-      const iconUrl = (user.providerData[0] && user.providerData[0].photoURL) || "";
+      const iconUrl = (user.providerData && user.providerData[0] && user.providerData[0]!.photoURL) || "";
 
       user
         .getIdToken()
