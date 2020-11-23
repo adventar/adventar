@@ -1,25 +1,27 @@
 <template>
-  <form class="CalendarForm" @submit.prevent="handleSubmit()">
-    <section>
-      <SectionHeader>タイトル</SectionHeader>
-      <div class="title">
-        <input v-model="title" required type="text" class="inputTitle" /> Advent Calendar {{ year }}
-      </div>
-    </section>
+  <div>
+    <form class="CalendarForm" @submit.prevent="handleSubmit()">
+      <section>
+        <SectionHeader>タイトル</SectionHeader>
+        <div class="title">
+          <input v-model="title" required type="text" class="inputTitle" /> Advent Calendar {{ year }}
+        </div>
+      </section>
 
-    <section>
-      <SectionHeader>概要</SectionHeader>
-      <textarea v-model="description" class="inputDescription"></textarea>
-      <p class="note">Markdown記法が使えます。</p>
-    </section>
+      <section>
+        <SectionHeader>概要</SectionHeader>
+        <textarea v-model="description" class="inputDescription"></textarea>
+        <p class="note">Markdown記法が使えます。</p>
+      </section>
 
-    <button type="submit" class="submitBtn">更新</button>
+      <button type="submit" class="submitBtn">更新</button>
+    </form>
 
     <template v-if="calendar">
       <br />
       <button type="button" class="deleteBtn" @click="handleDelete()">削除</button>
     </template>
-  </form>
+  </div>
 </template>
 
 <script lang="ts">
