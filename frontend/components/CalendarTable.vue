@@ -174,15 +174,7 @@ export default class extends Vue {
   }
 
   forceCancelable(entry: Entry): boolean {
-    return (
-      this.calendar !== null &&
-      !this.isOwnEntry(entry) &&
-      this.isOwnCalendar(this.calendar) &&
-      !entry.url &&
-      dayjs(new Date(this.calendar.year, 11, entry.day))
-        .add(1, "day")
-        .endOf("day") < dayjs(getToday())
-    );
+    return this.calendar !== null && !this.isOwnEntry(entry) && this.isOwnCalendar(this.calendar);
   }
 
   isOwnCalendar(calendar: Calendar): boolean {
@@ -272,8 +264,7 @@ export default class extends Vue {
   }
 
   handleClickForceCancel(entry: Entry) {
-    const message =
-      "カレンダーのオーナーに限り、登録日を1日以上過ぎても投稿のないエントリーを強制的にキャンセルできます。キャンセルしますか？";
+    const message = "カレンダーの管理者に限りエントリーを強制的にキャンセルできます。キャンセルしますか？";
     if (window.confirm(message)) {
       this.onDeleteEntry(entry.id);
     }

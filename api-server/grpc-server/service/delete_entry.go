@@ -4,7 +4,6 @@ import (
 	"context"
 
 	pb "github.com/adventar/adventar/api-server/grpc-server/grpc/adventar/v1"
-	"github.com/adventar/adventar/api-server/grpc-server/util"
 	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc/codes"
@@ -37,16 +36,12 @@ func (s *Service) DeleteEntry(ctx context.Context, in *pb.DeleteEntryRequest) (*
 func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {
 	var result struct {
 		EntryOwnerID    int `db:"entry_owner_id"`
-		Day             int `db:"day"`
-		Year            int `db:"year"`
 		CalendarOwnerID int `db:"calendar_owner_id"`
 	}
 
 	sql := `
 		select
 			e.user_id as entry_owner_id,
-			e.day as day,
-			c.year as year,
 			c.user_id as calendar_owner_id
 		from
 			entries as e
@@ -65,12 +60,7 @@ func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {
 		return true, nil
 	}
 
-	now, err := util.CurrentDate()
-	if err != nil {
-		return false, err
-	}
-
-	if userID == result.CalendarOwnerID && (result.Year < now.Year || result.Day+1 < now.Day) {
+	if userID == result.CalendarOwnerID {
 		return true, nil
 	}
 
