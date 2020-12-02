@@ -19,7 +19,7 @@
     "dayjs": "^1.8.16",
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
-    "feed": "^4.0.0",
+    "feed": "https://github.com/hokaccha/feed.git#custom-elements",
     "firebase": "^6.2.4",
     "focus-visible": "^5.2.0",
     "google-protobuf": "^3.10.0",

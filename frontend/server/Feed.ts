@@ -32,7 +32,10 @@ async function generateCalendarFeed(calendarId: number): Promise<string> {
         title: (entry.title || entry.comment || description).trim(),
         description,
         link: entry.url,
-        date: new Date(calendar.year, 11, entry.day)
+        date: new Date(calendar.year, 11, entry.day),
+        extra: {
+          "dc:creator": entry.owner?.name || ""
+        }
       });
     });
   }
