@@ -34,7 +34,7 @@ async function generateCalendarFeed(calendarId: number): Promise<string> {
         link: entry.url,
         date: new Date(calendar.year, 11, entry.day),
         extra: {
-          "dc:creator": entry.owner?.name || ""
+          "dc:creator": entry.owner ? entry.owner.name : ""
         }
       });
     });
