@@ -167,34 +167,31 @@ export default class extends Vue {
 }
 
 .header {
-  height: 38px;
+  width: 100%;
 }
 
-.header h2 {
+.header > .inner {
+  max-width: $content-max-width;
+  margin: 0 auto;
+}
+
+.header .title {
   margin: 0;
 }
 
-.header h2 a {
+.header .title a {
   font-size: 14px;
+  display: block;
+  padding: 0 10px;
+  height: 38px;
+  line-height: 38px;
   white-space: nowrap;
   color: #fff;
   text-decoration: none;
 }
 
-.header h2 svg {
+.header .title svg {
   margin-left: 5px;
-}
-
-.header > .inner {
-  max-width: $content-max-width;
-  padding: 3px 10px 5px 10px;
-  margin: 0 auto;
-  position: relative;
-}
-
-.title {
-  font-size: 20px;
-  font-weight: bold;
 }
 
 .CalendarTable {
@@ -218,6 +215,7 @@ export default class extends Vue {
 
   .inner {
     height: 18px;
+    line-height: 18px;
   }
 }
 
