@@ -17,13 +17,13 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>SUN</th>
-                  <th>MON</th>
-                  <th>TUE</th>
-                  <th>WED</th>
-                  <th>THU</th>
-                  <th>FRI</th>
-                  <th>SAT</th>
+                  <th><div class="inner">SUN</div></th>
+                  <th><div class="inner">MON</div></th>
+                  <th><div class="inner">TUE</div></th>
+                  <th><div class="inner">WED</div></th>
+                  <th><div class="inner">THU</div></th>
+                  <th><div class="inner">FRI</div></th>
+                  <th><div class="inner">SAT</div></th>
                 </tr>
               </thead>
               <tbody>
@@ -81,6 +81,13 @@ export default class extends Vue {
   }
 
   async asyncData({ params, error }) {
+    const meta = document.createElement("meta");
+    meta.setAttribute("name", "viewport");
+    meta.setAttribute(
+      "content",
+      "height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"
+    );
+    document.head.appendChild(meta);
     let calendar: Calendar;
     try {
       calendar = await JsonApiClient.getCalendar(params.id);
@@ -159,6 +166,10 @@ export default class extends Vue {
   padding: 0;
 }
 
+.header {
+  height: 38px;
+}
+
 .header h2 {
   margin: 0;
 }
@@ -204,6 +215,10 @@ export default class extends Vue {
   text-align: center;
   font-size: 12px;
   text-transform: uppercase;
+
+  .inner {
+    height: 18px;
+  }
 }
 
 .table thead th:first-child {
@@ -218,7 +233,11 @@ export default class extends Vue {
   border: 1px solid #e5e5e5;
   background-color: #fff;
   vertical-align: top;
-  position: relative;
+
+  .inner {
+    height: 72px;
+    overflow: hidden;
+  }
 
   &.is-editing {
     background-color: #ffe2e7;
@@ -229,10 +248,6 @@ export default class extends Vue {
     background-repeat: no-repeat;
     background-position: center top;
   }
-}
-
-.table .inner {
-  position: relative;
 }
 
 .table .day {
@@ -316,95 +331,5 @@ export default class extends Vue {
   color: #fff;
   background-color: #ef7266;
   background-image: linear-gradient(to bottom, #ef7266, #ef7266 50%, #e45541 50%, #e45541);
-}
-
-.dialog {
-  width: 310px;
-  border: 1px solid #ccc;
-  padding: 35px 10px 15px 15px;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  color: #666;
-  position: absolute;
-  background-color: #fff;
-  z-index: 1;
-}
-
-.dialog .arrow {
-  display: inline-block;
-  position: absolute;
-  bottom: -15px;
-  width: 0;
-  height: 0;
-  border: 8px solid black;
-  border-color: transparent transparent #fff #fff;
-  transform-origin: 0 0;
-  transform: rotate(-45deg);
-  box-shadow: -2px 2px 2px 0 rgba(0, 0, 0, 0.2);
-}
-
-.dialog .day {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  font-weight: bold;
-  font-size: 12px;
-}
-.dialog .closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.8;
-  }
-}
-
-.dialog .formRow {
-  padding: 5px 0;
-}
-
-.dialog input[type="text"] {
-  width: 270px;
-  padding: 5px;
-  border: 1px solid #e5e5e5;
-  outline: none;
-  font-size: 12px;
-  border-radius: 3px;
-  font-family: inherit;
-  -webkit-appearance: none;
-}
-
-.dialog .buttons {
-  position: relative;
-  margin: 10px 0 0 20px;
-}
-
-.dialog .submit {
-  font-size: 14px;
-  color: #fff;
-  border: 2px solid #28a745;
-  background-color: #28a745;
-  padding: 6px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.8;
-  }
-}
-
-.dialog .cancel {
-  font-size: 12px;
-  color: #dc3545;
-  cursor: pointer;
-  position: absolute;
-  top: 8px;
-  right: 10px;
-
-  &:hover {
-    opacity: 0.8;
-  }
 }
 </style>
