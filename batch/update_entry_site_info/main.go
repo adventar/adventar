@@ -21,6 +21,7 @@ func main() {
 func run() error {
 	var err error
 	source := os.Getenv("DATABASE_SOURCE")
+	source += "?parseTime=true&charset=utf8mb4"
 	db, err := sql.Open("mysql", source)
 	if err != nil {
 		return err

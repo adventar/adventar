@@ -15,10 +15,9 @@ func main() {
 	var err error
 	source := os.Getenv("DATABASE_SOURCE")
 	if source == "" {
-		source = "root@tcp(127.0.0.1:13306)/adventar_dev?parseTime=true"
-	} else {
-		source += "?parseTime=true"
+		source = "root@tcp(127.0.0.1:13306)/adventar_dev"
 	}
+	source += "?parseTime=true&charset=utf8mb4"
 	db, err := sqlx.Open("mysql", source)
 	if err != nil {
 		log.Fatal(err)
