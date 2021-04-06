@@ -35,9 +35,7 @@ func (smf *SiteMetaFetcher) Fetch(url string) (*SiteMeta, error) {
 	}
 
 	meta := &SiteMeta{}
-	doc.Find("title").Each(func(i int, s *goquery.Selection) {
-		meta.Title = s.Text()
-	})
+	meta.Title = doc.Find("head title").First().Text()
 	doc.Find("meta[name='twitter:image'], meta[property='og:image']").Each(func(i int, s *goquery.Selection) {
 		c := s.AttrOr("content", "")
 		if c != "" {
