@@ -9,4 +9,7 @@ $ ecs-cli compose create --cluster-config adventar --create-log-groups
 
 # Run task
 $ ecs-cli compose run --cluster-config adventar app /go/update_entry_site_info
+
+# Run task with entry ids
+$ ecs-cli compose run --cluster-config adventar app "/go/update_entry_site_info 1000 10000
 ```
