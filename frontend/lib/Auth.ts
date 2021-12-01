@@ -1,5 +1,14 @@
-import firebase from "firebase/app";
-import "firebase/auth";
+import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  getRedirectResult,
+  onAuthStateChanged,
+  signInWithRedirect,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  TwitterAuthProvider,
+  FacebookAuthProvider
+} from "firebase/auth";
 import { signIn } from "~/lib/GrpcClient";
 import { User } from "~/types/adventar";
 
@@ -28,7 +37,7 @@ export function saveUser(user: User | null): void {
 }
 
 export function initFirebase(): void {
-  firebase.initializeApp({
+  initializeApp({
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
     projectId: process.env.FIREBASE_PROJECT_ID
@@ -37,18 +46,19 @@ export function initFirebase(): void {
 
 export function loginWithFirebase(provider: string): void {
   sessionStorage.setItem(SIGNIN_STORAGE_KEY, SIGNIN_STORAGE_VALUE);
+  const auth = getAuth();
   switch (provider) {
     case "google":
-      firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+      signInWithRedirect(auth, new GoogleAuthProvider());
       break;
     case "github":
-      firebase.auth().signInWithRedirect(new firebase.auth.GithubAuthProvider());
+      signInWithRedirect(auth, new GithubAuthProvider());
       break;
     case "twitter":
-      firebase.auth().signInWithRedirect(new firebase.auth.TwitterAuthProvider());
+      signInWithRedirect(auth, new TwitterAuthProvider());
       break;
     case "facebook":
-      firebase.auth().signInWithRedirect(new firebase.auth.FacebookAuthProvider());
+      signInWithRedirect(auth, new FacebookAuthProvider());
       break;
     default:
       throw new Error("Invalid provider");
@@ -56,11 +66,11 @@ export function loginWithFirebase(provider: string): void {
 }
 
 export async function logoutWithFirebase() {
-  await firebase.auth().signOut();
+  await getAuth().signOut();
 }
 
 export function getToken(): Promise<string> {
-  const user = firebase.auth().currentUser;
+  const user = getAuth().currentUser;
   if (user) {
     return user.getIdToken();
   } else {
@@ -69,26 +79,23 @@ export function getToken(): Promise<string> {
 }
 
 export function initAuth(store) {
-  return Promise.all([getRedirectResult(), handleAuthStateChanged(store)]);
+  return Promise.all([getAuthRedirectResult(), handleAuthStateChanged(store)]);
 }
 
 function isProcessingSignin() {
   return sessionStorage.getItem(SIGNIN_STORAGE_KEY) === SIGNIN_STORAGE_VALUE;
 }
 
-function getRedirectResult() {
+function getAuthRedirectResult() {
   if (!isProcessingSignin()) return;
 
-  return firebase
-    .auth()
-    .getRedirectResult()
-    .catch(err => {
-      const COOKIE_ERROR_MSG =
-        "third-party cookie の設定が無効になってる可能性があります。ブラウザの設定をご確認ください。";
-      const msg = err.code === "auth/web-storage-unsupported" ? COOKIE_ERROR_MSG : err.message;
-      alert(`ログインに失敗しました。\n${msg}`);
-      console.error(err);
-    });
+  return getRedirectResult(getAuth()).catch(err => {
+    const COOKIE_ERROR_MSG =
+      "third-party cookie の設定が無効になってる可能性があります。ブラウザの設定をご確認ください。";
+    const msg = err.code === "auth/web-storage-unsupported" ? COOKIE_ERROR_MSG : err.message;
+    alert(`ログインに失敗しました。\n${msg}`);
+    console.error(err);
+  });
 }
 
 let listenedAuthStateChanged = false;
@@ -101,7 +108,7 @@ function handleAuthStateChanged(store): Promise<void> {
   }
 
   return new Promise((resolve, reject) => {
-    firebase.auth().onAuthStateChanged(user => {
+    onAuthStateChanged(getAuth(), user => {
       sessionStorage.removeItem(SIGNIN_STORAGE_KEY);
 
       if (!user) {
