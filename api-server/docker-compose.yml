@@ -19,6 +19,7 @@ services:
     command: /usr/local/bin/envoy -c /etc/envoy/envoy-local.yaml
   db:
     image: mysql:8.0
+    platform: linux/x86_64
     restart: always
     environment:
       MYSQL_DATABASE: adventar_dev
