@@ -64,6 +64,11 @@
           <div class="sectionBody"><nuxt-link to="/privacy">プライバシーポリシー</nuxt-link>を参照してください。</div>
         </details>
 
+        <details id="help-supporter" class="section">
+          <summary class="summary">サポーターについて</summary>
+          <div class="sectionBody"><nuxt-link to="/supporter">サポーターページ</nuxt-link>を参照してください。</div>
+        </details>
+
         <details id="help-inquiry" class="section">
           <summary class="summary">その他のお問い合わせ</summary>
           <div class="sectionBody">
