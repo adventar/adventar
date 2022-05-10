@@ -2,16 +2,9 @@ import { Feed } from "feed";
 import { getCalendar } from "~/lib/JsonApiClient";
 import { getToday } from "~/lib/Configuration";
 
-export class ExpiredCalendarError extends Error {
-  public name = "ExpiredCalendarError";
-}
-
-async function generateCalendarFeed(calendarId: number): Promise<string> {
+async function generateCalendarFeed(calendarId: number): Promise<{ feed: string; cacheable: boolean }> {
   const calendar = await getCalendar(calendarId);
   const today = getToday();
-  if (calendar.year < today.getFullYear()) {
-    throw new ExpiredCalendarError();
-  }
   const feed = new Feed({
     id: "Adventar",
     title: `${calendar.title} Advent Calendar ${calendar.year}`,
@@ -40,7 +33,7 @@ async function generateCalendarFeed(calendarId: number): Promise<string> {
     });
   }
 
-  return feed.rss2();
+  return { feed: feed.rss2(), cacheable: calendar.year < today.getFullYear() };
 }
 
 export { generateCalendarFeed };
