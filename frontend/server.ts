@@ -73,7 +73,7 @@ app.get(
 
 app.use((err, req, res, next) => {
   if (err instanceof ExpiredCalendarError) {
-    res.status(400);
+    res.status(404);
     res.header("Cache-Control", "max-age=31536000");
     return next(err);
   }
