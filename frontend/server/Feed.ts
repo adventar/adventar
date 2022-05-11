@@ -2,20 +2,17 @@ import { Feed } from "feed";
 import { getCalendar } from "~/lib/JsonApiClient";
 import { getToday } from "~/lib/Configuration";
 
-export class ExpiredCalendarError extends Error {
-  public name = "ExpiredCalendarError";
-}
-
-async function generateCalendarFeed(calendarId: number): Promise<string> {
+async function generateCalendarFeed(calendarId: number): Promise<{ feed: string; cacheable: boolean }> {
   const calendar = await getCalendar(calendarId);
   const today = getToday();
-  if (calendar.year < today.getFullYear()) {
-    throw new ExpiredCalendarError();
-  }
+  // 前年より前のカレンダーは更新されることがないのでcacheする。slackbot対策。
+  const cacheable = calendar.year < today.getFullYear();
+
   const feed = new Feed({
     id: "Adventar",
     title: `${calendar.title} Advent Calendar ${calendar.year}`,
-    link: `https://adventar.org/calendars/${calendar.id}`,
+    // slackbot が link の URL にアクセスしてそうなので一回消す
+    // link: `https://adventar.org/calendars/${calendar.id}`,
     description: calendar.description,
     generator: "Adventar",
     updated: new Date(calendar.year, 11, calendar.entries && calendar.entries[0] ? calendar.entries[0].day : 1),
@@ -40,7 +37,7 @@ async function generateCalendarFeed(calendarId: number): Promise<string> {
     });
   }
 
-  return feed.rss2();
+  return { feed: feed.rss2(), cacheable };
 }
 
 export { generateCalendarFeed };

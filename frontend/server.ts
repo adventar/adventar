@@ -4,7 +4,7 @@ import express from "express";
 import asyncHandler from "express-async-handler";
 import bugsnag from "@bugsnag/js";
 import config from "~/nuxt.config";
-import { generateCalendarFeed, ExpiredCalendarError } from "~/server/Feed";
+import { generateCalendarFeed } from "~/server/Feed";
 import { generateIcal } from "~/server/Ical";
 import { ApiError } from "~/lib/JsonApiClient";
 import url from "url";
@@ -23,7 +23,10 @@ app.get(
   "/calendars/:id.rss",
   asyncHandler(async (req, res) => {
     const calendarId = Number(req.params.id);
-    const feed = await generateCalendarFeed(calendarId);
+    const { feed, cacheable } = await generateCalendarFeed(calendarId);
+    if (cacheable) {
+      res.header("Cache-Control", "max-age=31536000");
+    }
     res.header("Content-Type", "application/rss+xml; charset=utf-8");
     res.send(feed);
   })
@@ -72,12 +75,6 @@ app.get(
 );
 
 app.use((err, req, res, next) => {
-  if (err instanceof ExpiredCalendarError) {
-    res.status(404);
-    res.header("Cache-Control", "max-age=31536000");
-    return next(err);
-  }
-
   if (err instanceof ApiError && err.response.status === 404) {
     res.status(404);
     return next(err);
