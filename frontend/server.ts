@@ -1,3 +1,4 @@
+import url from "url";
 import { Nuxt } from "nuxt";
 import serverless from "serverless-http";
 import express from "express";
@@ -7,7 +8,6 @@ import config from "~/nuxt.config";
 import { generateCalendarFeed } from "~/server/Feed";
 import { generateIcal } from "~/server/Ical";
 import { ApiError } from "~/lib/JsonApiClient";
-import url from "url";
 
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API_KEY || "");
 
@@ -37,7 +37,7 @@ app.get(
   asyncHandler(async (req, res) => {
     const u = req.query.url;
     if (!u) return res.status(400).send("url is required");
-    const { pathname } = url.parse(u);
+    const { pathname } = url.parse(u as string);
     const calendarId = pathname && Number(pathname.replace(/\/calendars\/(\d+)$/, "$1"));
     // 火曜スタートであればその年は4週目まで、そうでなければ5週目まである
     // const rowCount = new Date(this.calendar.year, 12, 1).getDay() <= 2 ? 4 : 5;
@@ -59,7 +59,7 @@ app.get(
 app.get(
   "/users/:id.ics",
   asyncHandler(async (req, res) => {
-    const userId = req.params.id;
+    const userId = Number(req.params.id);
     const ical = await generateIcal(userId);
     res.header("Content-Type", "text/calendar; charset=utf-8");
     res.send(ical);
