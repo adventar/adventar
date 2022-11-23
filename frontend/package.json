@@ -26,7 +26,7 @@
     "grpc-web": "^1.0.6",
     "ical-generator": "^1.8.1",
     "markdown-it": "^10.0.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "nuxt": "^2.8.1",
     "nuxt-fontawesome": "^0.4.0",
     "nuxt-property-decorator": "^2.4.0",
