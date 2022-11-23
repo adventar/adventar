@@ -20,7 +20,7 @@
     "express": "^4.17.1",
     "express-async-handler": "^1.1.4",
     "feed": "https://github.com/hokaccha/feed.git#custom-elements",
-    "firebase": "^9.5.0",
+    "firebase": "^9.14.0",
     "focus-visible": "^5.2.0",
     "google-protobuf": "^3.10.0",
     "grpc-web": "^1.0.6",
