@@ -1,9 +1,11 @@
 import { initializeApp } from "firebase/app";
+import { detect } from "detect-browser";
 import {
   getAuth,
   getRedirectResult,
   onAuthStateChanged,
   signInWithRedirect,
+  signInWithPopup,
   GoogleAuthProvider,
   GithubAuthProvider,
   TwitterAuthProvider,
@@ -47,18 +49,21 @@ export function initFirebase(): void {
 export function loginWithFirebase(provider: string): void {
   sessionStorage.setItem(SIGNIN_STORAGE_KEY, SIGNIN_STORAGE_VALUE);
   const auth = getAuth();
+  const browser = detect();
+  const usePopup = browser?.os === "iOS" || browser?.name === "safari";
+  const signIn = usePopup ? signInWithPopup : signInWithRedirect;
   switch (provider) {
     case "google":
-      signInWithRedirect(auth, new GoogleAuthProvider());
+      signIn(auth, new GoogleAuthProvider());
       break;
     case "github":
-      signInWithRedirect(auth, new GithubAuthProvider());
+      signIn(auth, new GithubAuthProvider());
       break;
     case "twitter":
-      signInWithRedirect(auth, new TwitterAuthProvider());
+      signIn(auth, new TwitterAuthProvider());
       break;
     case "facebook":
-      signInWithRedirect(auth, new FacebookAuthProvider());
+      signIn(auth, new FacebookAuthProvider());
       break;
     default:
       throw new Error("Invalid provider");
