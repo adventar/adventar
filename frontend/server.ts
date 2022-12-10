@@ -38,16 +38,20 @@ app.get(
     const u = req.query.url;
     if (!u) return res.status(400).send("url is required");
     const { pathname } = url.parse(u as string);
-    const calendarId = pathname && Number(pathname.replace(/\/calendars\/(\d+)$/, "$1"));
-    // 火曜スタートであればその年は4週目まで、そうでなければ5週目まである
-    // const rowCount = new Date(this.calendar.year, 12, 1).getDay() <= 2 ? 4 : 5;
-    // const cellHeight = 63;
-    // const headerHeight = 92;
-    // const height = headerHeight + cellHeight * rowCount;
+    const calendarId = (pathname && Number(pathname.replace(/\/calendars\/(\d+)$/, "$1"))) || null;
+    if (calendarId === null) {
+      res.status(400).send("calendar id is invalid");
+      return;
+    }
+    // カレンダーの行が5週になる場合
+    const isFiveWeeks = calendarId >= 7345 && calendarId <= 1000000; // FIXME: 1000000 は 2022 が終わったら変更
+    const rowHeight = 75;
+    const baseHeight = 362;
+    const height = isFiveWeeks ? baseHeight + rowHeight : baseHeight;
     res.json({
       version: "1.0",
       width: "100%",
-      height: 362,
+      height,
       type: "rich",
       provider_name: "Adventar",
       provider_url: "https://adventar.org",
