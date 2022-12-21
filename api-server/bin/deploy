@@ -8,11 +8,11 @@ TAG=$(git rev-parse HEAD)
 export TAG
 
 cd $ROOT_DIR/grpc-server
-docker build -t hokaccha/adventar-grpc-server:${TAG} .
+docker build --platform linux/amd64 -t hokaccha/adventar-grpc-server:${TAG} .
 docker push hokaccha/adventar-grpc-server:${TAG}
 
 cd $ROOT_DIR/envoy
-docker build -t hokaccha/adventar-envoy:${TAG} .
+docker build --platform linux/amd64 -t hokaccha/adventar-envoy:${TAG} .
 docker push hokaccha/adventar-envoy:${TAG}
 
 cd $ROOT_DIR/ecs
