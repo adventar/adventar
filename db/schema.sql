@@ -16,6 +16,7 @@ CREATE TABLE `calendars` (
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `year` smallint unsigned NOT NULL,
+  `listable` boolean NOT NULL DEFAULT true,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
