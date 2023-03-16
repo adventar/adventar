@@ -44,7 +44,7 @@ app.get(
       return;
     }
     // カレンダーの行が5週になる場合
-    const isFiveWeeks = calendarId >= 7345 && calendarId <= 1000000; // FIXME: 1000000 は 2022 が終わったら変更
+    const isFiveWeeks = calendarId >= 7345 && calendarId <= 8527;
     const rowHeight = 75;
     const baseHeight = 362;
     const height = isFiveWeeks ? baseHeight + rowHeight : baseHeight;
