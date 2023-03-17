@@ -9,8 +9,8 @@ import (
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/gen/adventar/v1/adventarv1connect"
-	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -27,6 +27,7 @@ func (s *AdventarServer) GetCalendar(
 	req *connect.Request[adventarv1.GetCalendarRequest],
 ) (*connect.Response[adventarv1.GetCalendarResponse], error) {
 	id := req.Msg.CalendarId
+	log.Printf("req.Msg.CalendarId: %v", id)
 	calendar, err := getCalendar(s.db, id)
 	if err != nil {
 		log.Printf("Error: %v", err)
@@ -45,7 +46,9 @@ func main() {
 	db := setupDatabase()
 	defer db.Close()
 	mux := http.NewServeMux()
-	mux.Handle(adventarv1connect.NewAdventarHandler(&AdventarServer{}))
+	mux.Handle(adventarv1connect.NewAdventarHandler(&AdventarServer{
+		db: db,
+	}))
 	err := http.ListenAndServe(
 		"localhost:8080",
 		h2c.NewHandler(mux, &http2.Server{}),
@@ -67,9 +70,15 @@ func setupDatabase() *sqlx.DB {
 	return db
 }
 
-func getCalendar(db *sqlx.DB, id int64) (*model.Calendar, error) {
+type Calendar struct {
+	ID    int64  `db:"id"`
+	Title string `db:"title"`
+	Year  int32  `db:"year"`
+}
+
+func getCalendar(db *sqlx.DB, id int64) (*Calendar, error) {
 	query := "select id, title, year from calendars where id = ?"
-	var calendar model.Calendar
+	var calendar Calendar
 	err := db.Get(&calendar, query, id)
 
 	if err != nil {
