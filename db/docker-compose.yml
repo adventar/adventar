@@ -1,0 +1,16 @@
+version: "3.3"
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: adventar_dev
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - 13306:3306
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
