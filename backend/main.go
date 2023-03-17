@@ -49,6 +49,7 @@ func main() {
 	mux.Handle(adventarv1connect.NewAdventarHandler(&AdventarServer{
 		db: db,
 	}))
+	log.Println("listen: localhost:8080")
 	err := http.ListenAndServe(
 		"localhost:8080",
 		h2c.NewHandler(mux, &http2.Server{}),
