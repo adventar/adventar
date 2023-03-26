@@ -41,7 +41,6 @@ type AdventarClient interface {
 	SignIn(context.Context, *connect_go.Request[v1.SignInRequest]) (*connect_go.Response[v1.User], error)
 	GetUser(context.Context, *connect_go.Request[v1.GetUserRequest]) (*connect_go.Response[v1.User], error)
 	UpdateUser(context.Context, *connect_go.Request[v1.UpdateUserRequest]) (*connect_go.Response[v1.User], error)
-	HealthCheck(context.Context, *connect_go.Request[v1.HealthCheckRequest]) (*connect_go.Response[v1.HealthCheckResponse], error)
 }
 
 // NewAdventarClient constructs a client for the adventar.v1.Adventar service. By default, it uses
@@ -119,11 +118,6 @@ func NewAdventarClient(httpClient connect_go.HTTPClient, baseURL string, opts ..
 			baseURL+"/adventar.v1.Adventar/UpdateUser",
 			opts...,
 		),
-		healthCheck: connect_go.NewClient[v1.HealthCheckRequest, v1.HealthCheckResponse](
-			httpClient,
-			baseURL+"/adventar.v1.Adventar/HealthCheck",
-			opts...,
-		),
 	}
 }
 
@@ -142,7 +136,6 @@ type adventarClient struct {
 	signIn            *connect_go.Client[v1.SignInRequest, v1.User]
 	getUser           *connect_go.Client[v1.GetUserRequest, v1.User]
 	updateUser        *connect_go.Client[v1.UpdateUserRequest, v1.User]
-	healthCheck       *connect_go.Client[v1.HealthCheckRequest, v1.HealthCheckResponse]
 }
 
 // ListCalendars calls adventar.v1.Adventar.ListCalendars.
@@ -210,11 +203,6 @@ func (c *adventarClient) UpdateUser(ctx context.Context, req *connect_go.Request
 	return c.updateUser.CallUnary(ctx, req)
 }
 
-// HealthCheck calls adventar.v1.Adventar.HealthCheck.
-func (c *adventarClient) HealthCheck(ctx context.Context, req *connect_go.Request[v1.HealthCheckRequest]) (*connect_go.Response[v1.HealthCheckResponse], error) {
-	return c.healthCheck.CallUnary(ctx, req)
-}
-
 // AdventarHandler is an implementation of the adventar.v1.Adventar service.
 type AdventarHandler interface {
 	ListCalendars(context.Context, *connect_go.Request[v1.ListCalendarsRequest]) (*connect_go.Response[v1.ListCalendarsResponse], error)
@@ -230,7 +218,6 @@ type AdventarHandler interface {
 	SignIn(context.Context, *connect_go.Request[v1.SignInRequest]) (*connect_go.Response[v1.User], error)
 	GetUser(context.Context, *connect_go.Request[v1.GetUserRequest]) (*connect_go.Response[v1.User], error)
 	UpdateUser(context.Context, *connect_go.Request[v1.UpdateUserRequest]) (*connect_go.Response[v1.User], error)
-	HealthCheck(context.Context, *connect_go.Request[v1.HealthCheckRequest]) (*connect_go.Response[v1.HealthCheckResponse], error)
 }
 
 // NewAdventarHandler builds an HTTP handler from the service implementation. It returns the path on
@@ -305,11 +292,6 @@ func NewAdventarHandler(svc AdventarHandler, opts ...connect_go.HandlerOption) (
 		svc.UpdateUser,
 		opts...,
 	))
-	mux.Handle("/adventar.v1.Adventar/HealthCheck", connect_go.NewUnaryHandler(
-		"/adventar.v1.Adventar/HealthCheck",
-		svc.HealthCheck,
-		opts...,
-	))
 	return "/adventar.v1.Adventar/", mux
 }
 
@@ -366,8 +348,4 @@ func (UnimplementedAdventarHandler) GetUser(context.Context, *connect_go.Request
 
 func (UnimplementedAdventarHandler) UpdateUser(context.Context, *connect_go.Request[v1.UpdateUserRequest]) (*connect_go.Response[v1.User], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("adventar.v1.Adventar.UpdateUser is not implemented"))
-}
-
-func (UnimplementedAdventarHandler) HealthCheck(context.Context, *connect_go.Request[v1.HealthCheckRequest]) (*connect_go.Response[v1.HealthCheckResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("adventar.v1.Adventar.HealthCheck is not implemented"))
 }

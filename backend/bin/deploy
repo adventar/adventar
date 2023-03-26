@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -ex
+
+ROOT_DIR=$(cd "$(dirname "$0")/.."; pwd)
+REPOSITORY="287379415997.dkr.ecr.ap-northeast-1.amazonaws.com/adventar-backend"
+TAG=$(git rev-parse HEAD)
+
+docker build --platform linux/amd64 -t ${REPOSITORY}:latest .
+docker push ${REPOSITORY}:latest

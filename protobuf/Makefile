@@ -1,0 +1,2 @@
+build:
+	buf generate

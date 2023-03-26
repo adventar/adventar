@@ -3,7 +3,6 @@ syntax = "proto3";
 package adventar.v1;
 
 import "google/protobuf/empty.proto";
-import "google/api/annotations.proto";
 import "adventar/v1/resources.proto";
 import "adventar/v1/rpc_messages.proto";
 
@@ -24,10 +23,4 @@ service Adventar {
   rpc SignIn(SignInRequest) returns (User) {}
   rpc GetUser(GetUserRequest) returns (User) {}
   rpc UpdateUser(UpdateUserRequest) returns (User) {}
-
-  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {
-    option (google.api.http) = {
-      get : "/health_check"
-    };
-  }
 }
