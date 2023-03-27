@@ -3,7 +3,6 @@ package util
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 
 	firebase "firebase.google.com/go"
@@ -71,8 +70,15 @@ func (v *FirebaseVerifier) VerifyIDToken(idToken string) (*AuthResult, error) {
 		return nil, xerrors.Errorf("Failed to assert type: %v", firebaseField["identities"])
 	}
 
-	authProvider := extractAuthProvider(provider)
-	authUID := extractAuthUID(identities, provider)
+	authProvider, err := extractAuthProvider(provider)
+	if err != nil {
+		return nil, err
+	}
+
+	authUID, err := extractAuthUID(identities, provider)
+	if err != nil {
+		return nil, err
+	}
 
 	return &AuthResult{
 		Name:         name,
@@ -82,32 +88,31 @@ func (v *FirebaseVerifier) VerifyIDToken(idToken string) (*AuthResult, error) {
 	}, nil
 }
 
-func extractAuthUID(identities map[string]interface{}, provider string) string {
+func extractAuthUID(identities map[string]interface{}, provider string) (string, error) {
 	arr, ok := identities[provider].([]interface{})
 	if !ok {
-		log.Fatalf("Type assertion error: %v", identities[provider])
+		return "", xerrors.Errorf("Type assertion error: %v", identities[provider])
 	}
 
 	uid, ok := arr[0].(string)
 	if !ok {
-		log.Fatalf("Type assertion error: %v", arr[0])
+		return "", xerrors.Errorf("Type assertion error: %v", arr[0])
 	}
 
-	return uid
+	return uid, nil
 }
 
-func extractAuthProvider(provider string) string {
+func extractAuthProvider(provider string) (string, error) {
 	switch provider {
 	case "google.com":
-		return "google"
+		return "google", nil
 	case "facebook.com":
-		return "facebook"
+		return "facebook", nil
 	case "github.com":
-		return "github"
+		return "github", nil
 	case "twitter.com":
-		return "twitter"
+		return "twitter", nil
 	default:
-		log.Fatalf("Unknown provider: %s", provider)
+		return "", xerrors.Errorf("Unknown provider: %s", provider)
 	}
-	return "" // XXX
 }

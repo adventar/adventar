@@ -4,9 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/adventar/adventar/backend/pkg/gen/adventar/v1/adventarv1connect"
@@ -14,7 +12,6 @@ import (
 	"github.com/bufbuild/connect-go"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/sirupsen/logrus"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -47,34 +44,38 @@ func (s *Service) Serve(addr string) {
 	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
 		io.WriteString(w, "ok\n")
 	})
-	log.Println("Listen: 8080")
+	util.Logger.Info().Msg("Server started on port 8080")
 	err := http.ListenAndServe(
 		":8080",
 		h2c.NewHandler(mux, &http2.Server{}),
 	)
-	log.Fatalf("listen failed: %v", err)
+	util.Logger.Fatal().Err(err).Msg("listen failed")
 }
 
 func createInterceptors() connect.HandlerOption {
-	// logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetOutput(os.Stdout)
-	logrus.SetLevel(logrus.DebugLevel)
 	loggingInterceptor := connect.UnaryInterceptorFunc(
 		func(next connect.UnaryFunc) connect.UnaryFunc {
 			return connect.UnaryFunc(func(ctx context.Context, request connect.AnyRequest) (connect.AnyResponse, error) {
-				logger := logrus.WithField("request", request.Spec().Procedure)
-				logger.Info("started unary call")
+				procedure := request.Spec().Procedure
+				util.Logger.Info().Str("request", procedure).Msg("started unary call")
 				start := time.Now()
 				response, err := next(ctx, request)
-				logger = logger.WithField("time", fmt.Sprintf("%dms", time.Since(start).Milliseconds()))
+				duration := fmt.Sprintf("%dms", time.Since(start).Milliseconds())
+
 				if err != nil {
-					logger.WithFields(logrus.Fields{
-						"code":  connect.CodeOf(err),
-						"error": err,
-					}).Error("finished unary call")
+					util.Logger.Error().
+						Str("request", procedure).
+						Str("duration", duration).
+						Str("code", connect.CodeOf(err).String()).
+						Err(err).
+						Msg("finished unary call")
 				} else {
-					logger.Info("finished unary call")
+					util.Logger.Info().
+						Str("request", procedure).
+						Str("duration", duration).
+						Msg("finished unary call")
 				}
+
 				return response, err
 			})
 		},

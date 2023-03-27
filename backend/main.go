@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/adventar/adventar/backend/pkg/service"
@@ -19,7 +18,7 @@ func main() {
 	source += "?parseTime=true&charset=utf8mb4"
 	db, err := sqlx.Open("mysql", source)
 	if err != nil {
-		log.Fatal(err)
+		util.Logger.Fatal().Err(err).Msg("")
 	}
 	defer db.Close()
 
