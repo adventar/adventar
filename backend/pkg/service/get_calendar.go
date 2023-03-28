@@ -9,6 +9,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
+	"github.com/m-mizutani/goerr"
 	"golang.org/x/xerrors"
 )
 
@@ -17,6 +18,7 @@ func (s *Service) GetCalendar(
 	ctx context.Context,
 	req *connect.Request[adventarv1.GetCalendarRequest],
 ) (*connect.Response[adventarv1.GetCalendarResponse], error) {
+	calendarId := req.Msg.GetCalendarId()
 	query, args, err := sq.
 		Select(makeSelectValue(map[string][]string{
 			"calendars": {"id", "title", "description", "year"},
@@ -24,7 +26,7 @@ func (s *Service) GetCalendar(
 		})...).
 		From("calendars").
 		Join("users on users.id = calendars.user_id").
-		Where(sq.Eq{"calendars.id": req.Msg.GetCalendarId()}).
+		Where(sq.Eq{"calendars.id": calendarId}).
 		ToSql()
 
 	if err != nil {
@@ -43,7 +45,8 @@ func (s *Service) GetCalendar(
 	}
 
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch calendar: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch calendar").With("calendar_id", calendarId)
+		// return nil, xerrors.Errorf("Failed query to fetch calendar: %w", err)
 	}
 
 	calendar := result.Calendar
