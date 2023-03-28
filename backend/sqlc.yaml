@@ -1,0 +1,9 @@
+version: "2"
+sql:
+- schema: "../db/schema.sql"
+  queries: "sqlc"
+  engine: "mysql"
+  gen:
+    go:
+      package: "adventar_db"
+      out: "pkg/gen/sqlc"

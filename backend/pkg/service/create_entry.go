@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
+	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/bufbuild/connect-go"
 	"github.com/m-mizutani/goerr"
 )

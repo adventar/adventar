@@ -5,8 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
-	"github.com/adventar/adventar/backend/pkg/model"
+	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/bufbuild/connect-go"
 	"github.com/m-mizutani/goerr"
 )
@@ -16,8 +15,8 @@ func (s *Service) GetUser(
 	ctx context.Context,
 	req *connect.Request[adventarv1.GetUserRequest],
 ) (*connect.Response[adventarv1.User], error) {
-	var user model.User
-	err := s.db.Get(&user, "select id, name, icon_url from users where id = ?", req.Msg.GetUserId())
+	userId := req.Msg.GetUserId()
+	user, err := s.clients.DB().Queries().GetUserById(context.Background(), userId)
 
 	if err == sql.ErrNoRows {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("User not found"))
@@ -30,6 +29,6 @@ func (s *Service) GetUser(
 	return connect.NewResponse(&adventarv1.User{
 		Id:      user.ID,
 		Name:    user.Name,
-		IconUrl: user.IconURL,
+		IconUrl: user.IconUrl,
 	}), nil
 }

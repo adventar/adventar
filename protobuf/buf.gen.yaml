@@ -2,11 +2,11 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: github.com/adventar/adventar/backend/pkg/gen
+    default: github.com/adventar/adventar/backend/pkg/gen/proto
 plugins:
   - name: go
-    out: ../backend/pkg/gen
+    out: ../backend/pkg/gen/proto
     opt: paths=source_relative
   - name: connect-go
-    out: ../backend/pkg/gen
+    out: ../backend/pkg/gen/proto
     opt: paths=source_relative

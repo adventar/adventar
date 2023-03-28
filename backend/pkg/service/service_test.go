@@ -5,6 +5,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/adventar/adventar/backend/pkg/infra"
+	db_client "github.com/adventar/adventar/backend/pkg/infra/db"
 	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/jmoiron/sqlx"
@@ -36,15 +38,23 @@ var (
 
 func TestMain(m *testing.M) {
 	var err error
-	db, err = sqlx.Open("mysql", "root@tcp(127.0.0.1:13306)/adventar_test?parseTime=true")
+	dsn := "root@tcp(127.0.0.1:13306)/adventar_test?parseTime=true"
+	db, err = sqlx.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
+	dbClient, err := db_client.New(dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer dbClient.Close()
+	clients := infra.New(infra.WithDB(dbClient))
+
 	v := &testVerifier{}
 	f := &testMetaFetcher{}
-	service = s.NewService(db, v, f)
+	service = s.NewService(db, v, f, clients)
 	code := m.Run()
 	os.Exit(code)
 }

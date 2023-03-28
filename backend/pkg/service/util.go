@@ -8,7 +8,7 @@ import (
 	"os"
 
 	sq "github.com/Masterminds/squirrel"
-	pb "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
+	pb "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/m-mizutani/goerr"
 )

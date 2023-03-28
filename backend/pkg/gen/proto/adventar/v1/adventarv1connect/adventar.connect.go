@@ -7,7 +7,7 @@ package adventarv1connect
 import (
 	context "context"
 	errors "errors"
-	v1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
+	v1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	connect_go "github.com/bufbuild/connect-go"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
