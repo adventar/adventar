@@ -6,7 +6,7 @@ import (
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // UpdateUser updates user info.
@@ -26,7 +26,7 @@ func (s *Service) UpdateUser(
 
 	_, err = s.db.Exec("update users set name = ? where id = ?", name, currentUser.ID)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to update user: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to update user")
 	}
 
 	return connect.NewResponse(&adventarv1.User{

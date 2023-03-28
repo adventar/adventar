@@ -11,15 +11,8 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/jmoiron/sqlx v1.3.5
 	golang.org/x/net v0.8.0
-	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2
 	google.golang.org/api v0.114.0
 	google.golang.org/protobuf v1.30.0
-)
-
-require (
-	github.com/bugsnag/panicwrap v1.3.4 // indirect
-	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 )
 
 require (
@@ -31,8 +24,6 @@ require (
 	cloud.google.com/go/longrunning v0.4.1 // indirect
 	cloud.google.com/go/storage v1.30.1 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
-	github.com/bugsnag/bugsnag-go v2.2.0+incompatible
-	github.com/bugsnag/bugsnag-go/v2 v2.2.0
 	github.com/getsentry/sentry-go v0.19.0
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
@@ -51,6 +42,7 @@ require (
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
+	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230327215041-6ac7f18bb9d5 // indirect
 	google.golang.org/grpc v1.54.0 // indirect

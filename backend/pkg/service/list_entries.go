@@ -7,7 +7,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // ListEntries lists entries.
@@ -33,7 +33,7 @@ func (s *Service) ListEntries(
 
 	query, args, err := relation.ToSql()
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to create sql: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to create sql")
 	}
 
 	rows := []struct {
@@ -44,7 +44,7 @@ func (s *Service) ListEntries(
 
 	err = s.db.Select(&rows, query, args...)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch entries: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch entries")
 	}
 
 	entries := []*adventarv1.Entry{}

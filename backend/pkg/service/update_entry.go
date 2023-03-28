@@ -10,7 +10,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // UpdateEntry updates the entry.
@@ -33,7 +33,7 @@ func (s *Service) UpdateEntry(
 		req.Msg.GetComment(), inURL, req.Msg.GetEntryId(), currentUser.ID,
 	)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to update entry: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to update entry")
 	}
 
 	if inURL != "" {
@@ -53,7 +53,7 @@ func (s *Service) UpdateEntry(
 			title, imageURL, req.Msg.GetEntryId(), currentUser.ID,
 		)
 		if err != nil {
-			return nil, xerrors.Errorf("Failed query to update entry: %w", err)
+			return nil, goerr.Wrap(err, "Failed query to update entry")
 		}
 	}
 
@@ -63,7 +63,7 @@ func (s *Service) UpdateEntry(
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("Entry not found"))
 	}
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch entry: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch entry")
 	}
 
 	return connect.NewResponse(&adventarv1.Entry{

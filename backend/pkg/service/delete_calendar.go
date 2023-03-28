@@ -7,7 +7,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/bufbuild/connect-go"
 	"github.com/golang/protobuf/ptypes/empty"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // DeleteCalendar deletes the calendar.
@@ -22,7 +22,7 @@ func (s *Service) DeleteCalendar(
 
 	_, err = s.db.Exec("delete from calendars where id = ? and user_id = ?", req.Msg.GetCalendarId(), currentUser.ID)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to delete calendar: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to delete calendar")
 	}
 
 	return connect.NewResponse(&empty.Empty{}), nil

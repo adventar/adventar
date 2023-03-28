@@ -7,7 +7,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/bufbuild/connect-go"
 	"github.com/golang/protobuf/ptypes/empty"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // DeleteEntry deletes the entry.
@@ -30,7 +30,7 @@ func (s *Service) DeleteEntry(
 
 	_, err = s.db.Exec("delete from entries where id = ?", req.Msg.GetEntryId())
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to delete entry: %w", err)
+		return nil, goerr.Wrap(err, "Failed to delete entry")
 	}
 
 	return connect.NewResponse(&empty.Empty{}), nil
@@ -56,7 +56,7 @@ func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {
 	err := s.db.Get(&result, sql, entryID)
 
 	if err != nil {
-		return false, xerrors.Errorf("Failed query to fetch user: %w", err)
+		return false, goerr.Wrap(err, "Failed query to fetch user")
 	}
 
 	if userID == result.EntryOwnerID {

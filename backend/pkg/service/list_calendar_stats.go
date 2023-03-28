@@ -5,7 +5,7 @@ import (
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // ListCalendarStats lists calendar stats
@@ -36,7 +36,7 @@ func (s *Service) ListCalendarStats(
 	rows := []result{}
 	err := s.db.Select(&rows, sql)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch calendar stats: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch calendar stats")
 	}
 	var stats []*adventarv1.CalendarStat
 	for _, row := range rows {

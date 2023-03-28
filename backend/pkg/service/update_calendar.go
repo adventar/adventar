@@ -8,7 +8,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // UpdateCalendar updates the calendar.
@@ -29,7 +29,7 @@ func (s *Service) UpdateCalendar(
 		req.Msg.GetTitle(), req.Msg.GetDescription(), req.Msg.GetCalendarId(), currentUser.ID,
 	)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to update calendar: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to update calendar")
 	}
 
 	var calendar model.Calendar
@@ -38,7 +38,7 @@ func (s *Service) UpdateCalendar(
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("Calendar not found"))
 	}
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch calendar: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch calendar")
 	}
 
 	return connect.NewResponse(&adventarv1.Calendar{

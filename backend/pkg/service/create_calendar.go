@@ -9,7 +9,7 @@ import (
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // CreateCalendar creates a calendar.
@@ -37,7 +37,7 @@ func (s *Service) CreateCalendar(
 
 	lastID, err := s.insertCalendar(currentUser.ID, req.Msg.GetTitle(), req.Msg.GetDescription(), now.Year)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to insert calendar: %w", err)
+		return nil, goerr.Wrap(err, "Failed to insert calendar")
 	}
 
 	var calendar model.Calendar
@@ -46,7 +46,7 @@ func (s *Service) CreateCalendar(
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("Calendar not found"))
 	}
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch calendar: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch calendar")
 	}
 
 	return connect.NewResponse(&adventarv1.Calendar{
@@ -63,12 +63,12 @@ func (s *Service) insertCalendar(userID int64, title string, description string,
 		userID, title, description, year,
 	)
 	if err != nil {
-		return 0, xerrors.Errorf("Failed query to insert into calendar: %w", err)
+		return 0, goerr.Wrap(err, "Failed query to insert into calendar")
 	}
 
 	lastID, err := res.LastInsertId()
 	if err != nil {
-		return 0, xerrors.Errorf("Failed to get last id: %w", err)
+		return 0, goerr.Wrap(err, "Failed to get last id")
 	}
 
 	return lastID, err

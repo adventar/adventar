@@ -8,7 +8,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // ListCalendars lists calendars.
@@ -40,7 +40,7 @@ func (s *Service) ListCalendars(
 
 	query, args, err := relation.ToSql()
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to create sql: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to create sql")
 	}
 
 	rows := []struct {
@@ -50,7 +50,7 @@ func (s *Service) ListCalendars(
 
 	err = s.db.Select(&rows, query, args...)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch entries: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch entries")
 	}
 
 	var calendars []*adventarv1.Calendar
@@ -71,7 +71,7 @@ func (s *Service) ListCalendars(
 	if len(calendars) != 0 {
 		err := s.bindEntryCount(calendars)
 		if err != nil {
-			return nil, xerrors.Errorf("Failed to bind entry count: %w", err)
+			return nil, goerr.Wrap(err, "Failed to bind entry count")
 		}
 	}
 
@@ -91,7 +91,7 @@ func (s *Service) bindEntryCount(calendars []*adventarv1.Calendar) error {
 		GroupBy("cid").
 		ToSql()
 	if err != nil {
-		return xerrors.Errorf("Failed query to create sql: %w", err)
+		return goerr.Wrap(err, "Failed query to create sql")
 	}
 
 	rows := []struct {
@@ -101,7 +101,7 @@ func (s *Service) bindEntryCount(calendars []*adventarv1.Calendar) error {
 
 	err = s.db.Select(&rows, query, args...)
 	if err != nil {
-		return xerrors.Errorf("Failed query to fetch entry counts: %w", err)
+		return goerr.Wrap(err, "Failed query to fetch entry counts")
 	}
 
 	entryCounts := map[int64]int32{}

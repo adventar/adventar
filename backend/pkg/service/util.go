@@ -10,7 +10,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	pb "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/model"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 func (s *Service) getCurrentUser(header http.Header) (*model.User, error) {
@@ -18,13 +18,13 @@ func (s *Service) getCurrentUser(header http.Header) (*model.User, error) {
 
 	authResult, err := s.verifier.VerifyIDToken(token)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to verify token: %w", err)
+		return nil, goerr.Wrap(err, "Failed to verify token")
 	}
 
 	var user model.User
 	err = s.db.Get(&user, "select id, name, icon_url from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch user")
 	}
 
 	return &user, nil
@@ -55,7 +55,7 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 		ToSql()
 
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to create sql: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to create sql")
 	}
 
 	rows := []struct {
@@ -65,7 +65,7 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 
 	err = s.db.Select(&rows, query, args...)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch entries: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch entries")
 	}
 
 	entries := []*pb.Entry{}

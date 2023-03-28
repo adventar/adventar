@@ -8,7 +8,7 @@ import (
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // CreateEntry creates a entry.
@@ -27,7 +27,7 @@ func (s *Service) CreateEntry(
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("Calendar not found"))
 	}
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch calendar: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch calendar")
 	}
 
 	day := req.Msg.GetDay()
@@ -37,13 +37,13 @@ func (s *Service) CreateEntry(
 
 	lastID, err := s.insertEntry(currentUser.ID, req.Msg.GetCalendarId(), day)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to insert entry: %w", err)
+		return nil, goerr.Wrap(err, "Failed to insert entry")
 	}
 
 	var entryID int64
 	err = s.db.Get(&entryID, "select id from entries where id = ?", lastID)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch entry: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch entry")
 	}
 
 	return connect.NewResponse(&adventarv1.Entry{Id: entryID}), nil
@@ -55,12 +55,12 @@ func (s *Service) insertEntry(userID int64, calendarID int64, day int32) (int64,
 		userID, calendarID, day,
 	)
 	if err != nil {
-		return 0, xerrors.Errorf("Failed query to insert into entry: %w", err)
+		return 0, goerr.Wrap(err, "Failed query to insert into entry")
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		return 0, xerrors.Errorf("Failed to get last id: %w", err)
+		return 0, goerr.Wrap(err, "Failed to get last id")
 	}
 
 	return id, nil

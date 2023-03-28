@@ -10,7 +10,6 @@ import (
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
 	"github.com/m-mizutani/goerr"
-	"golang.org/x/xerrors"
 )
 
 // GetCalendar returns a calendar.
@@ -30,7 +29,7 @@ func (s *Service) GetCalendar(
 		ToSql()
 
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to create sql: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to create sql")
 	}
 
 	result := struct {
@@ -52,7 +51,7 @@ func (s *Service) GetCalendar(
 	user := result.User
 	entries, err := s.findEntries(calendar.ID)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to find entries: %w", err)
+		return nil, goerr.Wrap(err, "Failed to find entries")
 	}
 
 	pbUser := &adventarv1.User{Id: user.ID, Name: user.Name, IconUrl: user.IconURL}

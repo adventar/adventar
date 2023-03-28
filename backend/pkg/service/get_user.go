@@ -5,11 +5,10 @@ import (
 	"database/sql"
 	"errors"
 
-	"golang.org/x/xerrors"
-
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
+	"github.com/m-mizutani/goerr"
 )
 
 // GetUser returns a user info.
@@ -25,7 +24,7 @@ func (s *Service) GetUser(
 	}
 
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch user")
 	}
 
 	return connect.NewResponse(&adventarv1.User{

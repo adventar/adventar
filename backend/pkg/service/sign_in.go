@@ -8,7 +8,7 @@ import (
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/bufbuild/connect-go"
-	"golang.org/x/xerrors"
+	"github.com/m-mizutani/goerr"
 )
 
 // SignIn validates the id token.
@@ -18,12 +18,12 @@ func (s *Service) SignIn(
 ) (*connect.Response[adventarv1.User], error) {
 	authResult, err := s.verifier.VerifyIDToken(req.Msg.GetJwt())
 	if err != nil {
-		return nil, xerrors.Errorf("Failed to verify token: %w", err)
+		return nil, goerr.Wrap(err, "Failed to verify token")
 	}
 
 	user, err := s.findOrCreateUser(authResult, req.Msg.GetIconUrl())
 	if err != nil {
-		return nil, xerrors.Errorf("Failed find or create user: %w", err)
+		return nil, goerr.Wrap(err, "Failed find or create user")
 	}
 
 	return connect.NewResponse(&adventarv1.User{
@@ -38,7 +38,7 @@ func (s *Service) findOrCreateUser(authResult *util.AuthResult, iconURL string) 
 	err := s.db.Get(&userID, "select id from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID)
 
 	if err != nil && err != sql.ErrNoRows {
-		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch user")
 	}
 
 	if iconURL == "" {
@@ -51,24 +51,24 @@ func (s *Service) findOrCreateUser(authResult *util.AuthResult, iconURL string) 
 			authResult.Name, authResult.AuthUID, authResult.AuthProvider, iconURL,
 		)
 		if err != nil {
-			return nil, xerrors.Errorf("Failed query to insert into user: %w", err)
+			return nil, goerr.Wrap(err, "Failed query to insert into user")
 		}
 
 		userID, err = res.LastInsertId()
 		if err != nil {
-			return nil, xerrors.Errorf("Failed to get last id: %w", err)
+			return nil, goerr.Wrap(err, "Failed to get last id")
 		}
 	} else {
 		_, err := s.db.Exec("update users set icon_url = ? where id = ?", iconURL, userID)
 		if err != nil {
-			return nil, xerrors.Errorf("Failed query to update user: %w", err)
+			return nil, goerr.Wrap(err, "Failed query to update user")
 		}
 	}
 
 	var user model.User
 	err = s.db.Get(&user, "select id, name, icon_url from users where id = ?", userID)
 	if err != nil {
-		return nil, xerrors.Errorf("Failed query to fetch user: %w", err)
+		return nil, goerr.Wrap(err, "Failed query to fetch user")
 	}
 
 	return &user, nil
