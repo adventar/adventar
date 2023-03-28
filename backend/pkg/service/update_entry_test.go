@@ -25,7 +25,7 @@ func TestUpdateEntry(t *testing.T) {
 		Comment: "comment",
 		Url:     "http://example.com",
 	})
-	// req.Header().Set("authorization", u.authUID)
+	req.Header().Set("authorization", u.authUID)
 
 	res, err := service.UpdateEntry(context.Background(), req)
 	if err != nil {
