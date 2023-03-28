@@ -46,7 +46,6 @@ func (s *Service) GetCalendar(
 
 	if err != nil {
 		return nil, goerr.Wrap(err, "Failed query to fetch calendar").With("calendar_id", calendarId)
-		// return nil, xerrors.Errorf("Failed query to fetch calendar: %w", err)
 	}
 
 	calendar := result.Calendar

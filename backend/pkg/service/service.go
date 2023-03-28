@@ -12,7 +12,7 @@ import (
 	"github.com/adventar/adventar/backend/pkg/gen/adventar/v1/adventarv1connect"
 	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/bufbuild/connect-go"
-	"github.com/bugsnag/bugsnag-go/v2"
+	"github.com/getsentry/sentry-go"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/m-mizutani/goerr"
@@ -71,14 +71,14 @@ func createInterceptors() connect.HandlerOption {
 
 				if err != nil {
 					util.Logger.Error().
-						Str("request", procedure).
+						Str("procedure", procedure).
 						Str("duration", duration).
 						Str("code", connect.CodeOf(err).String()).
 						Err(err).
 						Msg("finished unary call")
 				} else {
 					util.Logger.Info().
-						Str("request", procedure).
+						Str("procedure", procedure).
 						Str("duration", duration).
 						Msg("finished unary call")
 				}
@@ -88,11 +88,13 @@ func createInterceptors() connect.HandlerOption {
 		},
 	)
 
-	bugsnagAPIKey := os.Getenv("BUGSNAG_API_KEY")
-	if bugsnagAPIKey != "" {
-		bugsnag.Configure(bugsnag.Configuration{
-			APIKey: bugsnagAPIKey,
-		})
+	sentryDsn := os.Getenv("SENTRY_DSN")
+	if sentryDsn != "" {
+		err := sentry.Init(sentry.ClientOptions{Dsn: sentryDsn})
+
+		if err != nil {
+			util.Logger.Fatal().Err(err).Msg("")
+		}
 	}
 	errorHandlerInterceptor := connect.UnaryInterceptorFunc(func(next connect.UnaryFunc) connect.UnaryFunc {
 		return connect.UnaryFunc(func(ctx context.Context, request connect.AnyRequest) (connect.AnyResponse, error) {
@@ -101,19 +103,25 @@ func createInterceptors() connect.HandlerOption {
 				return response, nil
 			}
 			if connect.CodeOf(err) == connect.CodeUnknown {
-				info := map[string]interface{}{}
+				tags := map[string]interface{}{
+					"procedure": request.Spec().Procedure,
+				}
 				stacktrace := fmt.Sprintf("%+v", err)
 				util.Logger.Error().Msg(stacktrace)
-				info["stacktrace"] = stacktrace
 				var goErr *goerr.Error
 				if errors.As(err, &goErr) {
 					for k, v := range goErr.Values() {
 						util.Logger.Error().Any(k, v).Msg("Error context value")
-						info[k] = v
+						tags[k] = v
 					}
 				}
-				if bugsnagAPIKey != "" {
-					bugsnag.Notify(err, bugsnag.MetaData{"info": info})
+				if sentryDsn != "" {
+					sentry.ConfigureScope(func(scope *sentry.Scope) {
+						for k, v := range tags {
+							scope.SetTag(k, fmt.Sprintf("%v", v))
+						}
+					})
+					sentry.CaptureException(err)
 				}
 			}
 			return response, err

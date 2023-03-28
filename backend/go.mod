@@ -33,6 +33,7 @@ require (
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/bugsnag/bugsnag-go v2.2.0+incompatible
 	github.com/bugsnag/bugsnag-go/v2 v2.2.0
+	github.com/getsentry/sentry-go v0.19.0
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/uuid v1.3.0 // indirect
