@@ -6,15 +6,15 @@ import (
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/bufbuild/connect-go"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/m-mizutani/goerr"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // DeleteEntry deletes the entry.
 func (s *Service) DeleteEntry(
 	ctx context.Context,
 	req *connect.Request[adventarv1.DeleteEntryRequest],
-) (*connect.Response[empty.Empty], error) {
+) (*connect.Response[emptypb.Empty], error) {
 	currentUser, err := s.getCurrentUser(req.Header())
 	if err != nil {
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("Authentication failed"))
@@ -33,7 +33,7 @@ func (s *Service) DeleteEntry(
 		return nil, goerr.Wrap(err, "Failed to delete entry")
 	}
 
-	return connect.NewResponse(&empty.Empty{}), nil
+	return connect.NewResponse(&emptypb.Empty{}), nil
 }
 
 func (s *Service) entryDeletable(entryID int, userID int) (bool, error) {

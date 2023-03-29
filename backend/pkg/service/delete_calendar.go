@@ -6,15 +6,15 @@ import (
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/bufbuild/connect-go"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/m-mizutani/goerr"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // DeleteCalendar deletes the calendar.
 func (s *Service) DeleteCalendar(
 	ctx context.Context,
 	req *connect.Request[adventarv1.DeleteCalendarRequest],
-) (*connect.Response[empty.Empty], error) {
+) (*connect.Response[emptypb.Empty], error) {
 	currentUser, err := s.getCurrentUser(req.Header())
 	if err != nil {
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("Authentication failed"))
@@ -25,5 +25,5 @@ func (s *Service) DeleteCalendar(
 		return nil, goerr.Wrap(err, "Failed query to delete calendar")
 	}
 
-	return connect.NewResponse(&empty.Empty{}), nil
+	return connect.NewResponse(&emptypb.Empty{}), nil
 }
