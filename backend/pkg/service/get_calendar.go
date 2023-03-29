@@ -5,9 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	sq "github.com/Masterminds/squirrel"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
-	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
 	"github.com/m-mizutani/goerr"
 )
@@ -18,26 +16,7 @@ func (s *Service) GetCalendar(
 	req *connect.Request[adventarv1.GetCalendarRequest],
 ) (*connect.Response[adventarv1.GetCalendarResponse], error) {
 	calendarId := req.Msg.GetCalendarId()
-	query, args, err := sq.
-		Select(makeSelectValue(map[string][]string{
-			"calendars": {"id", "title", "description", "year"},
-			"users":     {"id", "name", "icon_url"},
-		})...).
-		From("calendars").
-		Join("users on users.id = calendars.user_id").
-		Where(sq.Eq{"calendars.id": calendarId}).
-		ToSql()
-
-	if err != nil {
-		return nil, goerr.Wrap(err, "Failed query to create sql")
-	}
-
-	result := struct {
-		Calendar model.Calendar `db:"calendars"`
-		User     model.User     `db:"users"`
-	}{}
-
-	err = s.db.Get(&result, query, args...)
+	calendar, err := s.queries().GetCalendarWithUserById(context.Background(), calendarId)
 
 	if err == sql.ErrNoRows {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("Calendar not found"))
@@ -47,25 +26,44 @@ func (s *Service) GetCalendar(
 		return nil, goerr.Wrap(err, "Failed query to fetch calendar").With("calendar_id", calendarId)
 	}
 
-	calendar := result.Calendar
-	user := result.User
-	entries, err := s.findEntries(calendar.ID)
+	entries, err := s.queries().ListEntriesByCalendarId(context.Background(), calendarId)
+
 	if err != nil {
 		return nil, goerr.Wrap(err, "Failed to find entries")
 	}
 
-	pbUser := &adventarv1.User{Id: user.ID, Name: user.Name, IconUrl: user.IconURL}
 	pbCalendar := &adventarv1.Calendar{
 		Id:          calendar.ID,
 		Title:       calendar.Title,
 		Description: calendar.Description,
 		Year:        calendar.Year,
-		Owner:       pbUser,
 		EntryCount:  int32(len(entries)),
+		Owner: &adventarv1.User{
+			Id:      calendar.UserID,
+			Name:    calendar.UserName,
+			IconUrl: calendar.UserIconUrl,
+		},
+	}
+
+	pbEntries := []*adventarv1.Entry{}
+	for _, entry := range entries {
+		pbEntries = append(pbEntries, &adventarv1.Entry{
+			Id:       entry.ID,
+			Day:      entry.Day,
+			Title:    entry.Title,
+			Comment:  entry.Comment,
+			Url:      entry.Url,
+			ImageUrl: convertImageURL(entry.ImageUrl),
+			Owner: &adventarv1.User{
+				Id:      entry.UserID,
+				Name:    entry.UserName,
+				IconUrl: entry.UserIconUrl,
+			},
+		})
 	}
 
 	return connect.NewResponse(&adventarv1.GetCalendarResponse{
 		Calendar: pbCalendar,
-		Entries:  entries,
+		Entries:  pbEntries,
 	}), nil
 }

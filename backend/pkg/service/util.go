@@ -9,6 +9,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	pb "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
+	adventar_db "github.com/adventar/adventar/backend/pkg/gen/sqlc"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/m-mizutani/goerr"
 )
@@ -86,6 +87,10 @@ func (s *Service) findEntries(cid int64) ([]*pb.Entry, error) {
 	}
 
 	return entries, nil
+}
+
+func (s *Service) queries() *adventar_db.Queries {
+	return s.clients.DB().Queries()
 }
 
 func isValidURL(s string) bool {

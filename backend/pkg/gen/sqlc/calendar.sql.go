@@ -9,22 +9,45 @@ import (
 	"context"
 )
 
-const getCalendarById = `-- name: GetCalendarById :one
-SELECT id, user_id, title, description, year, listable, created_at, updated_at FROM calendars WHERE id = ? LIMIT 1
+const getCalendarWithUserById = `-- name: GetCalendarWithUserById :one
+SELECT
+  calendars.id,
+  calendars.title,
+  calendars.description,
+  calendars.year,
+  users.id as user_id,
+  users.name as user_name,
+  users.icon_url as user_icon_url
+FROM
+  calendars
+INNER JOIN
+  users ON calendars.user_id = users.id
+WHERE
+  calendars.id = ?
+LIMIT 1
 `
 
-func (q *Queries) GetCalendarById(ctx context.Context, id int64) (Calendar, error) {
-	row := q.db.QueryRowContext(ctx, getCalendarById, id)
-	var i Calendar
+type GetCalendarWithUserByIdRow struct {
+	ID          int64
+	Title       string
+	Description string
+	Year        int32
+	UserID      int64
+	UserName    string
+	UserIconUrl string
+}
+
+func (q *Queries) GetCalendarWithUserById(ctx context.Context, id int64) (GetCalendarWithUserByIdRow, error) {
+	row := q.db.QueryRowContext(ctx, getCalendarWithUserById, id)
+	var i GetCalendarWithUserByIdRow
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
 		&i.Title,
 		&i.Description,
 		&i.Year,
-		&i.Listable,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.UserID,
+		&i.UserName,
+		&i.UserIconUrl,
 	)
 	return i, err
 }
