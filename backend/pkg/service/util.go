@@ -9,7 +9,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	pb "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
-	adventar_db "github.com/adventar/adventar/backend/pkg/gen/sqlc"
+	"github.com/adventar/adventar/backend/pkg/gen/sqlc/adventar_db"
 	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/m-mizutani/goerr"
 )

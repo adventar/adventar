@@ -6,4 +6,4 @@ sql:
   gen:
     go:
       package: "adventar_db"
-      out: "pkg/gen/sqlc"
+      out: "pkg/gen/sqlc/adventar_db"

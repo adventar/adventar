@@ -11,6 +11,7 @@ import (
 
 	"github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1/adventarv1connect"
 	"github.com/adventar/adventar/backend/pkg/infra"
+	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/bufbuild/connect-go"
 	"github.com/getsentry/sentry-go"
@@ -34,12 +35,19 @@ type Service struct {
 	db          *sqlx.DB
 	verifier    verifier
 	metaFetcher metaFetcher
+	usecase     *usecase.Usecase
 	clients     *infra.Clients
 }
 
 // NewService creates a new Service.
-func NewService(db *sqlx.DB, verifier verifier, metaFetcher metaFetcher, clients *infra.Clients) *Service {
-	return &Service{db: db, verifier: verifier, metaFetcher: metaFetcher, clients: clients}
+func NewService(db *sqlx.DB, verifier verifier, metaFetcher metaFetcher, usecase *usecase.Usecase, clients *infra.Clients) *Service {
+	return &Service{
+		db:          db,
+		verifier:    verifier,
+		metaFetcher: metaFetcher,
+		usecase:     usecase,
+		clients:     clients,
+	}
 }
 
 // Serve serves the service

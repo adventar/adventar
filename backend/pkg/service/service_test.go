@@ -8,6 +8,7 @@ import (
 	"github.com/adventar/adventar/backend/pkg/infra"
 	db_client "github.com/adventar/adventar/backend/pkg/infra/db"
 	s "github.com/adventar/adventar/backend/pkg/service"
+	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/jmoiron/sqlx"
 
@@ -51,10 +52,11 @@ func TestMain(m *testing.M) {
 	}
 	defer dbClient.Close()
 	clients := infra.New(infra.WithDB(dbClient))
+	usecase := usecase.New(clients)
 
 	v := &testVerifier{}
 	f := &testMetaFetcher{}
-	service = s.NewService(db, v, f, clients)
+	service = s.NewService(db, v, f, usecase, clients)
 	code := m.Run()
 	os.Exit(code)
 }

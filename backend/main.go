@@ -6,6 +6,7 @@ import (
 	"github.com/adventar/adventar/backend/pkg/infra"
 	"github.com/adventar/adventar/backend/pkg/infra/db"
 	"github.com/adventar/adventar/backend/pkg/service"
+	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/adventar/adventar/backend/pkg/util"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -30,9 +31,10 @@ func main() {
 	}
 	defer dbClient.Close()
 	clients := infra.New(infra.WithDB(dbClient))
+	usecase := usecase.New(clients)
 
 	v := &util.FirebaseVerifier{}
 	f := &util.SiteMetaFetcher{}
-	s := service.NewService(db_, v, f, clients)
+	s := service.NewService(db_, v, f, usecase, clients)
 	s.Serve(":8080")
 }

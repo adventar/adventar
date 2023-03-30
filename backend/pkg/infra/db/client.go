@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 
-	adventar_db "github.com/adventar/adventar/backend/pkg/gen/sqlc"
+	"github.com/adventar/adventar/backend/pkg/gen/sqlc/adventar_db"
 )
 
 type Client interface {
