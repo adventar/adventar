@@ -8,12 +8,12 @@ import (
 )
 
 // GetUser returns a user info.
-func (s *Service) GetUser(
+func (x *Service) GetUser(
 	ctx context.Context,
 	req *connect.Request[adventarv1.GetUserRequest],
 ) (*connect.Response[adventarv1.User], error) {
 	userId := req.Msg.GetUserId()
-	user, err := s.usecase.GetUserById(userId)
+	user, err := x.usecase.GetUserById(userId)
 
 	if err != nil {
 		return nil, err

@@ -10,12 +10,12 @@ import (
 )
 
 // GetCalendar returns a calendar.
-func (s *Service) GetCalendar(
+func (x *Service) GetCalendar(
 	ctx context.Context,
 	req *connect.Request[adventarv1.GetCalendarRequest],
 ) (*connect.Response[adventarv1.GetCalendarResponse], error) {
 	calendarId := req.Msg.GetCalendarId()
-	calendar, err := s.usecase.GetCalendarById(calendarId)
+	calendar, err := x.usecase.GetCalendarById(calendarId)
 
 	if err != nil {
 		return nil, err
