@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/adventar/adventar/backend/pkg/domain/types"
 	"github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1/adventarv1connect"
 	"github.com/adventar/adventar/backend/pkg/infra"
 	"github.com/adventar/adventar/backend/pkg/usecase"
@@ -80,7 +81,14 @@ func createInterceptors() connect.HandlerOption {
 				duration := fmt.Sprintf("%dms", time.Since(start).Milliseconds())
 
 				if err != nil {
-					util.Logger.Error().
+					logger := util.Logger.Error()
+					var goErr *goerr.Error
+					if errors.As(err, &goErr) {
+						for k, v := range goErr.Values() {
+							logger = logger.Any(fmt.Sprintf("error.%v", k), v)
+						}
+					}
+					logger.
 						Str("procedure", procedure).
 						Str("duration", duration).
 						Str("code", connect.CodeOf(err).String()).
@@ -112,6 +120,12 @@ func createInterceptors() connect.HandlerOption {
 			if err == nil {
 				return response, nil
 			}
+
+			switch {
+			case errors.Is(err, types.ErrRecordNotFound):
+				err = connect.NewError(connect.CodeNotFound, err)
+			}
+
 			if connect.CodeOf(err) == connect.CodeUnknown {
 				tags := map[string]interface{}{
 					"procedure": request.Spec().Procedure,
@@ -121,7 +135,6 @@ func createInterceptors() connect.HandlerOption {
 				var goErr *goerr.Error
 				if errors.As(err, &goErr) {
 					for k, v := range goErr.Values() {
-						util.Logger.Error().Any(k, v).Msg("Error context value")
 						tags[k] = v
 					}
 				}
