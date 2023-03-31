@@ -29,7 +29,7 @@ func (x *Service) authenticate(ctx context.Context) (*model.User, error) {
 
 	authResult, err := x.verifier.VerifyIDToken(metadata.authToken)
 	if err != nil {
-		return nil, goerr.Wrap(err, "Failed to verify token")
+		return nil, goerr.Wrap(types.ErrPermissionDenied, "Failed to verify token")
 	}
 
 	user, err := x.usecase.GetUserByAuthInfo(authResult.AuthProvider, authResult.AuthUID)

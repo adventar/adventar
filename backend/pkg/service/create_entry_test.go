@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
+	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/bufbuild/connect-go"
 )
 
@@ -19,8 +20,9 @@ func TestCreateEntry(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.CreateEntryRequest{CalendarId: c.id, Day: 1})
 	req.Header().Set("authorization", u.authUID)
+	ctx := s.SetRequestMetadata(context.Background(), req)
 
-	res, err := service.CreateEntry(context.Background(), req)
+	res, err := service.CreateEntry(ctx, req)
 	if err != nil {
 		t.Fatal(err)
 	}
