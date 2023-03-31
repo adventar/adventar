@@ -1,18 +1,48 @@
 package service
 
 import (
+	"context"
 	"crypto/sha1"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/adventar/adventar/backend/pkg/domain/model"
+	"github.com/adventar/adventar/backend/pkg/domain/types"
 	pb "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/gen/sqlc/adventar_db"
-	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/m-mizutani/goerr"
 )
+
+func (x *Service) authenticate(ctx context.Context) (*model.User, error) {
+	metadata, err := GetRequestMetadata(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if metadata.authToken == "" {
+		return nil, goerr.Wrap(types.ErrPermissionDenied, "Authentication failed").With("auth_token", "empty")
+	}
+
+	authResult, err := x.verifier.VerifyIDToken(metadata.authToken)
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed to verify token")
+	}
+
+	user, err := x.usecase.GetUserByAuthInfo(authResult.AuthProvider, authResult.AuthUID)
+	if err == sql.ErrNoRows {
+		return nil, goerr.Wrap(types.ErrPermissionDenied, "Authentication failed").With("auth_result", authResult)
+	}
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch user")
+	}
+
+	return user, nil
+}
 
 func (s *Service) getCurrentUser(header http.Header) (*model.User, error) {
 	token := header.Get("authorization")
@@ -22,13 +52,12 @@ func (s *Service) getCurrentUser(header http.Header) (*model.User, error) {
 		return nil, goerr.Wrap(err, "Failed to verify token")
 	}
 
-	var user model.User
-	err = s.db.Get(&user, "select id, name, icon_url from users where auth_provider = ? and auth_uid = ?", authResult.AuthProvider, authResult.AuthUID)
+	user, err := s.usecase.GetUserByAuthInfo(authResult.AuthProvider, authResult.AuthUID)
 	if err != nil {
 		return nil, goerr.Wrap(err, "Failed query to fetch user")
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 func convertImageURL(imageURL string) string {

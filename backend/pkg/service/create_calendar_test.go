@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
+	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/bufbuild/connect-go"
 )
 
@@ -19,8 +20,9 @@ func TestCreateCalendar(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.CreateCalendarRequest{Title: "foo", Description: "bar"})
 	req.Header().Set("authorization", u.authUID)
+	ctx := s.SetRequestMetadata(context.Background(), req)
 
-	res, err := service.CreateCalendar(context.Background(), req)
+	res, err := service.CreateCalendar(ctx, req)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,8 +47,13 @@ func TestCreateCalendar(t *testing.T) {
 }
 
 func TestCalendarCreatable(t *testing.T) {
+	cleanupDatabase()
+
+	u := &user{name: "foo", authUID: "xxx", authProvider: "google"}
+	createUser(t, u)
 	req := connect.NewRequest(&adventarv1.CreateCalendarRequest{Title: "foo", Description: "bar"})
-	ctx := context.Background()
+	req.Header().Set("authorization", u.authUID)
+	ctx := s.SetRequestMetadata(context.Background(), req)
 
 	os.Setenv("CURRENT_DATE", "2019-10-31 23:59:59")
 	_, err := service.CreateCalendar(ctx, req)

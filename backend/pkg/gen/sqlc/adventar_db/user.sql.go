@@ -9,6 +9,30 @@ import (
 	"context"
 )
 
+const getUserByAuthInfo = `-- name: GetUserByAuthInfo :one
+SELECT id, name, auth_uid, auth_provider, icon_url, created_at, updated_at FROM users WHERE auth_provider = ? and auth_uid = ? LIMIT 1
+`
+
+type GetUserByAuthInfoParams struct {
+	AuthProvider string
+	AuthUid      string
+}
+
+func (q *Queries) GetUserByAuthInfo(ctx context.Context, arg GetUserByAuthInfoParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByAuthInfo, arg.AuthProvider, arg.AuthUid)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.AuthUid,
+		&i.AuthProvider,
+		&i.IconUrl,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getUserById = `-- name: GetUserById :one
 SELECT id, name, auth_uid, auth_provider, icon_url, created_at, updated_at FROM users WHERE id = ? LIMIT 1
 `

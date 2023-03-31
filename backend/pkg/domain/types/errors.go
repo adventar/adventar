@@ -8,7 +8,3 @@ var (
 	ErrInvalidArgument    = goerr.New("Invalid argument")
 	ErrPermissionDenied   = goerr.New("Permission denied")
 )
-
-func ErrRecordNotFound2(msg string) *goerr.Error {
-	return goerr.New(msg)
-}
