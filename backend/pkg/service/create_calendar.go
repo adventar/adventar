@@ -2,74 +2,33 @@ package service
 
 import (
 	"context"
-	"database/sql"
-	"errors"
 
+	"github.com/adventar/adventar/backend/pkg/domain/types"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
-	"github.com/adventar/adventar/backend/pkg/model"
-	"github.com/adventar/adventar/backend/pkg/util"
+	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/bufbuild/connect-go"
 	"github.com/m-mizutani/goerr"
 )
 
 // CreateCalendar creates a calendar.
-func (s *Service) CreateCalendar(
+func (x *Service) CreateCalendar(
 	ctx context.Context,
 	req *connect.Request[adventarv1.CreateCalendarRequest],
 ) (*connect.Response[adventarv1.Calendar], error) {
-	now, err := util.CurrentDate()
+	currentUser, err := x.getCurrentUser(req.Header())
+	if err != nil {
+		return nil, goerr.Wrap(types.ErrPermissionDenied, "Authentication failed")
+	}
+
+	calendar, err := x.usecase.CreateCalendar(&usecase.CreateCalendarInput{
+		Title:       req.Msg.GetTitle(),
+		Description: req.Msg.GetDescription(),
+		UserID:      currentUser.ID,
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	if now.Month < 11 {
-		return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("Calendars can not create now"))
-	}
-
-	if req.Msg.GetTitle() == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Title is invalid"))
-	}
-
-	currentUser, err := s.getCurrentUser(req.Header())
-	if err != nil {
-		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("Authentication failed"))
-	}
-
-	lastID, err := s.insertCalendar(currentUser.ID, req.Msg.GetTitle(), req.Msg.GetDescription(), now.Year)
-	if err != nil {
-		return nil, goerr.Wrap(err, "Failed to insert calendar")
-	}
-
-	var calendar model.Calendar
-	err = s.db.Get(&calendar, "select id, user_id, title, description from calendars where id = ?", lastID)
-	if err == sql.ErrNoRows {
-		return nil, connect.NewError(connect.CodeNotFound, errors.New("Calendar not found"))
-	}
-	if err != nil {
-		return nil, goerr.Wrap(err, "Failed query to fetch calendar")
-	}
-
-	return connect.NewResponse(&adventarv1.Calendar{
-		Id:          calendar.ID,
-		Title:       calendar.Title,
-		Description: calendar.Description,
-		Year:        calendar.Year,
-	}), nil
-}
-
-func (s *Service) insertCalendar(userID int64, title string, description string, year int) (int64, error) {
-	res, err := s.db.Exec(
-		"insert into calendars(user_id, title, description, year) values(?, ?, ?, ?)",
-		userID, title, description, year,
-	)
-	if err != nil {
-		return 0, goerr.Wrap(err, "Failed query to insert into calendar")
-	}
-
-	lastID, err := res.LastInsertId()
-	if err != nil {
-		return 0, goerr.Wrap(err, "Failed to get last id")
-	}
-
-	return lastID, err
+	return connect.NewResponse(calendar.ToProto()), nil
 }

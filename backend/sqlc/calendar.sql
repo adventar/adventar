@@ -17,3 +17,9 @@ LIMIT 1;
 
 -- name: ListCalendarsByYear :many
 SELECT * FROM calendars WHERE year = ?;
+
+-- name: CreateCalendar :execlastid
+INSERT INTO calendars
+  (title, description, year, user_id)
+VALUES
+  (?, ?, ?, ?);

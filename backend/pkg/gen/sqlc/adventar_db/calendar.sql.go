@@ -9,6 +9,33 @@ import (
 	"context"
 )
 
+const createCalendar = `-- name: CreateCalendar :execlastid
+INSERT INTO calendars
+  (title, description, year, user_id)
+VALUES
+  (?, ?, ?, ?)
+`
+
+type CreateCalendarParams struct {
+	Title       string
+	Description string
+	Year        int32
+	UserID      int64
+}
+
+func (q *Queries) CreateCalendar(ctx context.Context, arg CreateCalendarParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, createCalendar,
+		arg.Title,
+		arg.Description,
+		arg.Year,
+		arg.UserID,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.LastInsertId()
+}
+
 const getCalendarWithUserById = `-- name: GetCalendarWithUserById :one
 SELECT
   calendars.id,

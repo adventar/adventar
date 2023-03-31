@@ -70,6 +70,11 @@ func (s *Service) Serve(addr string) {
 	util.Logger.Fatal().Err(err).Msg("listen failed")
 }
 
+type RequestContext struct {
+	requestedAt time.Time
+	context.Context
+}
+
 func createInterceptors() connect.HandlerOption {
 	loggingInterceptor := connect.UnaryInterceptorFunc(
 		func(next connect.UnaryFunc) connect.UnaryFunc {
@@ -151,5 +156,15 @@ func createInterceptors() connect.HandlerOption {
 		})
 	})
 
-	return connect.WithInterceptors(loggingInterceptor, errorHandlerInterceptor)
+	authInterceptor := connect.UnaryInterceptorFunc(func(next connect.UnaryFunc) connect.UnaryFunc {
+		return connect.UnaryFunc(func(ctx context.Context, request connect.AnyRequest) (connect.AnyResponse, error) {
+			reqCtx := RequestContext{
+				requestedAt: time.Now(),
+				Context:     ctx,
+			}
+			return next(reqCtx, request)
+		})
+	})
+
+	return connect.WithInterceptors(loggingInterceptor, errorHandlerInterceptor, authInterceptor)
 }
