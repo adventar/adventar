@@ -36,6 +36,24 @@ func (q *Queries) CreateCalendar(ctx context.Context, arg CreateCalendarParams) 
 	return result.LastInsertId()
 }
 
+const deleteCalendar = `-- name: DeleteCalendar :exec
+DELETE FROM
+  calendars
+WHERE
+  id = ?
+  AND user_id = ?
+`
+
+type DeleteCalendarParams struct {
+	ID     int64
+	UserID int64
+}
+
+func (q *Queries) DeleteCalendar(ctx context.Context, arg DeleteCalendarParams) error {
+	_, err := q.db.ExecContext(ctx, deleteCalendar, arg.ID, arg.UserID)
+	return err
+}
+
 const getCalendarWithUserById = `-- name: GetCalendarWithUserById :one
 SELECT
   calendars.id,

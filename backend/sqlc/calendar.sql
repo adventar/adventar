@@ -23,3 +23,10 @@ INSERT INTO calendars
   (title, description, year, user_id)
 VALUES
   (?, ?, ?, ?);
+
+-- name: DeleteCalendar :exec
+DELETE FROM
+  calendars
+WHERE
+  id = ?
+  AND user_id = ?

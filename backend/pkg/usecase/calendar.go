@@ -91,3 +91,21 @@ func (x *Usecase) CreateCalendar(input *CreateCalendarInput) (*model.Calendar, e
 
 	return x.GetCalendarById(lastID)
 }
+
+type DeleteCalendarInput struct {
+	CalendarID int64
+	UserID     int64
+}
+
+func (x *Usecase) DeleteCalendar(input *DeleteCalendarInput) error {
+	err := x.queries.DeleteCalendar(context.Background(), adventar_db.DeleteCalendarParams{
+		ID:     input.CalendarID,
+		UserID: input.UserID,
+	})
+
+	if err != nil {
+		return goerr.Wrap(err, "Failed query to delete calendar").With("input", input)
+	}
+
+	return nil
+}
