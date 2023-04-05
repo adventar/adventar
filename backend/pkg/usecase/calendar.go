@@ -58,6 +58,22 @@ func (x *Usecase) GetCalendarById(id int64) (*model.Calendar, error) {
 	}, nil
 }
 
+func (x *Usecase) ListCalendarStats() ([]*model.CalendarStat, error) {
+	stats, err := x.queries.ListCalendarStats(context.Background())
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch calendar stats")
+	}
+
+	return slice.Map(stats, func(stat adventar_db.ListCalendarStatsRow) *model.CalendarStat {
+		return &model.CalendarStat{
+			Year:           stat.Year,
+			CalendarsCount: int32(stat.CalendarsCount),
+			EntriesCount:   int32(stat.EntriesCount),
+		}
+	}), nil
+}
+
 type CreateCalendarInput struct {
 	Title       string
 	Description string

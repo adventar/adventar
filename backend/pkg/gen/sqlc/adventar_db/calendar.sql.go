@@ -97,6 +97,49 @@ func (q *Queries) GetCalendarWithUserById(ctx context.Context, id int64) (GetCal
 	return i, err
 }
 
+const listCalendarStats = `-- name: ListCalendarStats :many
+SELECT
+  year
+  , count(distinct calendars.id) AS calendars_count
+  , count(entries.id) AS entries_count
+FROM
+  calendars
+  LEFT JOIN entries ON entries.calendar_id = calendars.id
+GROUP BY
+  year
+ORDER BY
+  year DESC
+`
+
+type ListCalendarStatsRow struct {
+	Year           int32
+	CalendarsCount int64
+	EntriesCount   int64
+}
+
+func (q *Queries) ListCalendarStats(ctx context.Context) ([]ListCalendarStatsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listCalendarStats)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListCalendarStatsRow
+	for rows.Next() {
+		var i ListCalendarStatsRow
+		if err := rows.Scan(&i.Year, &i.CalendarsCount, &i.EntriesCount); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listCalendarsByYear = `-- name: ListCalendarsByYear :many
 SELECT id, user_id, title, description, year, listable, created_at, updated_at FROM calendars WHERE year = ?
 `

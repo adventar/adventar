@@ -18,6 +18,19 @@ LIMIT 1;
 -- name: ListCalendarsByYear :many
 SELECT * FROM calendars WHERE year = ?;
 
+-- name: ListCalendarStats :many
+SELECT
+  year
+  , count(distinct calendars.id) AS calendars_count
+  , count(entries.id) AS entries_count
+FROM
+  calendars
+  LEFT JOIN entries ON entries.calendar_id = calendars.id
+GROUP BY
+  year
+ORDER BY
+  year DESC;
+
 -- name: CreateCalendar :execlastid
 INSERT INTO calendars
   (title, description, year, user_id)
