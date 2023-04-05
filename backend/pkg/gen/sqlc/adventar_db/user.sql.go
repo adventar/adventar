@@ -51,3 +51,17 @@ func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
 	)
 	return i, err
 }
+
+const updateUser = `-- name: UpdateUser :exec
+UPDATE users SET name = ?  where id = ?
+`
+
+type UpdateUserParams struct {
+	Name string
+	ID   int64
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateUser, arg.Name, arg.ID)
+	return err
+}

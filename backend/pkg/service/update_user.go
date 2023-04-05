@@ -2,36 +2,35 @@ package service
 
 import (
 	"context"
-	"errors"
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
+	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/bufbuild/connect-go"
-	"github.com/m-mizutani/goerr"
 )
 
 // UpdateUser updates user info.
-func (s *Service) UpdateUser(
+func (x *Service) UpdateUser(
 	ctx context.Context,
 	req *connect.Request[adventarv1.UpdateUserRequest],
 ) (*connect.Response[adventarv1.User], error) {
-	currentUser, err := s.getCurrentUser(req.Header())
+	currentUser, err := x.authenticate(ctx)
+
 	if err != nil {
-		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("Authentication failed"))
+		return nil, err
 	}
 
-	name := req.Msg.Name
-	if name == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Name is blank"))
-	}
+	err = x.usecase.UpdateUser(&usecase.UpdateUserInput{
+		UserID: currentUser.ID,
+		Name:   req.Msg.Name,
+	})
 
-	_, err = s.db.Exec("update users set name = ? where id = ?", name, currentUser.ID)
 	if err != nil {
-		return nil, goerr.Wrap(err, "Failed query to update user")
+		return nil, err
 	}
 
 	return connect.NewResponse(&adventarv1.User{
 		Id:      currentUser.ID,
-		Name:    name,
+		Name:    req.Msg.Name,
 		IconUrl: currentUser.IconURL,
 	}), nil
 }

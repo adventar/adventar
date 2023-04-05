@@ -45,3 +45,25 @@ func (x *Usecase) GetUserByAuthInfo(provider string, uid string) (*model.User, e
 		IconURL: user.IconUrl,
 	}, nil
 }
+
+type UpdateUserInput struct {
+	UserID int64
+	Name   string
+}
+
+func (x *Usecase) UpdateUser(input *UpdateUserInput) error {
+	if input.Name == "" {
+		return goerr.Wrap(types.ErrInvalidArgument, "Name is required")
+	}
+
+	err := x.queries.UpdateUser(context.Background(), adventar_db.UpdateUserParams{
+		ID:   input.UserID,
+		Name: input.Name,
+	})
+
+	if err != nil {
+		return goerr.Wrap(err, "Failed query to update user")
+	}
+
+	return nil
+}
