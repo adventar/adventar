@@ -2,9 +2,12 @@ package service_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
+	"github.com/adventar/adventar/backend/pkg/domain/types"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
+	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/bufbuild/connect-go"
 )
 
@@ -25,8 +28,9 @@ func TestDeleteEntryWithCalendarOwner(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.DeleteEntryRequest{EntryId: e.id})
 	req.Header().Set("authorization", calendarOwner.authUID)
+	ctx := s.SetRequestMetadata(context.Background(), req)
 
-	_, err := service.DeleteEntry(context.Background(), req)
+	_, err := service.DeleteEntry(ctx, req)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -58,8 +62,9 @@ func TestDeleteEntryWithEntryOwner(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.DeleteEntryRequest{EntryId: e.id})
 	req.Header().Set("authorization", entryOwner.authUID)
+	ctx := s.SetRequestMetadata(context.Background(), req)
 
-	_, err := service.DeleteEntry(context.Background(), req)
+	_, err := service.DeleteEntry(ctx, req)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,9 +99,10 @@ func TestDeleteEntryWithOtherUser(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.DeleteEntryRequest{EntryId: e.id})
 	req.Header().Set("authorization", otherUser.authUID)
+	ctx := s.SetRequestMetadata(context.Background(), req)
 
-	_, err := service.DeleteEntry(context.Background(), req)
-	if connect.CodeOf(err) != connect.CodePermissionDenied {
+	_, err := service.DeleteEntry(ctx, req)
+	if errors.Is(err, types.ErrPermissionDenied) == false {
 		t.Fatal(err)
 	}
 

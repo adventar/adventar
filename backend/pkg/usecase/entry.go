@@ -59,3 +59,48 @@ func (x *Usecase) CreateEntry(input *CreateEntryInput) (*model.Entry, error) {
 
 	return x.GetEntryById(lastID)
 }
+
+type DeleteEntryInput struct {
+	EntryID int64
+	UserID  int64
+}
+
+func (x *Usecase) DeleteEntry(input *DeleteEntryInput) error {
+	deletable, err := x.entryDeletable(input.EntryID, input.UserID)
+
+	if err != nil {
+		return err
+	}
+
+	if deletable == false {
+		return goerr.Wrap(types.ErrPermissionDenied, "Invalid request")
+	}
+
+	err = x.queries.DeleteEntry(context.Background(), input.EntryID)
+
+	if err != nil {
+		return goerr.Wrap(err, "Failed to delete entry")
+	}
+
+	return nil
+}
+
+// ユーザーがエントリを削除可能かどうかを判定する
+// エントリの所有者かカレンダーの所有者であれば削除可能
+func (x *Usecase) entryDeletable(entryID int64, userID int64) (bool, error) {
+	result, err := x.queries.GetEntryAndCalendarOwnerByEntryId(context.Background(), entryID)
+
+	if err != nil {
+		return false, goerr.Wrap(err, "Failed query")
+	}
+
+	if userID == result.EntryOwnerID {
+		return true, nil
+	}
+
+	if userID == result.CalendarOwnerID {
+		return true, nil
+	}
+
+	return false, nil
+}

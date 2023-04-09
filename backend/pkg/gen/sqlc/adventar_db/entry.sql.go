@@ -30,6 +30,41 @@ func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (int64
 	return result.LastInsertId()
 }
 
+const deleteEntry = `-- name: DeleteEntry :exec
+DELETE FROM
+  entries
+WHERE
+  id = ?
+`
+
+func (q *Queries) DeleteEntry(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteEntry, id)
+	return err
+}
+
+const getEntryAndCalendarOwnerByEntryId = `-- name: GetEntryAndCalendarOwnerByEntryId :one
+SELECT
+  e.user_id AS entry_owner_id,
+  c.user_id AS calendar_owner_id
+FROM
+  entries AS e
+  INNER JOIN calendars AS c ON c.id = e.calendar_id
+WHERE
+  e.id = ?
+`
+
+type GetEntryAndCalendarOwnerByEntryIdRow struct {
+	EntryOwnerID    int64
+	CalendarOwnerID int64
+}
+
+func (q *Queries) GetEntryAndCalendarOwnerByEntryId(ctx context.Context, id int64) (GetEntryAndCalendarOwnerByEntryIdRow, error) {
+	row := q.db.QueryRowContext(ctx, getEntryAndCalendarOwnerByEntryId, id)
+	var i GetEntryAndCalendarOwnerByEntryIdRow
+	err := row.Scan(&i.EntryOwnerID, &i.CalendarOwnerID)
+	return i, err
+}
+
 const getEntryById = `-- name: GetEntryById :one
 SELECT
   entries.id,

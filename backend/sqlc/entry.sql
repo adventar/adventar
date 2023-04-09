@@ -41,3 +41,19 @@ INSERT INTO entries
   (calendar_id, user_id, day, comment, url, title, image_url)
 VALUES
   (?, ?, ?, '', '', '', '');
+
+-- name: GetEntryAndCalendarOwnerByEntryId :one
+SELECT
+  e.user_id AS entry_owner_id,
+  c.user_id AS calendar_owner_id
+FROM
+  entries AS e
+  INNER JOIN calendars AS c ON c.id = e.calendar_id
+WHERE
+  e.id = ?;
+
+-- name: DeleteEntry :exec
+DELETE FROM
+  entries
+WHERE
+  id = ?;
