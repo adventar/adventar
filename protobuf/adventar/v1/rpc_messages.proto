@@ -4,7 +4,7 @@ package adventar.v1;
 import "adventar/v1/resources.proto";
 
 message ListCalendarsRequest {
-  int64 year = 1;
+  int32 year = 1;
   int64 user_id = 2;
   string query = 3;
   int32 page_size = 4;

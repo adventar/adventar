@@ -97,6 +97,67 @@ func (q *Queries) GetCalendarWithUserById(ctx context.Context, id int64) (GetCal
 	return i, err
 }
 
+const listAllCalendars = `-- name: ListAllCalendars :many
+SELECT
+  calendars.id,
+  calendars.title,
+  calendars.description,
+  calendars.year,
+  users.id as user_id,
+  users.name as user_name,
+  users.icon_url as user_icon_url
+FROM
+  calendars
+INNER JOIN
+  users ON calendars.user_id = users.id
+WHERE
+  year = ?
+  AND listable = true
+ORDER BY
+  calendars.id DESC
+`
+
+type ListAllCalendarsRow struct {
+	ID          int64
+	Title       string
+	Description string
+	Year        int32
+	UserID      int64
+	UserName    string
+	UserIconUrl string
+}
+
+func (q *Queries) ListAllCalendars(ctx context.Context, year int32) ([]ListAllCalendarsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listAllCalendars, year)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListAllCalendarsRow
+	for rows.Next() {
+		var i ListAllCalendarsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.Year,
+			&i.UserID,
+			&i.UserName,
+			&i.UserIconUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listCalendarStats = `-- name: ListCalendarStats :many
 SELECT
   year
@@ -140,28 +201,192 @@ func (q *Queries) ListCalendarStats(ctx context.Context) ([]ListCalendarStatsRow
 	return items, nil
 }
 
-const listCalendarsByYear = `-- name: ListCalendarsByYear :many
-SELECT id, user_id, title, description, year, listable, created_at, updated_at FROM calendars WHERE year = ?
+const listCalendars = `-- name: ListCalendars :many
+SELECT
+  calendars.id,
+  calendars.title,
+  calendars.description,
+  calendars.year,
+  users.id as user_id,
+  users.name as user_name,
+  users.icon_url as user_icon_url
+FROM
+  calendars
+INNER JOIN
+  users ON calendars.user_id = users.id
+WHERE
+  year = ?
+  AND listable = true
+ORDER BY
+  calendars.id DESC
+LIMIT ?
 `
 
-func (q *Queries) ListCalendarsByYear(ctx context.Context, year int32) ([]Calendar, error) {
-	rows, err := q.db.QueryContext(ctx, listCalendarsByYear, year)
+type ListCalendarsParams struct {
+	Year  int32
+	Limit int32
+}
+
+type ListCalendarsRow struct {
+	ID          int64
+	Title       string
+	Description string
+	Year        int32
+	UserID      int64
+	UserName    string
+	UserIconUrl string
+}
+
+func (q *Queries) ListCalendars(ctx context.Context, arg ListCalendarsParams) ([]ListCalendarsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listCalendars, arg.Year, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Calendar
+	var items []ListCalendarsRow
 	for rows.Next() {
-		var i Calendar
+		var i ListCalendarsRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
 			&i.Title,
 			&i.Description,
 			&i.Year,
-			&i.Listable,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.UserID,
+			&i.UserName,
+			&i.UserIconUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listCalendarsByUserId = `-- name: ListCalendarsByUserId :many
+SELECT
+  calendars.id,
+  calendars.title,
+  calendars.description,
+  calendars.year,
+  users.id as user_id,
+  users.name as user_name,
+  users.icon_url as user_icon_url
+FROM
+  calendars
+INNER JOIN
+  users ON calendars.user_id = users.id
+WHERE
+  year = ?
+  AND users.id = ?
+ORDER BY
+  calendars.id DESC
+`
+
+type ListCalendarsByUserIdParams struct {
+	Year int32
+	ID   int64
+}
+
+type ListCalendarsByUserIdRow struct {
+	ID          int64
+	Title       string
+	Description string
+	Year        int32
+	UserID      int64
+	UserName    string
+	UserIconUrl string
+}
+
+func (q *Queries) ListCalendarsByUserId(ctx context.Context, arg ListCalendarsByUserIdParams) ([]ListCalendarsByUserIdRow, error) {
+	rows, err := q.db.QueryContext(ctx, listCalendarsByUserId, arg.Year, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListCalendarsByUserIdRow
+	for rows.Next() {
+		var i ListCalendarsByUserIdRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.Year,
+			&i.UserID,
+			&i.UserName,
+			&i.UserIconUrl,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const searchCalendars = `-- name: SearchCalendars :many
+SELECT
+  calendars.id,
+  calendars.title,
+  calendars.description,
+  calendars.year,
+  users.id as user_id,
+  users.name as user_name,
+  users.icon_url as user_icon_url
+FROM
+  calendars
+INNER JOIN
+  users ON calendars.user_id = users.id
+WHERE
+  year = ?
+  AND listable = true
+  AND (calendars.title LIKE ? OR calendars.description LIKE ?)
+ORDER BY
+  calendars.id DESC
+`
+
+type SearchCalendarsParams struct {
+	Year    int32
+	Keyword string
+}
+
+type SearchCalendarsRow struct {
+	ID          int64
+	Title       string
+	Description string
+	Year        int32
+	UserID      int64
+	UserName    string
+	UserIconUrl string
+}
+
+func (q *Queries) SearchCalendars(ctx context.Context, arg SearchCalendarsParams) ([]SearchCalendarsRow, error) {
+	rows, err := q.db.QueryContext(ctx, searchCalendars, arg.Year, arg.Keyword, arg.Keyword)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SearchCalendarsRow
+	for rows.Next() {
+		var i SearchCalendarsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Description,
+			&i.Year,
+			&i.UserID,
+			&i.UserName,
+			&i.UserIconUrl,
 		); err != nil {
 			return nil, err
 		}

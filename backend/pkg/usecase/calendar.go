@@ -3,6 +3,8 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 
 	"github.com/adventar/adventar/backend/pkg/domain/model"
 	"github.com/adventar/adventar/backend/pkg/domain/types"
@@ -11,6 +13,56 @@ import (
 	"github.com/m-mizutani/goerr"
 	"github.com/m-mizutani/gots/slice"
 )
+
+type calendarRow struct {
+	ID          int64
+	Title       string
+	Description string
+	Year        int32
+	UserID      int64
+	UserName    string
+	UserIconUrl string
+}
+
+type calendarRowToModelInput struct {
+	entryCount int32
+	entries    []adventar_db.ListEntriesByCalendarIdRow
+}
+
+func (r *calendarRow) toModel(input *calendarRowToModelInput) *model.Calendar {
+	entries := input.entries
+	if entries == nil {
+		entries = []adventar_db.ListEntriesByCalendarIdRow{}
+	}
+
+	return &model.Calendar{
+		ID:          r.ID,
+		Title:       r.Title,
+		Description: r.Description,
+		Year:        r.Year,
+		EntryCount:  input.entryCount,
+		Owner: &model.User{
+			ID:      r.UserID,
+			Name:    r.UserName,
+			IconURL: r.UserIconUrl,
+		},
+		Entries: slice.Map(entries, func(entry adventar_db.ListEntriesByCalendarIdRow) *model.Entry {
+			return &model.Entry{
+				ID:       entry.ID,
+				Day:      entry.Day,
+				Title:    entry.Title,
+				Comment:  entry.Comment,
+				URL:      entry.Url,
+				ImageURL: entry.ImageUrl,
+				Owner: &model.User{
+					ID:      entry.UserID,
+					Name:    entry.UserName,
+					IconURL: entry.UserIconUrl,
+				},
+			}
+		}),
+	}
+}
 
 func (x *Usecase) GetCalendarById(id int64) (*model.Calendar, error) {
 	calendar, err := x.queries.GetCalendarWithUserById(context.Background(), id)
@@ -29,40 +81,84 @@ func (x *Usecase) GetCalendarById(id int64) (*model.Calendar, error) {
 		return nil, goerr.Wrap(err, "Failed to find entries").With("calendar_id", id)
 	}
 
-	return &model.Calendar{
-		ID:          calendar.ID,
-		Title:       calendar.Title,
-		Description: calendar.Description,
-		Year:        calendar.Year,
-		EntryCount:  int32(len(entries)),
-		Owner: &model.User{
-			ID:      calendar.UserID,
-			Name:    calendar.UserName,
-			IconURL: calendar.UserIconUrl,
-		},
-		Entries: slice.Map(entries, func(entry adventar_db.ListEntriesByCalendarIdRow) *model.Entry {
-			return &model.Entry{
-				ID:       entry.ID,
-				Day:      entry.Day,
-				Title:    entry.Title,
-				Comment:  entry.Comment,
-				URL:      entry.Url,
-				ImageURL: entry.ImageUrl,
-				Owner: &model.User{
-					ID:      entry.UserID,
-					Name:    entry.UserName,
-					IconURL: entry.UserIconUrl,
-				},
-			}
-		}),
-	}, nil
+	row := calendarRow(calendar)
+
+	return row.toModel(&calendarRowToModelInput{
+		entryCount: int32(len(entries)),
+		entries:    entries,
+	}), nil
+}
+
+func (x *Usecase) ListCalendars(year int32, limit int32) ([]*model.Calendar, error) {
+	calendars, err := x.queries.ListCalendars(context.Background(), adventar_db.ListCalendarsParams{
+		Year:  year,
+		Limit: limit,
+	})
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch calendars")
+	}
+
+	rows := slice.Map(calendars, func(calendar adventar_db.ListCalendarsRow) calendarRow {
+		return calendarRow(calendar)
+	})
+
+	return x.calendarRowsToModels(rows)
+}
+
+func (x *Usecase) ListAllCalendars(year int32) ([]*model.Calendar, error) {
+	calendars, err := x.queries.ListAllCalendars(context.Background(), year)
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch calendars")
+	}
+
+	rows := slice.Map(calendars, func(calendar adventar_db.ListAllCalendarsRow) calendarRow {
+		return calendarRow(calendar)
+	})
+
+	return x.calendarRowsToModels(rows)
+}
+
+func (x *Usecase) SearchCalendars(year int32, query string) ([]*model.Calendar, error) {
+	calendars, err := x.queries.SearchCalendars(context.Background(), adventar_db.SearchCalendarsParams{
+		Year:    year,
+		Keyword: fmt.Sprint("%", query, "%"),
+	})
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch calendars")
+	}
+
+	rows := slice.Map(calendars, func(calendar adventar_db.SearchCalendarsRow) calendarRow {
+		return calendarRow(calendar)
+	})
+
+	return x.calendarRowsToModels(rows)
+}
+
+func (x *Usecase) ListCalendarsByUserId(year int32, userID int64) ([]*model.Calendar, error) {
+	calendars, err := x.queries.ListCalendarsByUserId(context.Background(), adventar_db.ListCalendarsByUserIdParams{
+		Year: year,
+		ID:   userID,
+	})
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch calendars")
+	}
+
+	rows := slice.Map(calendars, func(calendar adventar_db.ListCalendarsByUserIdRow) calendarRow {
+		return calendarRow(calendar)
+	})
+
+	return x.calendarRowsToModels(rows)
 }
 
 func (x *Usecase) ListCalendarStats() ([]*model.CalendarStat, error) {
 	stats, err := x.queries.ListCalendarStats(context.Background())
 
 	if err != nil {
-		return nil, goerr.Wrap(err, "Failed query to fetch calendar stats")
+		return nil, goerr.Wrap(err, "Failed query to fetch calendars stats")
 	}
 
 	return slice.Map(stats, func(stat adventar_db.ListCalendarStatsRow) *model.CalendarStat {
@@ -124,4 +220,53 @@ func (x *Usecase) DeleteCalendar(input *DeleteCalendarInput) error {
 	}
 
 	return nil
+}
+
+func (x *Usecase) calendarRowsToModels(rows []calendarRow) ([]*model.Calendar, error) {
+	entryCountByCalendarID, err := x.getEntryCounts(rows)
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed to get entry counts")
+	}
+
+	return slice.Map(rows, func(row calendarRow) *model.Calendar {
+		return row.toModel(&calendarRowToModelInput{
+			entryCount: entryCountByCalendarID[row.ID],
+		})
+	}), nil
+}
+
+// getEntryCounts returns entry counts by calendar ID.
+func (x *Usecase) getEntryCounts(calendars []calendarRow) (map[int64]int32, error) {
+	if len(calendars) == 0 {
+		return map[int64]int32{}, nil
+	}
+
+	ids := make([]interface{}, len(calendars))
+	for _, c := range calendars {
+		ids = append(ids, c.ID)
+	}
+
+	// sqlcがIN句をサポートしていないので、手動でクエリを組み立てる
+	// https://github.com/kyleconroy/sqlc/issues/695
+	sql := `SELECT calendar_id as cid, count(*) as count FROM entries WHERE calendar_id IN (?` + strings.Repeat(",?", len(ids)-1) + `) GROUP BY cid`
+
+	rows, err := x.clients.DB().RawDB().Query(sql, ids...)
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch entry counts")
+	}
+	defer rows.Close()
+
+	counts := map[int64]int32{}
+	for rows.Next() {
+		var cid int64
+		var count int32
+		err := rows.Scan(&cid, &count)
+		if err != nil {
+			return nil, goerr.Wrap(err, "Failed to scan entry count")
+		}
+		counts[cid] = count
+	}
+
+	return counts, nil
 }

@@ -7,6 +7,7 @@ import (
 )
 
 type Client interface {
+	RawDB() *sql.DB
 	Queries() *adventar_db.Queries
 	Close() error
 }
@@ -26,6 +27,10 @@ func New(dsn string) (Client, error) {
 		rawDb:   db,
 		queries: adventar_db.New(db),
 	}, nil
+}
+
+func (x *clientImpl) RawDB() *sql.DB {
+	return x.rawDb
 }
 
 func (x *clientImpl) Queries() *adventar_db.Queries {
