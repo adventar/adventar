@@ -1,0 +1,6 @@
+go 1.20
+
+use ./backend
+use ./image-server
+use ./batch/update_entry_site_info
+use ./api-server/grpc-server

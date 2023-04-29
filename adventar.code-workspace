@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "backend"
+		},
+		{
+			"path": "frontend"
+		},
+		{
+			"path": "protobuf"
+		},
+		{
+			"path": "terraform"
+		},
+		{
+			"path": "image-server"
+		}
+	]
+}
