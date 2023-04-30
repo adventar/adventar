@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 
 	"github.com/adventar/adventar/backend/pkg/domain/model"
 	"github.com/adventar/adventar/backend/pkg/domain/types"
@@ -238,34 +237,18 @@ func (x *Usecase) calendarRowsToModels(rows []calendarRow) ([]*model.Calendar, e
 
 // getEntryCounts returns entry counts by calendar ID.
 func (x *Usecase) getEntryCounts(calendars []calendarRow) (map[int64]int32, error) {
-	if len(calendars) == 0 {
-		return map[int64]int32{}, nil
-	}
+	ids := slice.Map(calendars, func(c calendarRow) int64 {
+		return c.ID
+	})
 
-	ids := make([]interface{}, len(calendars))
-	for _, c := range calendars {
-		ids = append(ids, c.ID)
-	}
-
-	// sqlcがIN句をサポートしていないので、手動でクエリを組み立てる
-	// https://github.com/kyleconroy/sqlc/issues/695
-	sql := `SELECT calendar_id as cid, count(*) as count FROM entries WHERE calendar_id IN (?` + strings.Repeat(",?", len(ids)-1) + `) GROUP BY cid`
-
-	rows, err := x.clients.DB().RawDB().Query(sql, ids...)
+	result, err := x.queries.GetEntryCountByCalendarId(context.Background(), ids)
 	if err != nil {
-		return nil, goerr.Wrap(err, "Failed query to fetch entry counts")
+		return nil, goerr.Wrap(err, "Failed to GetEntryCountByCalendarId query")
 	}
-	defer rows.Close()
 
 	counts := map[int64]int32{}
-	for rows.Next() {
-		var cid int64
-		var count int32
-		err := rows.Scan(&cid, &count)
-		if err != nil {
-			return nil, goerr.Wrap(err, "Failed to scan entry count")
-		}
-		counts[cid] = count
+	for _, r := range result {
+		counts[r.CalendarID] = int32(r.Count)
 	}
 
 	return counts, nil

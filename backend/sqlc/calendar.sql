@@ -107,6 +107,17 @@ GROUP BY
 ORDER BY
   year DESC;
 
+-- name: GetEntryCountByCalendarId :many
+SELECT
+  calendar_id,
+  count(*) as count
+FROM
+  entries
+WHERE
+  calendar_id IN (sqlc.slice('ids'))
+GROUP BY
+  calendar_id;
+
 -- name: CreateCalendar :execlastid
 INSERT INTO calendars
   (title, description, year, user_id)
