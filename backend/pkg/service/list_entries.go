@@ -3,72 +3,36 @@ package service
 import (
 	"context"
 
-	sq "github.com/Masterminds/squirrel"
+	"github.com/adventar/adventar/backend/pkg/domain/model"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
-	"github.com/adventar/adventar/backend/pkg/model"
 	"github.com/bufbuild/connect-go"
 	"github.com/m-mizutani/goerr"
+	"github.com/m-mizutani/gots/slice"
 )
 
 // ListEntries lists entries.
-func (s *Service) ListEntries(
+func (x *Service) ListEntries(
 	ctx context.Context,
 	req *connect.Request[adventarv1.ListEntriesRequest],
 ) (*connect.Response[adventarv1.ListEntriesResponse], error) {
-	relation := sq.
-		Select(makeSelectValue(map[string][]string{
-			"entries":   {"id", "day", "title", "comment", "url", "image_url"},
-			"calendars": {"id", "title", "description", "year"},
-			"users":     {"id", "name", "icon_url"},
-		})...).
-		From("entries").
-		Join("users on users.id = entries.user_id").
-		Join("calendars on calendars.id = entries.calendar_id").
-		Where(sq.Eq{"entries.user_id": req.Msg.GetUserId()}).
-		OrderBy("calendars.year, entries.day, entries.id")
+	userId := req.Msg.GetUserId()
+	year := req.Msg.GetYear()
 
+	var entries []*model.Entry
+	var err error
 	if req.Msg.GetYear() != 0 {
-		relation = relation.Where(sq.Eq{"year": req.Msg.GetYear()})
+		entries, err = x.usecase.ListUserEntriesByYear(userId, year)
+	} else {
+		entries, err = x.usecase.ListUserEntries(userId)
 	}
 
-	query, args, err := relation.ToSql()
 	if err != nil {
-		return nil, goerr.Wrap(err, "Failed query to create sql")
+		return nil, goerr.Wrap(err, "Failed to list entries")
 	}
 
-	rows := []struct {
-		Entry    model.Entry    `db:"entries"`
-		Calendar model.Calendar `db:"calendars"`
-		User     model.User     `db:"users"`
-	}{}
-
-	err = s.db.Select(&rows, query, args...)
-	if err != nil {
-		return nil, goerr.Wrap(err, "Failed query to fetch entries")
-	}
-
-	entries := []*adventarv1.Entry{}
-	for _, r := range rows {
-		entries = append(entries, &adventarv1.Entry{
-			Id:       r.Entry.ID,
-			Day:      r.Entry.Day,
-			Title:    r.Entry.Title,
-			Comment:  r.Entry.Comment,
-			Url:      r.Entry.URL,
-			ImageUrl: convertImageURL(r.Entry.ImageURL),
-			Calendar: &adventarv1.Calendar{
-				Id:          r.Calendar.ID,
-				Title:       r.Calendar.Title,
-				Description: r.Calendar.Description,
-				Year:        r.Calendar.Year,
-			},
-			Owner: &adventarv1.User{
-				Id:      r.User.ID,
-				Name:    r.User.Name,
-				IconUrl: r.User.IconURL,
-			},
-		})
-	}
-
-	return connect.NewResponse(&adventarv1.ListEntriesResponse{Entries: entries}), nil
+	return connect.NewResponse(&adventarv1.ListEntriesResponse{
+		Entries: slice.Map(entries, func(entry *model.Entry) *adventarv1.Entry {
+			return entry.ToProto()
+		}),
+	}), nil
 }

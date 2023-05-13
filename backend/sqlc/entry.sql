@@ -52,6 +52,59 @@ FROM
 WHERE
   e.id = ?;
 
+-- name: ListUserEntriesByYear :many
+SELECT
+  entries.id as id,
+  entries.day as day,
+  entries.title as title,
+  entries.comment as comment,
+  entries.url as url,
+  entries.image_url as image_url,
+  calendars.id as calendar_id,
+  calendars.title as calendar_title,
+  calendars.description as calendar_description,
+  calendars.year as calendar_year,
+  users.id as user_id,
+  users.name as user_name,
+  users.icon_url as user_icon_url
+FROM
+  entries
+INNER JOIN
+  users ON entries.user_id = users.id
+INNER JOIN
+  calendars ON entries.calendar_id = calendars.id
+WHERE
+  entries.user_id = ?
+  AND calendars.year = ?
+ORDER BY
+  calendars.year, entries.day, entries.id;
+
+-- name: ListUserEntries :many
+SELECT
+  entries.id as id,
+  entries.day as day,
+  entries.title as title,
+  entries.comment as comment,
+  entries.url as url,
+  entries.image_url as image_url,
+  calendars.id as calendar_id,
+  calendars.title as calendar_title,
+  calendars.description as calendar_description,
+  calendars.year as calendar_year,
+  users.id as user_id,
+  users.name as user_name,
+  users.icon_url as user_icon_url
+FROM
+  entries
+INNER JOIN
+  users ON entries.user_id = users.id
+INNER JOIN
+  calendars ON entries.calendar_id = calendars.id
+WHERE
+  entries.user_id = ?
+ORDER BY
+  calendars.year, entries.day, entries.id;
+
 -- name: DeleteEntry :exec
 DELETE FROM
   entries

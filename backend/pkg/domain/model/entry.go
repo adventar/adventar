@@ -14,6 +14,7 @@ type Entry struct {
 	URL        string
 	Title      string
 	ImageURL   string
+	Calendar   *Calendar
 	Owner      *User
 }
 
@@ -22,7 +23,7 @@ func (x *Entry) ResizableImageURL() string {
 }
 
 func (x *Entry) ToProto() *adventarv1.Entry {
-	return &adventarv1.Entry{
+	proto := &adventarv1.Entry{
 		Id:       x.ID,
 		Day:      x.Day,
 		Title:    x.Title,
@@ -31,4 +32,15 @@ func (x *Entry) ToProto() *adventarv1.Entry {
 		ImageUrl: x.ResizableImageURL(),
 		Owner:    x.Owner.ToProto(),
 	}
+
+	if x.Calendar != nil {
+		proto.Calendar = &adventarv1.Calendar{
+			Id:          x.Calendar.ID,
+			Title:       x.Calendar.Title,
+			Description: x.Calendar.Description,
+			Year:        x.Calendar.Year,
+		}
+	}
+
+	return proto
 }

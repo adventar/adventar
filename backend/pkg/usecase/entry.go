@@ -36,6 +36,76 @@ func (x *Usecase) GetEntryById(id int64) (*model.Entry, error) {
 	}, nil
 }
 
+func (x *Usecase) ListUserEntries(userID int64) ([]*model.Entry, error) {
+	entries, err := x.queries.ListUserEntries(context.Background(), userID)
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch entries").With("user_id", userID)
+	}
+
+	var results []*model.Entry
+	for _, entry := range entries {
+		results = append(results, &model.Entry{
+			ID:       entry.ID,
+			Day:      entry.Day,
+			Title:    entry.Title,
+			Comment:  entry.Comment,
+			URL:      entry.Url,
+			ImageURL: entry.ImageUrl,
+			Calendar: &model.Calendar{
+				ID:          entry.CalendarID,
+				Title:       entry.CalendarTitle,
+				Description: entry.CalendarDescription,
+				Year:        entry.CalendarYear,
+			},
+			Owner: &model.User{
+				ID:      entry.UserID,
+				Name:    entry.UserName,
+				IconURL: entry.UserIconUrl,
+			},
+		})
+	}
+
+	return results, nil
+}
+
+func (x *Usecase) ListUserEntriesByYear(userID int64, year int32) ([]*model.Entry, error) {
+	params := adventar_db.ListUserEntriesByYearParams{
+		UserID: userID,
+		Year:   year,
+	}
+	entries, err := x.queries.ListUserEntriesByYear(context.Background(), params)
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to fetch entries").With("user_id", userID).With("year", year)
+	}
+
+	var results []*model.Entry
+	for _, entry := range entries {
+		results = append(results, &model.Entry{
+			ID:       entry.ID,
+			Day:      entry.Day,
+			Title:    entry.Title,
+			Comment:  entry.Comment,
+			URL:      entry.Url,
+			ImageURL: entry.ImageUrl,
+			Calendar: &model.Calendar{
+				ID:          entry.CalendarID,
+				Title:       entry.CalendarTitle,
+				Description: entry.CalendarDescription,
+				Year:        entry.CalendarYear,
+			},
+			Owner: &model.User{
+				ID:      entry.UserID,
+				Name:    entry.UserName,
+				IconURL: entry.UserIconUrl,
+			},
+		})
+	}
+
+	return results, nil
+}
+
 type CreateEntryInput struct {
 	CalendarID int64
 	UserID     int64
