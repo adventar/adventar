@@ -5,6 +5,7 @@ import (
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/bufbuild/connect-go"
+	"github.com/m-mizutani/goerr"
 )
 
 // GetUser returns a user info.
@@ -16,7 +17,7 @@ func (x *Service) GetUser(
 	user, err := x.usecase.GetUserById(userId)
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to get user")
 	}
 
 	return connect.NewResponse(user.ToProto()), nil

@@ -72,12 +72,12 @@ func (v *FirebaseVerifier) VerifyIDToken(idToken string) (*AuthResult, error) {
 
 	authProvider, err := extractAuthProvider(provider)
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to extract auth provider")
 	}
 
 	authUID, err := extractAuthUID(identities, provider)
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to extract auth uid")
 	}
 
 	return &AuthResult{

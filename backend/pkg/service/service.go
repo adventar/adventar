@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/adventar/adventar/backend/pkg/domain/types"
@@ -130,8 +131,6 @@ func createInterceptors() connect.HandlerOption {
 				tags := map[string]interface{}{
 					"procedure": request.Spec().Procedure,
 				}
-				stacktrace := fmt.Sprintf("%+v", err)
-				util.Logger.Error().Msg(stacktrace)
 				var goErr *goerr.Error
 				if errors.As(err, &goErr) {
 					for k, v := range goErr.Values() {
@@ -147,6 +146,7 @@ func createInterceptors() connect.HandlerOption {
 					sentry.CaptureException(err)
 				}
 			}
+			printErrorStacks(err)
 			return response, err
 		})
 	})
@@ -159,4 +159,19 @@ func createInterceptors() connect.HandlerOption {
 	})
 
 	return connect.WithInterceptors(metadataInterceptor, loggingInterceptor, errorHandlerInterceptor)
+}
+
+func printErrorStacks(err error) {
+	var s []string
+	for err != nil {
+		var e *goerr.Error
+		if !errors.As(err, &e) {
+			break
+		}
+		s = append(s, fmt.Sprintf("%+v", e.StackTrace()[0]))
+		err = errors.Unwrap(err)
+	}
+	if len(s) > 0 {
+		util.Logger.Debug().Msg("Error StackTrace:\n" + strings.Join(s, "\n"))
+	}
 }

@@ -6,6 +6,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/bufbuild/connect-go"
+	"github.com/m-mizutani/goerr"
 )
 
 // UpdateUser updates user info.
@@ -16,7 +17,7 @@ func (x *Service) UpdateUser(
 	currentUser, err := x.authenticate(ctx)
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to authenticate")
 	}
 
 	err = x.usecase.UpdateUser(&usecase.UpdateUserInput{
@@ -25,7 +26,7 @@ func (x *Service) UpdateUser(
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to update user")
 	}
 
 	return connect.NewResponse(&adventarv1.User{

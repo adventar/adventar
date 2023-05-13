@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/adventar/adventar/backend/pkg/gen/sqlc/adventar_db"
+	"github.com/m-mizutani/goerr"
 )
 
 type Client interface {
@@ -19,7 +20,7 @@ type clientImpl struct {
 func New(dsn string) (Client, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to open DB connection")
 	}
 
 	return &clientImpl{

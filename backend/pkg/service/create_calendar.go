@@ -6,6 +6,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/bufbuild/connect-go"
+	"github.com/m-mizutani/goerr"
 )
 
 // CreateCalendar creates a calendar.
@@ -16,7 +17,7 @@ func (x *Service) CreateCalendar(
 	currentUser, err := x.authenticate(ctx)
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to authenticate")
 	}
 
 	calendar, err := x.usecase.CreateCalendar(&usecase.CreateCalendarInput{
@@ -26,7 +27,7 @@ func (x *Service) CreateCalendar(
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to create calendar")
 	}
 
 	return connect.NewResponse(calendar.ToProto()), nil

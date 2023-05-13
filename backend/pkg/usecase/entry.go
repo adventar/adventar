@@ -14,7 +14,7 @@ func (x *Usecase) GetEntryById(id int64) (*model.Entry, error) {
 	entry, err := x.queries.GetEntryById(context.Background(), id)
 
 	if err == sql.ErrNoRows {
-		return nil, goerr.Wrap(types.ErrRecordNotFound).With("entry_id", id)
+		return nil, goerr.Wrap(types.ErrRecordNotFound, "Entry not found").With("entry_id", id)
 	}
 
 	if err != nil {
@@ -45,7 +45,7 @@ type CreateEntryInput struct {
 func (x *Usecase) CreateEntry(input *CreateEntryInput) (*model.Entry, error) {
 	_, err := x.GetCalendarById(input.CalendarID)
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to get calendar")
 	}
 
 	if input.Day < 1 || input.Day > 25 {

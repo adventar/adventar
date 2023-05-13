@@ -1,11 +1,11 @@
 package util
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/m-mizutani/goerr"
 )
 
 type SiteMetaFetcher struct{}
@@ -21,17 +21,19 @@ func (smf *SiteMetaFetcher) Fetch(url string) (*SiteMeta, error) {
 	client := http.Client{Timeout: 2 * time.Second}
 	res, err := client.Get(url)
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to fetch site meta")
 	}
 	defer res.Body.Close()
 
 	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("status code error: %d %s", res.StatusCode, res.Status)
+		return nil, goerr.Wrap(err, "Failed to fetch site meta request").
+			With("status_code", res.StatusCode).
+			With("status", res.Status)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to parse html")
 	}
 
 	meta := &SiteMeta{}
@@ -43,5 +45,5 @@ func (smf *SiteMetaFetcher) Fetch(url string) (*SiteMeta, error) {
 		}
 	})
 
-	return meta, err
+	return meta, nil
 }

@@ -6,6 +6,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/bufbuild/connect-go"
+	"github.com/m-mizutani/goerr"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -17,7 +18,7 @@ func (x *Service) DeleteCalendar(
 	currentUser, err := x.authenticate(ctx)
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to authenticate")
 	}
 
 	err = x.usecase.DeleteCalendar(&usecase.DeleteCalendarInput{
@@ -26,7 +27,7 @@ func (x *Service) DeleteCalendar(
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to delete calendar")
 	}
 
 	return connect.NewResponse(&emptypb.Empty{}), nil

@@ -14,7 +14,7 @@ func (x *Usecase) GetUserById(id int64) (*model.User, error) {
 	user, err := x.queries.GetUserById(context.Background(), id)
 
 	if err == sql.ErrNoRows {
-		return nil, goerr.Wrap(types.ErrRecordNotFound).With("user_id", id)
+		return nil, goerr.Wrap(types.ErrRecordNotFound, "User not found").With("user_id", id)
 	}
 
 	if err != nil {
@@ -32,7 +32,9 @@ func (x *Usecase) GetUserByAuthInfo(provider string, uid string) (*model.User, e
 	user, err := x.queries.GetUserByAuthInfo(context.Background(), adventar_db.GetUserByAuthInfoParams{AuthProvider: provider, AuthUid: uid})
 
 	if err == sql.ErrNoRows {
-		return nil, goerr.Wrap(types.ErrRecordNotFound).With("auth_provider", provider).With("auth_uid", uid)
+		return nil, goerr.Wrap(types.ErrRecordNotFound, "User not found").
+			With("auth_provider", provider).
+			With("auth_uid", uid)
 	}
 
 	if err != nil {

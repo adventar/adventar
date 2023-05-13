@@ -67,7 +67,7 @@ func (x *Usecase) GetCalendarById(id int64) (*model.Calendar, error) {
 	calendar, err := x.queries.GetCalendarWithUserById(context.Background(), id)
 
 	if err == sql.ErrNoRows {
-		return nil, goerr.Wrap(types.ErrRecordNotFound).With("calendar_id", id)
+		return nil, goerr.Wrap(types.ErrRecordNotFound, "Calendar not found").With("calendar_id", id)
 	}
 
 	if err != nil {
@@ -178,7 +178,7 @@ type CreateCalendarInput struct {
 func (x *Usecase) CreateCalendar(input *CreateCalendarInput) (*model.Calendar, error) {
 	now, err := util.CurrentDate()
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to get current date")
 	}
 
 	if now.Month < 11 {

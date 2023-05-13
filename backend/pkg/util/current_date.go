@@ -3,6 +3,8 @@ package util
 import (
 	"os"
 	"time"
+
+	"github.com/m-mizutani/goerr"
 )
 
 type Date struct {
@@ -18,7 +20,7 @@ func CurrentDate() (*Date, error) {
 	if currentDate != "" {
 		t, err = time.Parse("2006-01-02 15:04:05", currentDate)
 		if err != nil {
-			return nil, err
+			return nil, goerr.Wrap(err, "Failed to parse CURRENT_DATE").With("currentDate", currentDate)
 		}
 	} else {
 		t = time.Now()

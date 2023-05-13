@@ -20,7 +20,7 @@ import (
 func (x *Service) authenticate(ctx context.Context) (*model.User, error) {
 	metadata, err := GetRequestMetadata(ctx)
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to get request metadata")
 	}
 
 	if metadata.authToken == "" {

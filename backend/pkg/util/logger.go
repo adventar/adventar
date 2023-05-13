@@ -13,3 +13,11 @@ var Logger = zerolog.New(
 		TimeFormat: time.DateTime,
 	},
 ).With().Timestamp().Logger()
+
+func SetLogLevel(level string) {
+	l, err := zerolog.ParseLevel(level)
+	if err != nil {
+		Logger.Fatal().Err(err).Msg("")
+	}
+	Logger = Logger.Level(l)
+}

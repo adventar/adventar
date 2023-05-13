@@ -6,6 +6,7 @@ import (
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/bufbuild/connect-go"
+	"github.com/m-mizutani/goerr"
 )
 
 // CreateEntry creates a entry.
@@ -16,7 +17,7 @@ func (x *Service) CreateEntry(
 	currentUser, err := x.authenticate(ctx)
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to authenticate")
 	}
 
 	entry, err := x.usecase.CreateEntry(&usecase.CreateEntryInput{
@@ -26,7 +27,7 @@ func (x *Service) CreateEntry(
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to create entry")
 	}
 
 	return connect.NewResponse(entry.ToProto()), nil

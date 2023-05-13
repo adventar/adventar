@@ -6,6 +6,7 @@ import (
 	"github.com/adventar/adventar/backend/pkg/domain/model"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/bufbuild/connect-go"
+	"github.com/m-mizutani/goerr"
 	"github.com/m-mizutani/gots/slice"
 )
 
@@ -32,7 +33,7 @@ func (x *Service) ListCalendars(
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, goerr.Wrap(err, "Failed to list calendars")
 	}
 
 	return connect.NewResponse(&adventarv1.ListCalendarsResponse{
