@@ -165,10 +165,9 @@ func printErrorStacks(err error) {
 	var s []string
 	for err != nil {
 		var e *goerr.Error
-		if !errors.As(err, &e) {
-			break
+		if errors.As(err, &e) {
+			s = append(s, fmt.Sprintf("%+v", e.StackTrace()[0]))
 		}
-		s = append(s, fmt.Sprintf("%+v", e.StackTrace()[0]))
 		err = errors.Unwrap(err)
 	}
 	if len(s) > 0 {
