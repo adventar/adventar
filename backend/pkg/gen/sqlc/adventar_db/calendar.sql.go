@@ -451,3 +451,31 @@ func (q *Queries) SearchCalendars(ctx context.Context, arg SearchCalendarsParams
 	}
 	return items, nil
 }
+
+const updateCalendar = `-- name: UpdateCalendar :exec
+UPDATE
+  calendars
+SET
+  title = ?,
+  description = ?
+WHERE
+  id = ?
+  AND user_id = ?
+`
+
+type UpdateCalendarParams struct {
+	Title       string
+	Description string
+	ID          int64
+	UserID      int64
+}
+
+func (q *Queries) UpdateCalendar(ctx context.Context, arg UpdateCalendarParams) error {
+	_, err := q.db.ExecContext(ctx, updateCalendar,
+		arg.Title,
+		arg.Description,
+		arg.ID,
+		arg.UserID,
+	)
+	return err
+}

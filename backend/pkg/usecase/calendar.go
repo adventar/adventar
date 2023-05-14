@@ -203,6 +203,32 @@ func (x *Usecase) CreateCalendar(input *CreateCalendarInput) (*model.Calendar, e
 	return x.GetCalendarById(lastID)
 }
 
+type UpdateCalendarInput struct {
+	CalendarID  int64
+	Title       string
+	Description string
+	UserID      int64
+}
+
+func (x *Usecase) UpdateCalendar(input *UpdateCalendarInput) (*model.Calendar, error) {
+	if input.Title == "" {
+		return nil, goerr.Wrap(types.ErrInvalidArgument, "Title is required")
+	}
+
+	err := x.queries.UpdateCalendar(context.Background(), adventar_db.UpdateCalendarParams{
+		ID:          input.CalendarID,
+		Title:       input.Title,
+		Description: input.Description,
+		UserID:      input.UserID,
+	})
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed query to update calendar")
+	}
+
+	return x.GetCalendarById(input.CalendarID)
+}
+
 type DeleteCalendarInput struct {
 	CalendarID int64
 	UserID     int64

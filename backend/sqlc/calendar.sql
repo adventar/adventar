@@ -124,6 +124,16 @@ INSERT INTO calendars
 VALUES
   (?, ?, ?, ?);
 
+-- name: UpdateCalendar :exec
+UPDATE
+  calendars
+SET
+  title = ?,
+  description = ?
+WHERE
+  id = ?
+  AND user_id = ?;
+
 -- name: DeleteCalendar :exec
 DELETE FROM
   calendars
