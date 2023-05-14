@@ -9,8 +9,33 @@ import (
 	"context"
 )
 
+const createUser = `-- name: CreateUser :execlastid
+INSERT INTO users (name, auth_uid, auth_provider, icon_url)
+values (?, ?, ?, ?)
+`
+
+type CreateUserParams struct {
+	Name         string
+	AuthUid      string
+	AuthProvider string
+	IconUrl      string
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, createUser,
+		arg.Name,
+		arg.AuthUid,
+		arg.AuthProvider,
+		arg.IconUrl,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.LastInsertId()
+}
+
 const getUserByAuthInfo = `-- name: GetUserByAuthInfo :one
-SELECT id, name, auth_uid, auth_provider, icon_url, created_at, updated_at FROM users WHERE auth_provider = ? and auth_uid = ? LIMIT 1
+SELECT id, name, auth_uid, auth_provider, icon_url, created_at, updated_at FROM users WHERE auth_provider = ? and auth_uid = ?
 `
 
 type GetUserByAuthInfoParams struct {
@@ -34,7 +59,7 @@ func (q *Queries) GetUserByAuthInfo(ctx context.Context, arg GetUserByAuthInfoPa
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, name, auth_uid, auth_provider, icon_url, created_at, updated_at FROM users WHERE id = ? LIMIT 1
+SELECT id, name, auth_uid, auth_provider, icon_url, created_at, updated_at FROM users WHERE id = ?
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
@@ -52,16 +77,30 @@ func (q *Queries) GetUserById(ctx context.Context, id int64) (User, error) {
 	return i, err
 }
 
-const updateUser = `-- name: UpdateUser :exec
-UPDATE users SET name = ?  where id = ?
+const updateUserIconUrl = `-- name: UpdateUserIconUrl :exec
+UPDATE users SET icon_url = ? WHERE id = ?
 `
 
-type UpdateUserParams struct {
+type UpdateUserIconUrlParams struct {
+	IconUrl string
+	ID      int64
+}
+
+func (q *Queries) UpdateUserIconUrl(ctx context.Context, arg UpdateUserIconUrlParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserIconUrl, arg.IconUrl, arg.ID)
+	return err
+}
+
+const updateUserName = `-- name: UpdateUserName :exec
+UPDATE users SET name = ?  WHERE id = ?
+`
+
+type UpdateUserNameParams struct {
 	Name string
 	ID   int64
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.ExecContext(ctx, updateUser, arg.Name, arg.ID)
+func (q *Queries) UpdateUserName(ctx context.Context, arg UpdateUserNameParams) error {
+	_, err := q.db.ExecContext(ctx, updateUserName, arg.Name, arg.ID)
 	return err
 }

@@ -20,7 +20,7 @@ func (x *Service) UpdateUser(
 		return nil, goerr.Wrap(err, "Failed to authenticate")
 	}
 
-	err = x.usecase.UpdateUser(&usecase.UpdateUserInput{
+	err = x.usecase.UpdateUserName(&usecase.UpdateUserNameInput{
 		UserID: currentUser.ID,
 		Name:   req.Msg.Name,
 	})
