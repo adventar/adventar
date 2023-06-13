@@ -62,7 +62,9 @@ func (s *Service) Serve(addr string) {
 		":8080",
 		h2c.NewHandler(mux, &http2.Server{}),
 	)
-	util.Logger.Fatal().Err(err).Msg("listen failed")
+	if err != nil {
+		panic(err)
+	}
 }
 
 func createInterceptors() connect.HandlerOption {
@@ -106,9 +108,10 @@ func createInterceptors() connect.HandlerOption {
 		err := sentry.Init(sentry.ClientOptions{Dsn: sentryDsn})
 
 		if err != nil {
-			util.Logger.Fatal().Err(err).Msg("")
+			panic("Sentry initialize failed: " + err.Error())
 		}
 	}
+
 	errorHandlerInterceptor := connect.UnaryInterceptorFunc(func(next connect.UnaryFunc) connect.UnaryFunc {
 		return connect.UnaryFunc(func(ctx context.Context, request connect.AnyRequest) (connect.AnyResponse, error) {
 			response, err := next(ctx, request)

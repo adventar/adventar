@@ -23,13 +23,13 @@ func main() {
 	// TODO: set info in production
 	util.SetLogLevel("debug")
 	if err != nil {
-		util.Logger.Fatal().Err(err).Msg("")
+		panic(err)
 	}
 	defer db_.Close()
 
 	dbClient, err := db.New(source)
 	if err != nil {
-		util.Logger.Fatal().Err(err).Msg("")
+		panic(err)
 	}
 	defer dbClient.Close()
 	v := &util.FirebaseVerifier{}
