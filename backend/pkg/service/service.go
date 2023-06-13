@@ -20,6 +20,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/m-mizutani/goerr"
+	"golang.org/x/exp/slog"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -57,7 +58,7 @@ func (s *Service) Serve(addr string) {
 	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
 		io.WriteString(w, "ok\n")
 	})
-	util.Logger.Info().Msg("Server started on port 8080")
+	util.Logger.Info("Server started on port 8080")
 	err := http.ListenAndServe(
 		":8080",
 		h2c.NewHandler(mux, &http2.Server{}),
@@ -72,30 +73,30 @@ func createInterceptors() connect.HandlerOption {
 		func(next connect.UnaryFunc) connect.UnaryFunc {
 			return connect.UnaryFunc(func(ctx context.Context, request connect.AnyRequest) (connect.AnyResponse, error) {
 				procedure := request.Spec().Procedure
-				util.Logger.Info().Str("request", procedure).Msg("started unary call")
+				util.Logger.Info("started unary call", slog.String("request", procedure))
 				start := time.Now()
 				response, err := next(ctx, request)
 				duration := fmt.Sprintf("%dms", time.Since(start).Milliseconds())
 
 				if err != nil {
-					logger := util.Logger.Error()
+					attrs := []any{
+						slog.Any("err", err.Error()),
+						slog.String("procedure", procedure),
+						slog.String("duration", duration),
+						slog.String("code", connect.CodeOf(err).String()),
+					}
 					var goErr *goerr.Error
 					if errors.As(err, &goErr) {
 						for k, v := range goErr.Values() {
-							logger = logger.Any(fmt.Sprintf("error.%v", k), v)
+							attrs = append(attrs, slog.Any(k, v))
 						}
 					}
-					logger.
-						Str("procedure", procedure).
-						Str("duration", duration).
-						Str("code", connect.CodeOf(err).String()).
-						Err(err).
-						Msg("finished unary call")
+					util.Logger.Error("finished unary call", attrs...)
 				} else {
-					util.Logger.Info().
-						Str("procedure", procedure).
-						Str("duration", duration).
-						Msg("finished unary call")
+					util.Logger.Info("finished unary call",
+						slog.String("procedure", procedure),
+						slog.String("duration", duration),
+					)
 				}
 
 				return response, err
@@ -168,6 +169,6 @@ func printErrorStacks(err error) {
 		err = errors.Unwrap(err)
 	}
 	if len(s) > 0 {
-		util.Logger.Debug().Msg("Error StackTrace:\n" + strings.Join(s, "\n"))
+		util.Logger.Debug("Error StackTrace:\n" + strings.Join(s, "\n"))
 	}
 }

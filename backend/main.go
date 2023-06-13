@@ -20,8 +20,6 @@ func main() {
 	}
 	source += "?parseTime=true&charset=utf8mb4"
 	db_, err := sqlx.Open("mysql", source)
-	// TODO: set info in production
-	util.SetLogLevel("debug")
 	if err != nil {
 		panic(err)
 	}
