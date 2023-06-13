@@ -52,11 +52,11 @@ func TestMain(m *testing.M) {
 	}
 	defer dbClient.Close()
 	clients := infra.New(infra.WithDB(dbClient))
-	usecase := usecase.New(clients)
+	f := &testMetaFetcher{}
+	usecase := usecase.New(clients, f)
 
 	v := &testVerifier{}
-	f := &testMetaFetcher{}
-	service = s.NewService(db, v, f, usecase, clients)
+	service = s.NewService(db, v, usecase, clients)
 	code := m.Run()
 	os.Exit(code)
 }

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
+	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/bufbuild/connect-go"
 )
 
@@ -27,7 +28,8 @@ func TestUpdateEntry(t *testing.T) {
 	})
 	req.Header().Set("authorization", u.authUID)
 
-	res, err := service.UpdateEntry(context.Background(), req)
+	ctx := s.SetRequestMetadata(context.Background(), req)
+	res, err := service.UpdateEntry(ctx, req)
 	if err != nil {
 		t.Fatal(err)
 	}

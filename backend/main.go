@@ -32,11 +32,11 @@ func main() {
 		util.Logger.Fatal().Err(err).Msg("")
 	}
 	defer dbClient.Close()
-	clients := infra.New(infra.WithDB(dbClient))
-	usecase := usecase.New(clients)
-
 	v := &util.FirebaseVerifier{}
-	f := &util.SiteMetaFetcher{}
-	s := service.NewService(db_, v, f, usecase, clients)
+	metaFetcher := &util.SiteMetaFetcher{}
+	clients := infra.New(infra.WithDB(dbClient))
+	usecase := usecase.New(clients, metaFetcher)
+
+	s := service.NewService(db_, v, usecase, clients)
 	s.Serve(":8080")
 }

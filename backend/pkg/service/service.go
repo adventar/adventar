@@ -28,27 +28,21 @@ type verifier interface {
 	VerifyIDToken(string) (*util.AuthResult, error)
 }
 
-type metaFetcher interface {
-	Fetch(string) (*util.SiteMeta, error)
-}
-
 // Service holds data used by grpc functions.
 type Service struct {
-	db          *sqlx.DB
-	verifier    verifier
-	metaFetcher metaFetcher
-	usecase     *usecase.Usecase
-	clients     *infra.Clients
+	db       *sqlx.DB
+	verifier verifier
+	usecase  *usecase.Usecase
+	clients  *infra.Clients
 }
 
 // NewService creates a new Service.
-func NewService(db *sqlx.DB, verifier verifier, metaFetcher metaFetcher, usecase *usecase.Usecase, clients *infra.Clients) *Service {
+func NewService(db *sqlx.DB, verifier verifier, usecase *usecase.Usecase, clients *infra.Clients) *Service {
 	return &Service{
-		db:          db,
-		verifier:    verifier,
-		metaFetcher: metaFetcher,
-		usecase:     usecase,
-		clients:     clients,
+		db:       db,
+		verifier: verifier,
+		usecase:  usecase,
+		clients:  clients,
 	}
 }
 

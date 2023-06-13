@@ -105,6 +105,26 @@ WHERE
 ORDER BY
   calendars.year, entries.day, entries.id;
 
+-- name: UpdateEntryCommentAndUrl :exec
+UPDATE
+  entries
+SET
+  comment = ?,
+  url = ?
+WHERE
+  id = ?
+  AND user_id = ?;
+
+-- name: UpdateEntryTitleAndImageUrl :exec
+UPDATE
+  entries
+SET
+  title = ?,
+  image_url = ?
+WHERE
+  id = ?
+  AND user_id = ?;
+
 -- name: DeleteEntry :exec
 DELETE FROM
   entries

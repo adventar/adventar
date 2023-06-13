@@ -3,10 +3,13 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"net/url"
+	"strings"
 
 	"github.com/adventar/adventar/backend/pkg/domain/model"
 	"github.com/adventar/adventar/backend/pkg/domain/types"
 	"github.com/adventar/adventar/backend/pkg/gen/sqlc/adventar_db"
+	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/m-mizutani/goerr"
 )
 
@@ -130,6 +133,60 @@ func (x *Usecase) CreateEntry(input *CreateEntryInput) (*model.Entry, error) {
 	return x.GetEntryById(lastID)
 }
 
+type UpdateEntryInput struct {
+	EntryID int64
+	UserID  int64
+	URL     string
+	Comment string
+}
+
+func (x *Usecase) UpdateEntry(input *UpdateEntryInput) (*model.Entry, error) {
+	url := strings.TrimSpace(input.URL)
+	if url != "" && !isValidURL(url) {
+		return nil, goerr.Wrap(types.ErrInvalidArgument, "Invalid URL").With("url", url)
+	}
+
+	params := adventar_db.UpdateEntryCommentAndUrlParams{
+		ID:      input.EntryID,
+		UserID:  input.UserID,
+		Url:     input.URL,
+		Comment: input.Comment,
+	}
+	err := x.queries.UpdateEntryCommentAndUrl(context.Background(), params)
+
+	if err != nil {
+		return nil, goerr.Wrap(err, "Failed to update entry").With("entry_id", input.EntryID)
+	}
+
+	if input.URL != "" {
+		m, err := x.metaFetcher.Fetch(input.URL)
+		var title string
+		var imageURL string
+		if err != nil {
+			util.Logger.Warn().Str("url", input.URL).Err(err).Msg("Failed to fetch site meta info")
+			title = ""
+			imageURL = ""
+		} else {
+			title = m.Title
+			imageURL = m.ImageURL
+		}
+
+		params := adventar_db.UpdateEntryTitleAndImageUrlParams{
+			ID:       input.EntryID,
+			UserID:   input.UserID,
+			Title:    title,
+			ImageUrl: imageURL,
+		}
+		err = x.queries.UpdateEntryTitleAndImageUrl(context.Background(), params)
+
+		if err != nil {
+			return nil, goerr.Wrap(err, "Failed query to update entry").With("entry_id", input.EntryID)
+		}
+	}
+
+	return x.GetEntryById(input.EntryID)
+}
+
 type DeleteEntryInput struct {
 	EntryID int64
 	UserID  int64
@@ -173,4 +230,13 @@ func (x *Usecase) entryDeletable(entryID int64, userID int64) (bool, error) {
 	}
 
 	return false, nil
+}
+
+func isValidURL(s string) bool {
+	u, err := url.Parse(s)
+	if err != nil {
+		return false
+	}
+
+	return u.Scheme == "http" || u.Scheme == "https"
 }

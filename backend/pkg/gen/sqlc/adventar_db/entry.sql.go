@@ -344,3 +344,59 @@ func (q *Queries) ListUserEntriesByYear(ctx context.Context, arg ListUserEntries
 	}
 	return items, nil
 }
+
+const updateEntryCommentAndUrl = `-- name: UpdateEntryCommentAndUrl :exec
+UPDATE
+  entries
+SET
+  comment = ?,
+  url = ?
+WHERE
+  id = ?
+  AND user_id = ?
+`
+
+type UpdateEntryCommentAndUrlParams struct {
+	Comment string
+	Url     string
+	ID      int64
+	UserID  int64
+}
+
+func (q *Queries) UpdateEntryCommentAndUrl(ctx context.Context, arg UpdateEntryCommentAndUrlParams) error {
+	_, err := q.db.ExecContext(ctx, updateEntryCommentAndUrl,
+		arg.Comment,
+		arg.Url,
+		arg.ID,
+		arg.UserID,
+	)
+	return err
+}
+
+const updateEntryTitleAndImageUrl = `-- name: UpdateEntryTitleAndImageUrl :exec
+UPDATE
+  entries
+SET
+  title = ?,
+  image_url = ?
+WHERE
+  id = ?
+  AND user_id = ?
+`
+
+type UpdateEntryTitleAndImageUrlParams struct {
+	Title    string
+	ImageUrl string
+	ID       int64
+	UserID   int64
+}
+
+func (q *Queries) UpdateEntryTitleAndImageUrl(ctx context.Context, arg UpdateEntryTitleAndImageUrlParams) error {
+	_, err := q.db.ExecContext(ctx, updateEntryTitleAndImageUrl,
+		arg.Title,
+		arg.ImageUrl,
+		arg.ID,
+		arg.UserID,
+	)
+	return err
+}
