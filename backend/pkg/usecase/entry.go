@@ -11,6 +11,7 @@ import (
 	"github.com/adventar/adventar/backend/pkg/gen/sqlc/adventar_db"
 	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/m-mizutani/goerr"
+	"golang.org/x/exp/slog"
 )
 
 func (x *Usecase) GetEntryById(id int64) (*model.Entry, error) {
@@ -163,7 +164,10 @@ func (x *Usecase) UpdateEntry(input *UpdateEntryInput) (*model.Entry, error) {
 		var title string
 		var imageURL string
 		if err != nil {
-			util.Logger.Warn().Str("url", input.URL).Err(err).Msg("Failed to fetch site meta info")
+			util.Logger.Warn("Failed to fetch site meta info",
+				slog.String("url", input.URL),
+				slog.Any("err", err.Error()),
+			)
 			title = ""
 			imageURL = ""
 		} else {
