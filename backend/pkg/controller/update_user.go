@@ -10,7 +10,7 @@ import (
 )
 
 // UpdateUser updates user info.
-func (x *Service) UpdateUser(
+func (x *Controller) UpdateUser(
 	ctx context.Context,
 	req *connect.Request[adventarv1.UpdateUserRequest],
 ) (*connect.Response[adventarv1.User], error) {

@@ -10,7 +10,7 @@ import (
 	"github.com/m-mizutani/goerr"
 )
 
-func (x *Service) authenticate(ctx context.Context) (*model.User, error) {
+func (x *Controller) authenticate(ctx context.Context) (*model.User, error) {
 	metadata, err := GetRequestMetadata(ctx)
 	if err != nil {
 		return nil, goerr.Wrap(err, "Failed to get request metadata")
@@ -37,6 +37,6 @@ func (x *Service) authenticate(ctx context.Context) (*model.User, error) {
 	return user, nil
 }
 
-func (s *Service) queries() *adventar_db.Queries {
-	return s.clients.DB().Queries()
+func (c *Controller) queries() *adventar_db.Queries {
+	return c.clients.DB().Queries()
 }

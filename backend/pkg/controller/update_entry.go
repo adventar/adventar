@@ -10,7 +10,7 @@ import (
 )
 
 // UpdateEntry updates the entry.
-func (x *Service) UpdateEntry(
+func (x *Controller) UpdateEntry(
 	ctx context.Context,
 	req *connect.Request[adventarv1.UpdateEntryRequest],
 ) (*connect.Response[adventarv1.Entry], error) {

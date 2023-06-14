@@ -11,7 +11,7 @@ import (
 )
 
 // DeleteEntry deletes the entry.
-func (x *Service) DeleteEntry(
+func (x *Controller) DeleteEntry(
 	ctx context.Context,
 	req *connect.Request[adventarv1.DeleteEntryRequest],
 ) (*connect.Response[emptypb.Empty], error) {

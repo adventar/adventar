@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/adventar/adventar/backend/pkg/controller"
 	s "github.com/adventar/adventar/backend/pkg/controller"
 	"github.com/adventar/adventar/backend/pkg/domain/types"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
@@ -28,7 +29,7 @@ func TestDeleteEntryWithCalendarOwner(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.DeleteEntryRequest{EntryId: e.id})
 	req.Header().Set("authorization", calendarOwner.authUID)
-	ctx := s.SetRequestMetadata(context.Background(), req)
+	ctx := controller.SetRequestMetadata(context.Background(), req)
 
 	_, err := service.DeleteEntry(ctx, req)
 	if err != nil {
@@ -62,7 +63,7 @@ func TestDeleteEntryWithEntryOwner(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.DeleteEntryRequest{EntryId: e.id})
 	req.Header().Set("authorization", entryOwner.authUID)
-	ctx := s.SetRequestMetadata(context.Background(), req)
+	ctx := controller.SetRequestMetadata(context.Background(), req)
 
 	_, err := service.DeleteEntry(ctx, req)
 	if err != nil {

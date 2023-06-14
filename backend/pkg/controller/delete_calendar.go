@@ -11,7 +11,7 @@ import (
 )
 
 // DeleteCalendar deletes the calendar.
-func (x *Service) DeleteCalendar(
+func (x *Controller) DeleteCalendar(
 	ctx context.Context,
 	req *connect.Request[adventarv1.DeleteCalendarRequest],
 ) (*connect.Response[emptypb.Empty], error) {

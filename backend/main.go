@@ -19,6 +19,7 @@ func main() {
 		source = "root@tcp(127.0.0.1:13306)/adventar_dev"
 	}
 	source += "?parseTime=true&charset=utf8mb4"
+	// TODO: test で使っている sqlx を消したら sql にする
 	db_, err := sqlx.Open("mysql", source)
 	if err != nil {
 		panic(err)
@@ -35,6 +36,6 @@ func main() {
 	clients := infra.New(infra.WithDB(dbClient))
 	usecase := usecase.New(clients, metaFetcher)
 
-	s := controller.NewService(db_, v, usecase, clients)
+	s := controller.NewController(db_, v, usecase, clients)
 	s.Serve(":8080")
 }

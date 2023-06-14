@@ -10,7 +10,7 @@ import (
 )
 
 // UpdateCalendar updates the calendar.
-func (x *Service) UpdateCalendar(
+func (x *Controller) UpdateCalendar(
 	ctx context.Context,
 	req *connect.Request[adventarv1.UpdateCalendarRequest],
 ) (*connect.Response[adventarv1.Calendar], error) {

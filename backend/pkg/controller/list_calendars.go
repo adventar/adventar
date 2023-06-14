@@ -11,7 +11,7 @@ import (
 )
 
 // ListCalendars lists calendars.
-func (x *Service) ListCalendars(
+func (x *Controller) ListCalendars(
 	ctx context.Context,
 	req *connect.Request[adventarv1.ListCalendarsRequest],
 ) (*connect.Response[adventarv1.ListCalendarsResponse], error) {

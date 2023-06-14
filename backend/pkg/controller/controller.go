@@ -29,17 +29,17 @@ type verifier interface {
 	VerifyIDToken(string) (*util.AuthResult, error)
 }
 
-// Service holds data used by grpc functions.
-type Service struct {
+// Controller holds data used by grpc functions.
+type Controller struct {
 	db       *sqlx.DB
 	verifier verifier
 	usecase  *usecase.Usecase
 	clients  *infra.Clients
 }
 
-// NewService creates a new Service.
-func NewService(db *sqlx.DB, verifier verifier, usecase *usecase.Usecase, clients *infra.Clients) *Service {
-	return &Service{
+// NewController creates a new Service.
+func NewController(db *sqlx.DB, verifier verifier, usecase *usecase.Usecase, clients *infra.Clients) *Controller {
+	return &Controller{
 		db:       db,
 		verifier: verifier,
 		usecase:  usecase,
@@ -48,13 +48,13 @@ func NewService(db *sqlx.DB, verifier verifier, usecase *usecase.Usecase, client
 }
 
 // Serve serves the service
-func (s *Service) Serve(addr string) {
+func (x *Controller) Serve(addr string) {
 	mux := http.NewServeMux()
 	interceptors := createInterceptors()
 	withRecover := connect.WithRecover(func(_ context.Context, _ connect.Spec, _ http.Header, r any) error {
 		return goerr.New("(panic) %v", r)
 	})
-	mux.Handle(adventarv1connect.NewAdventarHandler(s, interceptors, withRecover))
+	mux.Handle(adventarv1connect.NewAdventarHandler(x, interceptors, withRecover))
 	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
 		io.WriteString(w, "ok\n")
 	})

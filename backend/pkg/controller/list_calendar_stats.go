@@ -11,7 +11,7 @@ import (
 )
 
 // ListCalendarStats lists calendar stats
-func (x *Service) ListCalendarStats(
+func (x *Controller) ListCalendarStats(
 	ctx context.Context,
 	req *connect.Request[adventarv1.ListCalendarStatsRequest],
 ) (*connect.Response[adventarv1.ListCalendarStatsResponse], error) {

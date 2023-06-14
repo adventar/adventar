@@ -11,7 +11,7 @@ import (
 )
 
 // ListEntries lists entries.
-func (x *Service) ListEntries(
+func (x *Controller) ListEntries(
 	ctx context.Context,
 	req *connect.Request[adventarv1.ListEntriesRequest],
 ) (*connect.Response[adventarv1.ListEntriesResponse], error) {

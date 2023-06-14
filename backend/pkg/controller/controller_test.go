@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	s "github.com/adventar/adventar/backend/pkg/controller"
+	"github.com/adventar/adventar/backend/pkg/controller"
 	"github.com/adventar/adventar/backend/pkg/infra"
 	db_client "github.com/adventar/adventar/backend/pkg/infra/db"
 	"github.com/adventar/adventar/backend/pkg/usecase"
@@ -34,7 +34,7 @@ func (tmf *testMetaFetcher) Fetch(url string) (*util.SiteMeta, error) {
 
 var (
 	db      *sqlx.DB
-	service *s.Service
+	service *controller.Controller
 )
 
 func TestMain(m *testing.M) {
@@ -56,7 +56,7 @@ func TestMain(m *testing.M) {
 	usecase := usecase.New(clients, f)
 
 	v := &testVerifier{}
-	service = s.NewService(db, v, usecase, clients)
+	service = controller.NewController(db, v, usecase, clients)
 	code := m.Run()
 	os.Exit(code)
 }

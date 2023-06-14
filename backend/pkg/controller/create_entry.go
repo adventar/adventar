@@ -10,7 +10,7 @@ import (
 )
 
 // CreateEntry creates a entry.
-func (x *Service) CreateEntry(
+func (x *Controller) CreateEntry(
 	ctx context.Context,
 	req *connect.Request[adventarv1.CreateEntryRequest],
 ) (*connect.Response[adventarv1.Entry], error) {

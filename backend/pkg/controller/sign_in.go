@@ -9,7 +9,7 @@ import (
 )
 
 // SignIn validates the id token.
-func (x *Service) SignIn(
+func (x *Controller) SignIn(
 	ctx context.Context,
 	req *connect.Request[adventarv1.SignInRequest],
 ) (*connect.Response[adventarv1.User], error) {

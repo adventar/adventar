@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	s "github.com/adventar/adventar/backend/pkg/controller"
+	"github.com/adventar/adventar/backend/pkg/controller"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/bufbuild/connect-go"
 )
@@ -20,7 +20,7 @@ func TestDeleteCalendar(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.DeleteCalendarRequest{CalendarId: c.id})
 	req.Header().Set("authorization", u.authUID)
-	ctx := s.SetRequestMetadata(context.Background(), req)
+	ctx := controller.SetRequestMetadata(context.Background(), req)
 
 	_, err := service.DeleteCalendar(ctx, req)
 	if err != nil {

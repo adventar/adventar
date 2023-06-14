@@ -11,7 +11,7 @@ import (
 )
 
 // GetCalendar returns a calendar.
-func (x *Service) GetCalendar(
+func (x *Controller) GetCalendar(
 	ctx context.Context,
 	req *connect.Request[adventarv1.GetCalendarRequest],
 ) (*connect.Response[adventarv1.GetCalendarResponse], error) {

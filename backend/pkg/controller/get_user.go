@@ -9,7 +9,7 @@ import (
 )
 
 // GetUser returns a user info.
-func (x *Service) GetUser(
+func (x *Controller) GetUser(
 	ctx context.Context,
 	req *connect.Request[adventarv1.GetUserRequest],
 ) (*connect.Response[adventarv1.User], error) {

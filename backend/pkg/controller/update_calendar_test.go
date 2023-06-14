@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	s "github.com/adventar/adventar/backend/pkg/controller"
+	"github.com/adventar/adventar/backend/pkg/controller"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
 	"github.com/bufbuild/connect-go"
 )
@@ -24,7 +24,7 @@ func TestUpdateCalendar(t *testing.T) {
 		Description: "bar",
 	})
 	req.Header().Set("authorization", u.authUID)
-	ctx := s.SetRequestMetadata(context.Background(), req)
+	ctx := controller.SetRequestMetadata(context.Background(), req)
 	_, err := service.UpdateCalendar(ctx, req)
 	if err != nil {
 		t.Fatal(err)

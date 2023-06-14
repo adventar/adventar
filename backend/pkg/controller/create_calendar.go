@@ -10,7 +10,7 @@ import (
 )
 
 // CreateCalendar creates a calendar.
-func (x *Service) CreateCalendar(
+func (x *Controller) CreateCalendar(
 	ctx context.Context,
 	req *connect.Request[adventarv1.CreateCalendarRequest],
 ) (*connect.Response[adventarv1.Calendar], error) {
