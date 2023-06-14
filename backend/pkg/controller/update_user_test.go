@@ -1,11 +1,11 @@
-package service_test
+package controller_test
 
 import (
 	"context"
 	"testing"
 
+	"github.com/adventar/adventar/backend/pkg/controller"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
-	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/bufbuild/connect-go"
 )
 
@@ -17,7 +17,7 @@ func TestUpdateUser(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.UpdateUserRequest{Name: "changed"})
 	req.Header().Set("authorization", u.authUID)
-	ctx := s.SetRequestMetadata(context.Background(), req)
+	ctx := controller.SetRequestMetadata(context.Background(), req)
 
 	_, err := service.UpdateUser(ctx, req)
 	if err != nil {

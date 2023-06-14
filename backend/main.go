@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
+	"github.com/adventar/adventar/backend/pkg/controller"
 	"github.com/adventar/adventar/backend/pkg/infra"
 	"github.com/adventar/adventar/backend/pkg/infra/db"
-	"github.com/adventar/adventar/backend/pkg/service"
 	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/adventar/adventar/backend/pkg/util"
 	_ "github.com/go-sql-driver/mysql"
@@ -35,6 +35,6 @@ func main() {
 	clients := infra.New(infra.WithDB(dbClient))
 	usecase := usecase.New(clients, metaFetcher)
 
-	s := service.NewService(db_, v, usecase, clients)
+	s := controller.NewService(db_, v, usecase, clients)
 	s.Serve(":8080")
 }

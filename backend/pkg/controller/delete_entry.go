@@ -1,4 +1,4 @@
-package service
+package controller
 
 import (
 	"context"
@@ -10,10 +10,10 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-// DeleteCalendar deletes the calendar.
-func (x *Service) DeleteCalendar(
+// DeleteEntry deletes the entry.
+func (x *Service) DeleteEntry(
 	ctx context.Context,
-	req *connect.Request[adventarv1.DeleteCalendarRequest],
+	req *connect.Request[adventarv1.DeleteEntryRequest],
 ) (*connect.Response[emptypb.Empty], error) {
 	currentUser, err := x.authenticate(ctx)
 
@@ -21,13 +21,13 @@ func (x *Service) DeleteCalendar(
 		return nil, goerr.Wrap(err, "Failed to authenticate")
 	}
 
-	err = x.usecase.DeleteCalendar(&usecase.DeleteCalendarInput{
-		CalendarID: req.Msg.GetCalendarId(),
-		UserID:     currentUser.ID,
+	err = x.usecase.DeleteEntry(&usecase.DeleteEntryInput{
+		EntryID: req.Msg.GetEntryId(),
+		UserID:  currentUser.ID,
 	})
 
 	if err != nil {
-		return nil, goerr.Wrap(err, "Failed to delete calendar")
+		return nil, goerr.Wrap(err, "Failed to delete entry")
 	}
 
 	return connect.NewResponse(&emptypb.Empty{}), nil

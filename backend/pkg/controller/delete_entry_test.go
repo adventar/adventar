@@ -1,13 +1,13 @@
-package service_test
+package controller_test
 
 import (
 	"context"
 	"errors"
 	"testing"
 
+	s "github.com/adventar/adventar/backend/pkg/controller"
 	"github.com/adventar/adventar/backend/pkg/domain/types"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
-	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/bufbuild/connect-go"
 )
 

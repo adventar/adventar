@@ -1,4 +1,4 @@
-package service_test
+package controller_test
 
 import (
 	"context"

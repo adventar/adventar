@@ -1,4 +1,4 @@
-package service_test
+package controller_test
 
 import (
 	"context"
@@ -6,8 +6,9 @@ import (
 	"strings"
 	"testing"
 
+	c "github.com/adventar/adventar/backend/pkg/controller"
+	s "github.com/adventar/adventar/backend/pkg/controller"
 	adventarv1 "github.com/adventar/adventar/backend/pkg/gen/proto/adventar/v1"
-	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/bufbuild/connect-go"
 )
 
@@ -20,7 +21,7 @@ func TestCreateCalendar(t *testing.T) {
 
 	req := connect.NewRequest(&adventarv1.CreateCalendarRequest{Title: "foo", Description: "bar"})
 	req.Header().Set("authorization", u.authUID)
-	ctx := s.SetRequestMetadata(context.Background(), req)
+	ctx := c.SetRequestMetadata(context.Background(), req)
 
 	res, err := service.CreateCalendar(ctx, req)
 	if err != nil {

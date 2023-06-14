@@ -1,13 +1,13 @@
-package service_test
+package controller_test
 
 import (
 	"log"
 	"os"
 	"testing"
 
+	s "github.com/adventar/adventar/backend/pkg/controller"
 	"github.com/adventar/adventar/backend/pkg/infra"
 	db_client "github.com/adventar/adventar/backend/pkg/infra/db"
-	s "github.com/adventar/adventar/backend/pkg/service"
 	"github.com/adventar/adventar/backend/pkg/usecase"
 	"github.com/adventar/adventar/backend/pkg/util"
 	"github.com/jmoiron/sqlx"
