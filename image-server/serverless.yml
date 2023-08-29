@@ -6,7 +6,8 @@ plugins:
 provider:
   name: aws
   stage: prod
-  runtime: go1.x
+  architecture: arm64
+  runtime: provided.al2
   region: ap-northeast-1
   deploymentBucket:
     name: adventar
@@ -23,11 +24,11 @@ package:
   exclude:
     - ./**
   include:
-    - ./image-server
+    - ./bootstrap
 
 functions:
   main:
-    handler: image-server
+    handler: bootstrap
     events:
       - http:
           method: GET

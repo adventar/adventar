@@ -1,10 +1,10 @@
 .PHONY: build clean deploy
 
 build:
-	env GOOS=linux go build -ldflags="-s -w" -o image-server main.go
+	env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o ./bootstrap main.go
 
 clean:
-	rm -f image-server
+	rm -f bootstrap
 
 deploy: clean build
 	sls deploy --verbose

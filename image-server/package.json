@@ -2,7 +2,10 @@
   "name": "adventar-image-server",
   "private": true,
   "devDependencies": {
-    "serverless": "^1.56.1",
+    "serverless": "^3.34.0",
     "serverless-apigw-binary": "^0.4.4"
+  },
+  "volta": {
+    "node": "18.12.1"
   }
 }
