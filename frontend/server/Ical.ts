@@ -13,7 +13,6 @@ async function generateIcal(userId: number): Promise<string> {
   });
   const cal = ical({
     name: "Adventar",
-    domain: "adventar.org",
     prodId: { company: "adventar", product: "ical-generator", language: "JA" },
     timezone: "Asia/Tokyo",
     events
