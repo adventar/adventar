@@ -8,7 +8,8 @@ async function generateIcal(userId: number): Promise<string> {
     return {
       summary: `${calendar.title} Advent Calendar ${calendar.year}`,
       start: new Date(calendar.year, 11, e.day),
-      end: new Date(calendar.year, 11, e.day)
+      end: new Date(calendar.year, 11, e.day),
+      allDay: true
     };
   });
   const cal = ical({
