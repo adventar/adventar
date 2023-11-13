@@ -1,5 +1,4 @@
-service:
-  name: adventar-frontend
+service: adventar-frontend
 
 package:
   exclude:

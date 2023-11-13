@@ -56,10 +56,10 @@
     "eslint-plugin-standard": ">=4.0.1",
     "eslint-plugin-vue": "^6.0.1",
     "jest": "^24.9.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^5.0.0",
     "prettier": "^1.19.1",
-    "sass-loader": "^8.0.0",
-    "serverless": "^1.54.0",
+    "sass-loader": "^10.1.1",
+    "serverless": "^3.36.0",
     "serverless-offline": "^5.12.0",
     "serverless-webpack": "^5.3.1",
     "ts-jest": "^24.1.0",
@@ -68,5 +68,9 @@
     "vue-jest": "^3.0.5",
     "webpack-cli": "^3.3.9",
     "webpack-node-externals": "^1.7.2"
+  },
+  "volta": {
+    "node": "14.21.3",
+    "yarn": "1.22.19"
   }
 }

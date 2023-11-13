@@ -7,11 +7,12 @@ export NODE_ENV=production
 cd "$(dirname "$0")/.."
 
 rm -rf dist .nuxt-server .nuxt
+yarn install
 yarn run build:spa
 yarn run build:server
 cp -R .nuxt-server/dist/client/* dist/_nuxt
 
 aws s3 sync ./dist/ s3://adventar-assets/nuxt --cache-control '31536000,public' --exclude '*.html' --exclude 'sw.js'
 aws s3 sync ./dist/ s3://adventar-assets/nuxt --exclude '*' --include '*.html' --include 'sw.js'
-serverless deploy -v
+serverless deploy --verbose
 aws cloudfront create-invalidation --distribution-id EDY18AN1Q3CP --paths '/*'
