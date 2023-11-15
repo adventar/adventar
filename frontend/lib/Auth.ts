@@ -50,7 +50,7 @@ export function loginWithFirebase(provider: string): void {
   sessionStorage.setItem(SIGNIN_STORAGE_KEY, SIGNIN_STORAGE_VALUE);
   const auth = getAuth();
   const browser = detect();
-  const usePopup = browser?.os === "iOS" || browser?.name === "safari";
+  const usePopup = browser?.os === "iOS" || browser?.name === "safari" || browser?.name === "firefox";
   const signIn = usePopup ? signInWithPopup : signInWithRedirect;
   switch (provider) {
     case "google":
