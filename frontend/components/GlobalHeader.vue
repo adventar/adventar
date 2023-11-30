@@ -56,7 +56,7 @@
                 </button>
               </li>
               <li>
-                <button @click.native="hideDropdown()" @click="login('facebook')">
+                <button @click.native="hideDropdown()" @click="loginWithFacebook()">
                   <font-awesome-icon :icon="['fab', 'facebook']" /> Facebook でログイン
                 </button>
               </li>
@@ -117,6 +117,10 @@ export default class extends Vue {
 
   hideDropdown() {
     this.isShownDropdown = false;
+  }
+
+  loginWithFacebook() {
+    this.$router.push("/facebook-login");
   }
 
   login(provider) {
