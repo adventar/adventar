@@ -13,7 +13,7 @@
           すでにFacebookログインでAdventarに登録しており、データの変更が必要な場合は、<a
             href="https://twitter.com/hokaccha"
             >@hokaccha</a
-          >宛にDMをお願いします。
+          >宛にDM、もしくは k.hokamura@gmail.com までメールで連絡をお願いします。
         </p>
       </div>
     </main>
