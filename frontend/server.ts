@@ -8,6 +8,7 @@ import config from "~/nuxt.config";
 import { generateCalendarFeed } from "~/server/Feed";
 import { generateIcal } from "~/server/Ical";
 import { ApiError } from "~/lib/JsonApiClient";
+import { generateOembed } from "./server/Oembed";
 
 const bugsnagClient = bugsnag(process.env.BUGSNAG_API_KEY || "");
 
@@ -43,20 +44,9 @@ app.get(
       res.status(400).send("calendar id is invalid");
       return;
     }
-    // カレンダーの行が5週になる場合
-    const isFiveWeeks = calendarId >= 7345 && calendarId <= 1000000; // FIXME: 1000000 は 2023 が終わったら変更;
-    const rowHeight = 75;
-    const baseHeight = 362;
-    const height = isFiveWeeks ? baseHeight + rowHeight : baseHeight;
-    res.json({
-      version: "1.0",
-      width: "100%",
-      height,
-      type: "rich",
-      provider_name: "Adventar",
-      provider_url: "https://adventar.org",
-      url: `https://adventar.org/calendars/${calendarId}/embed`
-    });
+    const oembed = await generateOembed(calendarId);
+
+    res.json(oembed);
   })
 );
 
