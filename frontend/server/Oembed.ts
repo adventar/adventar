@@ -8,6 +8,7 @@ type OembedResponse = {
   provider_name: "Adventar";
   provider_url: "https://adventar.org";
   url: string;
+  html: string;
 };
 
 const ROW_HEIGHT = 75;
@@ -16,6 +17,7 @@ const BASE_HEIGHT = 362;
 export async function generateOembed(calendarId: number): Promise<OembedResponse> {
   const calendar = await getCalendar(calendarId);
   const height = isFiveWeeks(calendar.year) ? BASE_HEIGHT + ROW_HEIGHT : BASE_HEIGHT;
+  const url = `https://adventar.org/calendars/${calendarId}/embed`;
   return {
     version: "1.0",
     width: "100%",
@@ -23,7 +25,8 @@ export async function generateOembed(calendarId: number): Promise<OembedResponse
     type: "rich",
     provider_name: "Adventar",
     provider_url: "https://adventar.org",
-    url: `https://adventar.org/calendars/${calendarId}/embed`
+    url,
+    html: `\u003ciframe src="${url}" width="100%" height="${height}"\u003e\u003c/iframe\u003e\n`
   };
 }
 
