@@ -49,21 +49,18 @@ export function initFirebase(): void {
 export function loginWithFirebase(provider: string): void {
   sessionStorage.setItem(SIGNIN_STORAGE_KEY, SIGNIN_STORAGE_VALUE);
   const auth = getAuth();
-  const browser = detect();
-  const usePopup = browser?.os === "iOS" || browser?.name === "safari" || browser?.name === "firefox";
-  const signIn = usePopup ? signInWithPopup : signInWithRedirect;
   switch (provider) {
     case "google":
-      signIn(auth, new GoogleAuthProvider());
+      signInWithPopup(auth, new GoogleAuthProvider());
       break;
     case "github":
-      signIn(auth, new GithubAuthProvider());
+      signInWithPopup(auth, new GithubAuthProvider());
       break;
     case "twitter":
-      signIn(auth, new TwitterAuthProvider());
+      signInWithPopup(auth, new TwitterAuthProvider());
       break;
     case "facebook":
-      signIn(auth, new FacebookAuthProvider());
+      signInWithPopup(auth, new FacebookAuthProvider());
       break;
     default:
       throw new Error("Invalid provider");
