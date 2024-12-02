@@ -37,7 +37,12 @@ async function generateCalendarFeed(calendarId: number): Promise<{ feed: string;
     });
   }
 
-  return { feed: feed.rss2(), cacheable };
+  // https://github.com/adventar/adventar/issues/52#issuecomment-2509769282
+  const rss = feed
+    .rss2()
+    .replace('<rss version="2.0">', '<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">');
+
+  return { feed: rss, cacheable };
 }
 
 export { generateCalendarFeed };
