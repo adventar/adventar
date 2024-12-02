@@ -1,10 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { detect } from "detect-browser";
 import {
   getAuth,
   getRedirectResult,
   onAuthStateChanged,
-  signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
   GithubAuthProvider,
